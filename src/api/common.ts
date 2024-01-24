@@ -23,3 +23,10 @@ export const setLogin = (data: ILoginParams) => {
     data
   })
 }
+
+export const setLogout = () => {
+  return instance.request<any, IBaseResponse<null>>({
+    url: '/admin/logout',
+    method: 'POST'
+  })
+}

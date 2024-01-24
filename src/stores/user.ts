@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { setLogin } from '@/api/common'
+import { setLogin, setLogout } from '@/api/common'
 
 import type { ILoginParams } from '@/types/api/common'
 
@@ -34,12 +34,21 @@ export const useUserStore = defineStore('user', () => {
         })
     })
   }
+  function logout() {
+    return new Promise<void>((resolve) => {
+      setLogout().then(() => {
+        removeToken()
+        resolve()
+      })
+    })
+  }
 
   return {
     token,
     getToken,
     setToken,
     removeToken,
-    login
+    login,
+    logout
   }
 })
