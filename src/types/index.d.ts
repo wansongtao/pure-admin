@@ -11,6 +11,14 @@ export interface IBaseResponse<T = unknown> {
   data: T
 }
 
+export interface IBaseList<T = unknown> {
+  list: T[]
+  /**
+   * 总数量
+   */
+  total: number
+}
+
 export interface IMenuItem {
   key: string
   icon?: () => VNode
@@ -24,4 +32,10 @@ export interface ITagLinkItem {
   path: string
   checked?: boolean
   hiddenCloseIcon?: boolean
+}
+
+export interface IBaseQuery {
+  keyword?: string
+  startTime?: string
+  endTime?: string
 }
