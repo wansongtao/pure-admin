@@ -1,8 +1,8 @@
 <script lang="ts" generic="T extends Record<string, any>" setup>
-import type { TableColumnType, TableProps } from 'ant-design-vue'
+import type { TableProps, TableColumnProps } from 'ant-design-vue'
 import type { ColumnFilterItem, Key, SorterResult } from 'ant-design-vue/es/table/interface'
 
-type IColumn<U> = TableColumnType<U> & { dataIndex?: keyof U }
+type IColumn<U> = TableColumnProps<U> & { dataIndex?: keyof U }
 
 defineOptions({
   name: 'BaseTable'
@@ -34,7 +34,7 @@ const $emits = defineEmits<{
 const $props = withDefaults(
   defineProps<{
     rowKey?: string
-    columns: TableColumnType<T>[]
+    columns: IColumn<T>[]
     list?: T[]
     loading?: boolean
     scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string | number }
@@ -73,7 +73,7 @@ const columnList = computed(() => {
   }
 
   const list = $props.defaultShowOperation ? [...$props.columns, defaultItem] : $props.columns
-  return list as TableColumnType<T>[]
+  return list as IColumn<T>[]
 })
 
 const selectedRowKeys = ref<Key[]>([])
