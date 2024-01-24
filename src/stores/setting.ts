@@ -17,9 +17,12 @@ export const useSettingStore = defineStore('setting', () => {
     setTheme(theme.value)
   }
 
+  const cacheRoutes = ref<string[]>([])
+
   return {
     theme,
     followSystemTheme,
-    toggleTheme
+    toggleTheme,
+    cacheRoutes
   }
 })
