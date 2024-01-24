@@ -10,3 +10,11 @@ export interface IBaseResponse<T = unknown> {
   msg: string
   data: T
 }
+
+export interface IMenuItem {
+  key: string
+  icon?: () => VNode
+  label?: string
+  path: string
+  children?: IMenuItem[]
+}
