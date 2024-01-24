@@ -34,7 +34,7 @@ const $emits = defineEmits<{
 const $props = withDefaults(
   defineProps<{
     rowKey?: string
-    columns: IColumn<T>[]
+    columns: (IColumn<T> | TableColumnProps)[]
     list?: T[]
     loading?: boolean
     scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string | number }
