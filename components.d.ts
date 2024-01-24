@@ -24,5 +24,6 @@ declare module 'vue' {
     ParentView: typeof import('./src/components/ParentView/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScreenFull: typeof import('./src/components/ScreenFull/index.vue')['default']
   }
 }
