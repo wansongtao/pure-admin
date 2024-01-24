@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { setLogin, setLogout } from '@/api/common'
+import { getUserInfo, setLogin, setLogout } from '@/api/common'
 
 import type { ILoginParams, IUserInfo } from '@/types/api/common'
 
@@ -49,6 +49,18 @@ export const useUserStore = defineStore('user', () => {
     permissions: [],
     roles: []
   })
+  function getUserInfoAction() {
+    return new Promise<IUserInfo>((resolve, reject) => {
+      getUserInfo()
+        .then((res) => {
+          userInfo.value = res.data
+          resolve(res.data)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
 
   return {
     token,
@@ -57,6 +69,7 @@ export const useUserStore = defineStore('user', () => {
     removeToken,
     login,
     logout,
-    userInfo
+    userInfo,
+    getUserInfoAction
   }
 })

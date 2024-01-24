@@ -30,6 +30,10 @@ router.beforeEach(async (to) => {
       NProgress.done()
       return to.fullPath
     }
+
+    if (!useStore.userInfo.roles.length) {
+      await useStore.getUserInfoAction()
+    }
   }
 })
 
