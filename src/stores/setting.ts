@@ -41,11 +41,9 @@ export const useSettingStore = defineStore('setting', () => {
   const menus = ref<IMenuItem[]>([])
   async function getRoutesAction() {
     const result = await getMenus().catch(() => ({ data: [] }))
-
     const route = generateRoutes(result.data)
     cacheRoutes.value = generateCacheRouteNames(route.children ?? [])
     menus.value = generateAsideMenu(route.children ?? [])
-console.log(route, cacheRoutes.value, menus.value);
 
     return route
   }
