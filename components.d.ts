@@ -18,6 +18,7 @@ declare module 'vue' {
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     ARow: typeof import('ant-design-vue/es')['Row']
     BaseSwitch: typeof import('./src/components/BaseSwitch/index.vue')['default']
+    ButtonCollapsed: typeof import('./src/components/ButtonCollapsed/index.vue')['default']
     IconMoon: typeof import('./src/components/icons/IconMoon.vue')['default']
     IconSun: typeof import('./src/components/icons/IconSun.vue')['default']
     ParentView: typeof import('./src/components/ParentView/index.vue')['default']
