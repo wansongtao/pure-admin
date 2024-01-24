@@ -18,3 +18,10 @@ export interface IMenuItem {
   path: string
   children?: IMenuItem[]
 }
+
+export interface ITagLinkItem {
+  title: string
+  path: string
+  checked?: boolean
+  hiddenCloseIcon?: boolean
+}

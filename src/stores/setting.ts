@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { getTheme, setTheme } from '@/utils/theme'
 import { getSystemTheme } from '@/utils/index'
 
-import type { IMenuItem } from '@/types'
+import type { IMenuItem, ITagLinkItem } from '@/types'
 
 export const useSettingStore = defineStore('setting', () => {
   const theme = ref(getTheme())
@@ -24,6 +24,17 @@ export const useSettingStore = defineStore('setting', () => {
     collapsed.value = !collapsed.value
   }
 
+  const defaultTagLinks = ref<ITagLinkItem[]>([
+    {
+      title: '首页',
+      path: '/',
+      hiddenCloseIcon: true
+    }
+  ])
+  function setDefaultTagLink(...tagLinks: ITagLinkItem[]) {
+    defaultTagLinks.value = tagLinks
+  }
+
   const cacheRoutes = ref<string[]>([])
   const menus = ref<IMenuItem[]>([])
 
@@ -33,6 +44,8 @@ export const useSettingStore = defineStore('setting', () => {
     toggleTheme,
     collapsed,
     toggleCollapsed,
+    defaultTagLinks,
+    setDefaultTagLink,
     cacheRoutes,
     menus
   }
