@@ -1,7 +1,7 @@
 import instance from '@/utils/request'
 
 import type { IBaseResponse } from '@/types/index'
-import type { ILoginParams } from '@/types/api/common'
+import type { ILoginParams, IMenuData } from '@/types/api/common'
 
 export const getCaptcha = () => {
   return instance.request<any, IBaseResponse<string>>({
@@ -28,5 +28,12 @@ export const setLogout = () => {
   return instance.request<any, IBaseResponse<null>>({
     url: '/admin/logout',
     method: 'POST'
+  })
+}
+
+export const getMenus = () => {
+  return instance.request<any, IBaseResponse<IMenuData[]>>({
+    url: '/admin/auth/menu',
+    method: 'GET'
   })
 }
