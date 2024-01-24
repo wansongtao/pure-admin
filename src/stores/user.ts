@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { setLogin, setLogout } from '@/api/common'
 
-import type { ILoginParams } from '@/types/api/common'
+import type { ILoginParams, IUserInfo } from '@/types/api/common'
 
 export const useUserStore = defineStore('user', () => {
   const token = ref('')
@@ -43,12 +43,20 @@ export const useUserStore = defineStore('user', () => {
     })
   }
 
+  const userInfo = ref<IUserInfo>({
+    nickName: '',
+    avatar: '',
+    permissions: [],
+    roles: []
+  })
+
   return {
     token,
     getToken,
     setToken,
     removeToken,
     login,
-    logout
+    logout,
+    userInfo
   }
 })
