@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { setLogin } from '@/api/common'
+
+import type { ILoginParams } from '@/types/api/common'
 
 export const useUserStore = defineStore('user', () => {
   const token = ref('')
@@ -19,10 +22,24 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('token')
   }
 
+  function login(data: ILoginParams) {
+    return new Promise<void>((resolve, reject) => {
+      setLogin(data)
+        .then((res) => {
+          setToken(res.data)
+          resolve()
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
   return {
     token,
     getToken,
     setToken,
-    removeToken
+    removeToken,
+    login
   }
 })
