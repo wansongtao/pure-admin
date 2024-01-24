@@ -26,7 +26,7 @@ watch(
 </script>
 
 <template>
-  <div class="breadcrumb flex items-center">
+  <div class="breadcrumb">
     <a-breadcrumb>
       <a-breadcrumb-item v-for="(item, idx) in routes" :key="item.path">
         <router-link :to="item.path" v-if="idx !== routes.length - 1">{{ item.title }}</router-link>
@@ -37,6 +37,11 @@ watch(
 </template>
 
 <style lang="scss" scoped>
+.breadcrumb {
+  display: flex;
+  align-items: center;
+}
+
 :deep(.ant-breadcrumb li:last-child) {
   color: var(--st-c-text-1);
 }
