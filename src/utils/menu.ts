@@ -81,12 +81,7 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
 
       if (item.component && COMPONENT_MAP[item.component]) {
         route.component = COMPONENT_MAP[item.component]
-      }
-
-      if (item.name) {
-        route.name = item.name
-      } else {
-        route.name = item.component?.replace(/[/]|(.vue)/g, '')
+        route.name = item.component.replace(/[/]|(.vue)/g, '')
       }
 
       if (item.title) {
@@ -95,10 +90,10 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
       if (item.icon) {
         route.meta!.icon = item.icon
       }
-      if (item.cache) {
+      if (item.cache === true) {
         route.meta!.cache = item.cache
       }
-      if (item.hidden) {
+      if (item.hidden === true) {
         route.meta!.hidden = item.hidden
       }
       // 设置为字符串会报错，页面加载不出来

@@ -30,10 +30,6 @@ export interface IMenuData {
    */
   title: string
   /**
-   * 组件（路由）名称
-   */
-  name?: string
-  /**
    * 组件路径
    */
   component?: string
