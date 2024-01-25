@@ -31,6 +31,7 @@ watch(
 
 <style lang="scss" scoped>
 .code {
+  width: 100%;
   height: 32px;
   cursor: pointer;
 }
