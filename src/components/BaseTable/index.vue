@@ -37,7 +37,7 @@ const $props = withDefaults(
     columns: (IColumn<T> | TableColumnProps)[]
     list?: T[]
     loading?: boolean
-    scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string | number }
+    scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string }
     defaultExpandAllRows?: boolean
     defaultExpandFirstRows?: boolean
     defaultExpandedRowKeys?: string[]
@@ -55,7 +55,7 @@ const $props = withDefaults(
     rowKey: 'id',
     scroll: () => ({
       scrollToFirstRowOnChange: true,
-      y: 'calc(100vh - 234px - var(--st-scrollbar-h) - var(--st-header-h))'
+      y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 210px)'
     }),
     defaultExpandFirstRows: false,
     defaultShowOperation: true,
@@ -165,7 +165,9 @@ const handleDelete = (id: Key, record: T) => {
       </template>
 
       <template #emptyText>
-        <slot name="emptyText" />
+        <slot name="emptyText">
+          <a-empty />
+        </slot>
       </template>
       <template
         #customFilterDropdown="{
@@ -211,5 +213,9 @@ const handleDelete = (id: Key, record: T) => {
 }
 .dark .ant-table-striped :deep(.table-striped) td {
   background-color: rgb(29, 29, 29);
+}
+
+:deep(.ant-table-tbody) {
+  height: v-bind('scroll.y');
 }
 </style>
