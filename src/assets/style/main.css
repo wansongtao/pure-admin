@@ -16,7 +16,7 @@
   overflow-y: auto;
   box-sizing: border-box;
   margin: 20px 10px 10px 20px;
-  padding: 20px;
+  padding: 10px 20px;
   height: 100%;
   border-radius: 12px;
   background-color: var(--st-c-bg);
