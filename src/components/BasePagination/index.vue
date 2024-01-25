@@ -36,6 +36,7 @@ const onChange = (page: number, pageSize: number) => {
 <template>
   <div class="base_pagination">
     <a-pagination
+      v-bind="$attrs"
       :current="page"
       :page-size="pageSize"
       :total="total"
@@ -49,4 +50,10 @@ const onChange = (page: number, pageSize: number) => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.base_pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+</style>
