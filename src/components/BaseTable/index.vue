@@ -50,6 +50,12 @@ const $props = withDefaults(
      */
     defaultRowSelection?: boolean
     rowSelection?: TableProps['rowSelection']
+    transformCellText?: (data: {
+      text: any
+      column: TableColumnProps<T>
+      record: T
+      index: number
+    }) => any
   }>(),
   {
     rowKey: 'id',
@@ -59,7 +65,26 @@ const $props = withDefaults(
     }),
     defaultExpandFirstRows: false,
     defaultShowOperation: true,
-    defaultRowSelection: false
+    defaultRowSelection: false,
+    transformCellText: ({
+      text,
+      column,
+      record
+    }: {
+      text: any
+      column: TableColumnProps<T>
+      record: T
+    }) => {
+      const { dataIndex } = column
+      if (
+        typeof dataIndex === 'string' &&
+        (record[dataIndex] === undefined || record[dataIndex] === null)
+      ) {
+        return '--'
+      }
+
+      return text
+    }
   }
 )
 
@@ -141,6 +166,7 @@ const handleDelete = (id: Key, record: T) => {
       :scroll="scroll"
       :row-selection="rowSelectionConfig"
       :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : '')"
+      :transform-cell-text="transformCellText"
       @change="handleSort"
     >
       <template #bodyCell="{ column, record, index, text }">
