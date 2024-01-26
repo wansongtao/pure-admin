@@ -61,7 +61,7 @@ const $props = withDefaults(
     rowKey: 'id',
     scroll: () => ({
       scrollToFirstRowOnChange: true,
-      y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 210px)'
+      y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 262px)'
     }),
     defaultExpandFirstRows: false,
     defaultShowOperation: true,
