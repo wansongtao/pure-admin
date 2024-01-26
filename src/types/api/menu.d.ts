@@ -10,11 +10,14 @@ export interface IQueryMenuParam {
 }
 
 export interface IMenuTreeItem {
+  /**
+   * 菜单ID
+   */
   id: string
   /**
    * 菜单路径
    */
-  path: string
+  path?: string
   /**
    * 父菜单id
    */
@@ -28,6 +31,10 @@ export interface IMenuTreeItem {
    */
   typeName: string
   /**
+   * 权限字符串
+   */
+  permission?: string
+  /**
    * 菜单icon名
    */
   icon?: string
@@ -38,7 +45,7 @@ export interface IMenuTreeItem {
   /**
    * 是否隐藏菜单
    */
-  hidden: boolean
+  hidden?: boolean
   /**
    * 添加时间
    */
