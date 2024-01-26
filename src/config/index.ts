@@ -1,7 +1,4 @@
-import type { IQueryMenuParam } from '@/types/api/menu';
-import type { ITheme } from '@/types/index'
-
-export const DEFAULT_THEME: ITheme = 'light'
+import type { IQueryMenuParam } from '@/types/api/menu'
 
 export const ALL_PERMISSION = '*:*:*'
 

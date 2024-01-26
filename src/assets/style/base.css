@@ -48,9 +48,8 @@ img {
   --st-aside-w-s: 80px;
   --st-header-h: 51px;
   --st-scrollbar-h: 35px;
-}
 
-.light {
+  /* light theme */
   --st-c-icon: #606266;
   --st-c-bg-mute: #f1f1f1;
   --st-c-divider: rgba(60, 60, 60, 0.1);
@@ -66,7 +65,7 @@ img {
   --st-c-tag-checked: #ebf5ff;
 }
 
-.dark {
+html[data-theme='dark'] {
   --st-c-icon: #dadada;
   --st-c-bg-mute: #2f2f2f;
   --st-c-divider: rgba(84, 84, 84, 0.65);
