@@ -58,7 +58,7 @@ img {
   --st-c-text-3: rgba(235, 235, 235, 0.6);
   --st-c-bg: #fff;
   --st-c-bg-2: #f5f7fa;
-  --st-c-menu-checked: #e6f4ff;
+  --st-c-menu-checked: #e9f4fe;
   --st-c-menu-active: #f0f0f0;
   --st-c-menu-bg: rgba(0, 0, 0, 0.02);
   --st-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
@@ -74,7 +74,7 @@ html[data-theme='dark'] {
   --st-c-text-3: rgba(60, 60, 60, 0.7);
   --st-c-bg: #141414;
   --st-c-bg-2: #2f2f2f;
-  --st-c-menu-checked: #111a2c;
+  --st-c-menu-checked: #131a2b;
   --st-c-menu-active: #313131;
   --st-c-menu-bg: rgba(255, 255, 255, 0.04);
   --st-shadow: 0 6px 16px 0 rgba(235, 235, 235, 0.08), 0 3px 6px -4px rgba(235, 235, 235, 0.12), 0 9px 28px 8px rgba(235, 235, 235, 0.05);
