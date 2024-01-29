@@ -63,6 +63,7 @@ img {
   --st-c-menu-bg: rgba(0, 0, 0, 0.02);
   --st-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
   --st-c-tag-checked: #ebf5ff;
+  --st-c-striped: #fafafa;
 }
 
 html[data-theme='dark'] {
@@ -79,4 +80,5 @@ html[data-theme='dark'] {
   --st-c-menu-bg: rgba(255, 255, 255, 0.04);
   --st-shadow: 0 6px 16px 0 rgba(235, 235, 235, 0.08), 0 3px 6px -4px rgba(235, 235, 235, 0.12), 0 9px 28px 8px rgba(235, 235, 235, 0.05);
   --st-c-tag-checked: #3c3c3c;
+  --st-c-striped: rgb(29, 29, 29);
 }

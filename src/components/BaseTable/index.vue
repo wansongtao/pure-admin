@@ -235,10 +235,7 @@ const handleDelete = (id: Key, record: T) => {
 }
 
 .ant-table-striped :deep(.table-striped) td {
-  background-color: #fafafa;
-}
-.dark .ant-table-striped :deep(.table-striped) td {
-  background-color: rgb(29, 29, 29);
+  background-color: var(--st-c-striped);
 }
 
 :deep(.ant-table-tbody) {
