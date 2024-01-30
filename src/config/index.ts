@@ -1,8 +1,11 @@
-import type { IQueryMenuParam } from '@/types/api/menu'
+import type { IQueryMenuParam, IMenuType } from '@/types/api/menu'
 
 export const ALL_PERMISSION = '*:*:*'
 
-export const MENU_STATUS: { label: string; value: IQueryMenuParam['disabled'] }[] = [
+export const MENU_STATUS: {
+  readonly label: string
+  readonly value: IQueryMenuParam['disabled']
+}[] = [
   {
     label: '启用',
     value: 1
@@ -12,3 +15,9 @@ export const MENU_STATUS: { label: string; value: IQueryMenuParam['disabled'] }[
     value: 0
   }
 ]
+
+export const MENU_TYPES: { [key in IMenuType]: string } = {
+  directory: '目录',
+  menu: '菜单',
+  button: '按钮'
+}
