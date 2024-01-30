@@ -131,3 +131,32 @@ export const getSystemTheme = (autoFollow?: (mode: 'dark' | 'light') => void) =>
   }
   return theme
 }
+
+/**
+ * 递归查找
+ * @param data 
+ * @param compare 
+ * @param childrenKey 
+ * @returns 
+ */
+export const recursionFindItem = <T extends Record<string, any>>(
+  data: T[],
+  compare: (value: T) => boolean,
+  childrenKey = 'children'
+): T | null => {
+  let item: T | null = null
+
+  for (let i = 0; i < data.length; i++) {
+    const value = data[i]
+    if (compare(value)) {
+      item = value
+      break
+    }
+
+    if (value[childrenKey]) {
+      item = recursionFindItem(value[childrenKey], compare, childrenKey)
+    }
+  }
+
+  return item
+}
