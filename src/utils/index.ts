@@ -134,10 +134,10 @@ export const getSystemTheme = (autoFollow?: (mode: 'dark' | 'light') => void) =>
 
 /**
  * 递归查找
- * @param data 
- * @param compare 
- * @param childrenKey 
- * @returns 
+ * @param data
+ * @param compare
+ * @param childrenKey
+ * @returns
  */
 export const recursionFindItem = <T extends Record<string, any>>(
   data: T[],
@@ -159,4 +159,22 @@ export const recursionFindItem = <T extends Record<string, any>>(
   }
 
   return item
+}
+
+/**
+ * 将对象转为数组
+ * @param data 
+ * @returns 
+ */
+export const objectToArray = <T extends Record<string, unknown>>(
+  data: T
+) => {
+  const keys: (keyof T)[] = Object.keys(data)
+
+  return keys.map((k) => {
+    return {
+      label: data[k],
+      value: k
+    }
+  })
 }
