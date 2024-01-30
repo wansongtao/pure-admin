@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useMenuTypes } from '@/hooks/useMenuTypes'
-import { MENU_STATUS } from '@/config/index'
+import { MENU_STATUS, MENU_TYPES } from '@/config/index'
+import { objectToArray } from '@/utils/index'
 
 import type { IBaseQuery } from '@/types/index'
 import type { IQueryMenuParam } from '@/types/api/menu'
@@ -10,7 +10,7 @@ const $emits = defineEmits<{
   handleReset: []
 }>()
 
-const { menuTypes } = useMenuTypes()
+const menuTypes = objectToArray(MENU_TYPES)
 
 const disabled = ref<IQueryMenuParam['disabled']>(undefined)
 const type = ref<IQueryMenuParam['type']>(undefined)
