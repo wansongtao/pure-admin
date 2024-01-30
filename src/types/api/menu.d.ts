@@ -45,10 +45,6 @@ export interface IMenuListItem {
    */
   disabled: boolean
   /**
-   * 是否隐藏菜单
-   */
-  hidden?: boolean
-  /**
    * 添加时间
    */
   createTime: string
