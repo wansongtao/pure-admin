@@ -41,6 +41,7 @@ export default defineConfig({
       '/dev': {
         target: 'https://mock.apifox.com/m1/3925622-0-default',
         changeOrigin: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/dev/, '')
       }
     }
