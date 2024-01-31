@@ -163,12 +163,10 @@ export const recursionFindItem = <T extends Record<string, any>>(
 
 /**
  * 将对象转为数组
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
-export const objectToArray = <T extends Record<string, unknown>>(
-  data: T
-) => {
+export const objectToArray = <T extends Record<any, unknown>>(data: T) => {
   const keys: (keyof T)[] = Object.keys(data)
 
   return keys.map((k) => {
@@ -177,4 +175,19 @@ export const objectToArray = <T extends Record<string, unknown>>(
       value: k
     }
   })
+}
+
+/**
+ * 移除对象中的无意义属性
+ * @param data 
+ * @returns 
+ */
+export const removeObjectEmptyProto = <T extends Record<any, any>>(data: T) => {
+  const keys: (keyof T)[] = Object.keys(data)
+  keys.forEach((k) => {
+    if (data[k] === undefined || data[k] === '' || data[k] === null) {
+      delete data[k]
+    }
+  })
+  return data
 }
