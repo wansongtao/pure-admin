@@ -1,7 +1,13 @@
 import instance from '@/utils/request'
 
 import type { IBaseList, IBaseResponse } from '@/types/index'
-import type { IMenuListItem, IQueryMenuParam, IMenuTree, IMenuParam } from '@/types/api/menu'
+import type {
+  IMenuListItem,
+  IQueryMenuParam,
+  IMenuTree,
+  IMenuParam,
+  IMenuDetail
+} from '@/types/api/menu'
 
 export const getMenuList = (params: IQueryMenuParam) => {
   return instance.request<any, IBaseResponse<IBaseList<IMenuListItem>>>({
@@ -23,5 +29,12 @@ export const addMenu = (data: IMenuParam) => {
     url: '/admin/menu',
     method: 'post',
     data
+  })
+}
+
+export const getMenuDetail = (id: number) => {
+  return instance.request<any, IBaseResponse<IMenuDetail>>({
+    url: `/admin/menu/${id}`,
+    method: 'get'
   })
 }

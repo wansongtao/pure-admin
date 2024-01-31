@@ -120,3 +120,58 @@ export interface IMenuTree {
   type: IMenuType
   children?: IMenuTree[]
 }
+
+export interface IMenuDetail {
+  /**
+   * 是否缓存
+   */
+  cache?: boolean
+  /**
+   * 菜单组件路径
+   */
+  component?: string
+  /**
+   * 是否禁用
+   */
+  disabled?: boolean
+  /**
+   * 是否隐藏
+   */
+  hidden?: boolean
+  /**
+   * 菜单图标
+   */
+  icon?: string
+  /**
+   * 菜单ID
+   */
+  id: number
+  /**
+   * 菜单路径
+   */
+  path?: string
+  /**
+   * 菜单权限
+   */
+  permission?: string
+  /**
+   * 父菜单ID
+   */
+  pid?: number
+  /**
+   * 是否开启路由布尔模式传参
+   */
+  props?: boolean
+  /**
+   * 重定向地址
+   */
+  redirect?: string
+  /**
+   * 菜单名称
+   */
+  title: string
+  /**
+   * 类型
+   */
+  type: IMenuType
+}
