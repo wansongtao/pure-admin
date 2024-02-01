@@ -46,3 +46,18 @@ export const updateMenu = (id: number, data: IMenuParam) => {
     data
   })
 }
+
+export const deleteMenu = (id: number) => {
+  return instance.request<any, IBaseResponse>({
+    url: `/admin/menu/${id}`,
+    method: 'delete'
+  })
+}
+
+export const deleteMultipleMenus = (data: number[]) => {
+  return instance.request<any, IBaseResponse>({
+    url: '/admin/menu',
+    method: 'delete',
+    data
+  })
+}
