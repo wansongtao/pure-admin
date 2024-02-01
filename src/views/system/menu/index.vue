@@ -2,6 +2,7 @@
 import TFilter from './components/TFilter.vue'
 import MENU_ICON_MAP from '@/config/menuIcons'
 import ButtonAdd from './components/ButtonAdd.vue'
+import MenuEdit from './components/MenuEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
@@ -95,9 +96,6 @@ const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend'
 const handleDelete = (id: number) => {
   console.log(id)
 }
-const handleEdit = (id: number) => {
-  console.log(id)
-}
 </script>
 
 <template>
@@ -142,9 +140,7 @@ const handleEdit = (id: number) => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <a-button type="primary" size="small" ghost @click="handleEdit(record.id)"
-              >编辑</a-button
-            >
+            <menu-edit :id="record.id" @handle-success="getList" />
             <ButtonDelete @handle-ok="handleDelete(record.id)" />
           </a-space>
         </template>
