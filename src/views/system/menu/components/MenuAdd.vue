@@ -8,7 +8,7 @@ import { removeObjectEmptyProto } from '@/utils/index'
 import type { IMenuParam } from '@/types/api/menu'
 
 const $emits = defineEmits<{
-  addSuccess: []
+  handleSuccess: []
 }>()
 
 const open = ref(false)
@@ -24,7 +24,7 @@ const handleAdd = (param: IMenuParam) => {
     open.value = false
     modalRef.value?.resetForm()
     message.success('添加菜单成功')
-    $emits('addSuccess')
+    $emits('handleSuccess')
   })
 }
 </script>

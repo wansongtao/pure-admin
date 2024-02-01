@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TFilter from './components/TFilter.vue'
 import MENU_ICON_MAP from '@/config/menuIcons'
-import ButtonAdd from './components/ButtonAdd.vue'
+import MenuAdd from './components/MenuAdd.vue'
 import MenuEdit from './components/MenuEdit.vue'
 import MenuDelete from './components/MenuDelete.vue'
 
@@ -119,7 +119,7 @@ const deleteSuccess = () => {
 
     <div class="tool">
       <a-space>
-        <button-add @add-success="getList" />
+        <menu-add @handle-success="getList" />
         <menu-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
