@@ -78,7 +78,7 @@ const requestData = async (params: IQueryMenuParam) => {
   }
 }
 
-const { page, pageSize, total, loading, list, getList } = usePageRequest(requestData)
+const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
 
 const query = ref<IQueryMenuParam>({})
 const handleQuery = (data?: IQueryMenuParam) => {
@@ -97,8 +97,19 @@ const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend'
 
 const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
-  checkedIds.value = []
-  getList()
+  if (page.value < lastPage.value) {
+    checkedIds.value = []
+    getList()
+    return
+  }
+
+  const deleteNum = checkedIds.value.length || 1
+  const lastPageSize = total.value % pageSize.value
+  if (deleteNum >= lastPageSize) {
+    checkedIds.value = []
+    getList()
+    return
+  }
 }
 </script>
 
@@ -147,7 +158,7 @@ const deleteSuccess = () => {
         <template v-if="column.key === 'operation'">
           <a-space>
             <menu-edit :id="record.id" @handle-success="getList" />
-            <menu-delete :id="record.id" @handle-success="getList" />
+            <menu-delete :id="record.id" @handle-success="deleteSuccess" />
           </a-space>
         </template>
       </template>
