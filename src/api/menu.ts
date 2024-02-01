@@ -38,3 +38,11 @@ export const getMenuDetail = (id: number) => {
     method: 'get'
   })
 }
+
+export const updateMenu = (id: number, data: IMenuParam) => {
+  return instance.request<any, IBaseResponse>({
+    url: `/admin/menu/${id}`,
+    method: 'put',
+    data
+  })
+}
