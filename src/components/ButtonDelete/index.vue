@@ -21,6 +21,7 @@ const $props = withDefaults(
     disabled?: boolean
     shape?: 'default' | 'circle' | 'round'
     confirmConfig?: ModalFuncProps
+    beforeOpenConfirm?: () => boolean
   }>(),
   {
     text: '删除',
@@ -37,6 +38,11 @@ const $emits = defineEmits<{
 }>()
 
 const showDeleteConfirm = () => {
+  const open = $props.beforeOpenConfirm ? $props.beforeOpenConfirm() : true
+  if (!open) {
+    return
+  }
+
   Modal.confirm({
     title: '您确定要删除这条数据吗？',
     icon: createVNode(ExclamationCircleOutlined),
