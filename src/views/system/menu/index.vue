@@ -3,6 +3,7 @@ import TFilter from './components/TFilter.vue'
 import MENU_ICON_MAP from '@/config/menuIcons'
 import ButtonAdd from './components/ButtonAdd.vue'
 import MenuEdit from './components/MenuEdit.vue'
+import MenuDelete from './components/MenuDelete.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
@@ -93,8 +94,11 @@ const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend'
     return
   }
 }
-const handleDelete = (id: number) => {
-  console.log(id)
+
+const checkedIds = ref<number[]>([])
+const deleteSuccess = () => {
+  checkedIds.value = []
+  getList()
 }
 </script>
 
@@ -105,7 +109,7 @@ const handleDelete = (id: number) => {
     <div class="tool">
       <a-space>
         <button-add @add-success="getList" />
-        <a-button type="primary" danger>删除</a-button>
+        <menu-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
 
@@ -114,8 +118,10 @@ const handleDelete = (id: number) => {
       :list="list"
       :loading="loading"
       bordered
-      defaultExpandFirstRows
-      :defaultShowOperation="false"
+      default-expand-first-rows
+      default-row-selection
+      v-model:checked="checkedIds"
+      :default-show-operation="false"
       @handle-sort="handleSort"
     >
       <template #default="{ column, record }">
@@ -141,7 +147,7 @@ const handleDelete = (id: number) => {
         <template v-if="column.key === 'operation'">
           <a-space>
             <menu-edit :id="record.id" @handle-success="getList" />
-            <ButtonDelete @handle-ok="handleDelete(record.id)" />
+            <menu-delete :id="record.id" @handle-success="getList" />
           </a-space>
         </template>
       </template>
