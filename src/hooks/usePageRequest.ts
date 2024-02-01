@@ -1,4 +1,4 @@
-import { ref, watch, shallowRef } from 'vue'
+import { ref, watch, shallowRef, computed } from 'vue'
 import { debounce } from '@/utils'
 
 import type { Ref, ShallowRef } from 'vue'
@@ -41,6 +41,14 @@ export const usePageRequest = <
   const page = ref(defaultPage)
   const pageSize = ref(defaultPageSize)
 
+  const lastPage = computed(() => {
+    if (!total.value || !pageSize.value) {
+      return 0
+    }
+
+    return Math.ceil(total.value / pageSize.value)
+  })
+
   /**
    * 请求列表数据，自动带上page与pageSize，只传入其他query即可
    */
@@ -72,6 +80,7 @@ export const usePageRequest = <
     loading,
     page,
     pageSize,
+    lastPage,
     getList
   }
 }
