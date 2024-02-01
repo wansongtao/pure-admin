@@ -75,7 +75,8 @@ const $props = withDefaults(
       column: TableColumnProps<T>
       record: T
     }) => {
-      const { dataIndex } = column
+      // 开启行选择后使用解构会报错
+      const dataIndex = column?.dataIndex
       if (
         typeof dataIndex === 'string' &&
         (record[dataIndex] === undefined || record[dataIndex] === null)
