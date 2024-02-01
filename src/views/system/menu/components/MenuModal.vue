@@ -88,14 +88,17 @@ const createState = (): IMenuParam => {
 }
 
 const formState = ref<IMenuParam>(createState())
-watch(() => $props.details, (data) => {
-  if (data) {
-    formState.value = data
-    return
-  }
+watch(
+  () => $props.details,
+  (data) => {
+    if (data) {
+      formState.value = { ...formState.value, ...data }
+      return
+    }
 
-  formState.value = createState()
-})
+    formState.value = createState()
+  }
+)
 
 const formRef = ref<FormInstance>()
 const resetForm = () => {
@@ -104,7 +107,6 @@ const resetForm = () => {
 }
 
 const $emits = defineEmits<{
-  onOk: [data: IMenuParam]
   onCancel: []
   verifySuccess: [data: IMenuParam]
 }>()
@@ -114,8 +116,6 @@ const handleCancel = () => {
   $emits('onCancel')
 }
 const handleOk = async () => {
-  $emits('onOk', formState.value)
-
   const nameList = ['title']
   if (formState.value.type !== 'button') {
     nameList.push('path')
@@ -131,7 +131,21 @@ const handleOk = async () => {
   }
 
   formRef.value?.validate(nameList).then(() => {
-    $emits('verifySuccess', formState.value)
+    const data = { ...formState.value }
+    if (formState.value.type === 'button') {
+      delete data['cache']
+      delete data['component']
+      delete data['hidden']
+      delete data['icon']
+      delete data['path']
+      delete data['props']
+      delete data['redirect']
+    } else if (formState.value.type === 'directory') {
+      delete data['cache']
+      delete data['props']
+    }
+
+    $emits('verifySuccess', data)
   })
 }
 
