@@ -179,8 +179,8 @@ export const objectToArray = <T extends Record<any, unknown>>(data: T) => {
 
 /**
  * 移除对象中的无意义属性
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 export const removeObjectEmptyProto = <T extends Record<any, any>>(data: T) => {
   const keys: (keyof T)[] = Object.keys(data)
@@ -189,5 +189,27 @@ export const removeObjectEmptyProto = <T extends Record<any, any>>(data: T) => {
       delete data[k]
     }
   })
+  return data
+}
+
+/**
+ * 移除对象中与另一个对象中属性值都相同的key
+ * @param data 需要移除属性的对象
+ * @param obj 比较对象
+ * @returns 
+ */
+export const removeSameProtoAndValue = <T extends Record<any, any>, K extends Record<any, any>>(
+  data: T,
+  obj: K
+) => {
+  const keys: (keyof K)[] = Object.keys(obj)
+
+  keys.forEach((k) => {
+    const value = data[k] as any
+    if (value === obj[k]) {
+      delete data[k]
+    }
+  })
+
   return data
 }
