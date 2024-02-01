@@ -29,7 +29,6 @@ const $emits = defineEmits<{
   handleSort: [fieldName: keyof T, order?: 'descend' | 'ascend' | null]
   handleEdit: [id: Key, record: T]
   handleDelete: [id: Key, record: T]
-  handleSelect: [ids: Key[]]
 }>()
 const $props = withDefaults(
   defineProps<{
@@ -102,13 +101,12 @@ const columnList = computed(() => {
   return list as IColumn<T>[]
 })
 
-const selectedRowKeys = ref<Key[]>([])
+const selectedRowKeys = defineModel<Key[]>('checked', { default: [] })
 const rowSelectionConfig = computed(() => {
   const defaultConfig: TableProps['rowSelection'] = {
     selectedRowKeys: selectedRowKeys.value,
     onChange: (keys: Key[]) => {
       selectedRowKeys.value = keys
-      $emits('handleSelect', keys)
     }
   }
 
