@@ -22,16 +22,16 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('token')
   }
 
-  function login(data: ILoginParams) {
+  async function login(data: ILoginParams) {
     return new Promise<void>((resolve, reject) => {
-      setLogin(data)
-        .then((res) => {
-          setToken(res.data)
+      setLogin(data).then((res) => {
+        if (res.result) {
+          setToken(res.result.data)
           resolve()
-        })
-        .catch((err) => {
-          reject(err)
-        })
+        } else {
+          reject(res.error)
+        }
+      })
     })
   }
   function logout() {
@@ -51,14 +51,15 @@ export const useUserStore = defineStore('user', () => {
   })
   function getUserInfoAction() {
     return new Promise<IUserInfo>((resolve, reject) => {
-      getUserInfo()
-        .then((res) => {
-          userInfo.value = res.data
-          resolve(res.data)
-        })
-        .catch((err) => {
-          reject(err)
-        })
+      getUserInfo().then((res) => {
+        const { result, error } = res
+        if (result) {
+          userInfo.value = result.data
+          resolve(result.data)
+        } else {
+          reject(error)
+        }
+      })
     })
   }
 

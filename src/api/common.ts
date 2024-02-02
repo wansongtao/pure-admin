@@ -1,10 +1,10 @@
-import instance from '@/utils/request'
+import { request } from '@/utils/request'
 
 import type { IBaseResponse } from '@/types/index'
 import type { ILoginParams, IMenuData, IUserInfo } from '@/types/api/common'
 
 export const getCaptcha = () => {
-  return instance.request<any, IBaseResponse<string>>({
+  return request<IBaseResponse<string>>({
     url: '/admin/captcha',
     method: 'GET',
     headers: {
@@ -14,7 +14,7 @@ export const getCaptcha = () => {
 }
 
 export const setLogin = (data: ILoginParams) => {
-  return instance.request<any, IBaseResponse<string>>({
+  return request<IBaseResponse<string>>({
     url: '/admin/login',
     method: 'POST',
     headers: {
@@ -25,21 +25,21 @@ export const setLogin = (data: ILoginParams) => {
 }
 
 export const setLogout = () => {
-  return instance.request<any, IBaseResponse<null>>({
+  return request<IBaseResponse<null>>({
     url: '/admin/logout',
     method: 'POST'
   })
 }
 
 export const getMenus = () => {
-  return instance.request<any, IBaseResponse<IMenuData[]>>({
+  return request<IBaseResponse<IMenuData[]>>({
     url: '/admin/auth/menu',
     method: 'GET'
   })
 }
 
 export const getUserInfo = () => {
-  return instance.request<any, IBaseResponse<IUserInfo>>({
+  return request<IBaseResponse<IUserInfo>>({
     url: '/admin/auth/userinfo',
     method: 'GET'
   })
