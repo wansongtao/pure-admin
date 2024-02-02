@@ -43,7 +43,14 @@ const handleEdit = (data: IMenuParam) => {
 </script>
 
 <template>
-  <a-button type="primary" size="small" ghost @click="handleOpen">编辑</a-button>
+  <a-button
+    v-permission="['system:menu:edit']"
+    type="primary"
+    size="small"
+    ghost
+    @click="handleOpen"
+    >编辑</a-button
+  >
   <menu-modal v-model="open" title="编辑菜单" :details="detail" @verify-success="handleEdit" />
 </template>
 

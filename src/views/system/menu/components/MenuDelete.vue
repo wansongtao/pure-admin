@@ -48,6 +48,7 @@ const handleDelete = () => {
 
 <template>
   <ButtonDelete
+    v-permission="['system:menu:del']"
     :size="isSingle ? 'small' : 'middle'"
     :text="isSingle ? '删除' : '批量删除'"
     :confirm-config="{

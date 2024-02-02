@@ -30,7 +30,7 @@ const handleAdd = (param: IMenuParam) => {
 </script>
 
 <template>
-  <a-button type="primary" @click="handleOpen">新增</a-button>
+  <a-button v-permission="['system:menu:add']" type="primary" @click="handleOpen">新增</a-button>
   <menu-modal ref="modalRef" v-model="open" @verify-success="handleAdd" />
 </template>
 
