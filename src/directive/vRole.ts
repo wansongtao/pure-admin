@@ -12,9 +12,9 @@ const vRole = (app: App) => {
     const isHas = hasRoles(roles, needRole, or)
     if (!isHas) {
       el.style.display = 'none'
-      setImmediate(() => {
+      setTimeout(() => {
         el.parentNode?.removeChild(el)
-      })
+      }, 0)
     }
   })
 }
