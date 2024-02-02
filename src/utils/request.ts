@@ -67,6 +67,18 @@ const goToLogin = (seconds = 2) => {
   }, seconds * 1000)
 }
 
+const createError = (message = 'error', code = 'api error'): AxiosError => {
+  return {
+    code,
+    message,
+    name: '',
+    isAxiosError: false,
+    toJSON: () => {
+      return { '[Object]': '[Object]' }
+    }
+  }
+}
+
 instance.interceptors.request.use(
   (config) => {
     if (config.headers?.isToken !== false) {
@@ -90,30 +102,26 @@ instance.interceptors.request.use(
 )
 
 instance.interceptors.response.use(
-  (res: AxiosResponse<IBaseResponse | Blob, any>): any => {
+  (res: AxiosResponse<IBaseResponse | Blob>) => {
     const data = res.data
 
-    if (data instanceof Blob) {
-      return data
+    if (data instanceof Blob || data.code === 200) {
+      return res
     }
 
     if (data.code === 300 || data.code === 401) {
       message.error(data.msg, 2)
       goToLogin()
-      return Promise.reject(data.msg)
+      return Promise.reject(createError(data.msg))
     }
 
-    if (data.code !== 200) {
-      message.error(data.msg)
-      return Promise.reject(data.msg)
-    }
-
-    return data
+    message.error(data.msg)
+    return Promise.reject(createError(data.msg))
   },
   (error: AxiosError) => {
     // Cancel request
     if (error.code === 'ERR_CANCELED') {
-      console.warn(error.message)
+      message.warn(error.message)
       return Promise.reject(error)
     }
 
@@ -131,25 +139,11 @@ instance.interceptors.response.use(
 export const request = <T extends IBaseResponse | Blob, C = any>(config: AxiosRequestConfig<C>) => {
   return new Promise<{ result?: T; error?: AxiosError }>((resolve) => {
     instance
-      .request<any, IBaseResponse | Blob>(config)
+      .request<IBaseResponse | Blob>(config)
       .then((res) => {
-        resolve({ result: res as T })
+        resolve({ result: res.data as T })
       })
-      .catch((error: AxiosError | string) => {
-        if (typeof error === 'string') {
-          resolve({
-            error: {
-              message: error,
-              name: '',
-              isAxiosError: false,
-              toJSON: () => {
-                return { '[Object]': '[Object]' }
-              }
-            }
-          })
-          return
-        }
-
+      .catch((error: AxiosError) => {
         resolve({ error })
       })
   })
