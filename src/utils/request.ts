@@ -128,4 +128,31 @@ instance.interceptors.response.use(
   }
 )
 
+export const request = <T extends IBaseResponse | Blob, C = any>(config: AxiosRequestConfig<C>) => {
+  return new Promise<{ result?: T; error?: AxiosError }>((resolve) => {
+    instance
+      .request<any, IBaseResponse | Blob>(config)
+      .then((res) => {
+        resolve({ result: res as T })
+      })
+      .catch((error: AxiosError | string) => {
+        if (typeof error === 'string') {
+          resolve({
+            error: {
+              message: error,
+              name: '',
+              isAxiosError: false,
+              toJSON: () => {
+                return { '[Object]': '[Object]' }
+              }
+            }
+          })
+          return
+        }
+
+        resolve({ error })
+      })
+  })
+}
+
 export default instance
