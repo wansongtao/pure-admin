@@ -1,15 +1,13 @@
-<script lang="ts" generic="T extends Record<string, any>" setup>
+<script lang="ts" generic="T extends Record<string, any>, K = TableColumnProps<T>" setup>
 import type { TableProps, TableColumnProps } from 'ant-design-vue'
 import type { ColumnFilterItem, Key, SorterResult } from 'ant-design-vue/es/table/interface'
-
-type IColumn<U> = TableColumnProps<U> & { dataIndex?: keyof U }
 
 defineOptions({
   name: 'BaseTable'
 })
 defineSlots<{
-  default(props: { column: IColumn<T>; record: T; index: number; text: any }): any
-  headerCell(props: { column: IColumn<T>; title: any }): any
+  default(props: { column: K; record: T; index: number; text: any }): any
+  headerCell(props: { column: K; title: any }): any
   emptyText(): any
   customFilterDropdown(props: {
     prefixCls: string
@@ -19,9 +17,9 @@ defineSlots<{
     clearFilters?: (param?: { confirm?: boolean; closeDropdown?: boolean }) => void
     filters?: ColumnFilterItem[]
     visible: boolean
-    column: IColumn<T>
+    column: K
   }): any
-  customFilterIcon(props: { filtered: any; column: IColumn<T> }): any
+  customFilterIcon(props: { filtered: any; column: K }): any
   summary(): any
 }>()
 
@@ -33,7 +31,7 @@ const $emits = defineEmits<{
 const $props = withDefaults(
   defineProps<{
     rowKey?: string
-    columns: TableColumnProps<any>[]
+    columns: K[]
     list?: T[]
     loading?: boolean
     scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string }
@@ -98,7 +96,7 @@ const columnList = computed(() => {
   }
 
   const list = $props.defaultShowOperation ? [...$props.columns, defaultItem] : $props.columns
-  return list as IColumn<T>[]
+  return list as TableColumnProps[]
 })
 
 const selectedRowKeys = defineModel<Key[]>('checked', { default: [] })
@@ -169,7 +167,7 @@ const handleDelete = (id: Key, record: T) => {
       @change="handleSort"
     >
       <template #bodyCell="{ column, record, index, text }">
-        <slot :column="column as IColumn<T>" :record="record as T" :index="index" :text="text" />
+        <slot :column="(column as K)" :record="record as T" :index="index" :text="text" />
 
         <template v-if="column.key === 'operation' && defaultShowOperation">
           <a-space>
@@ -186,7 +184,7 @@ const handleDelete = (id: Key, record: T) => {
       </template>
 
       <template #headerCell="{ column, title }">
-        <slot name="headerCell" :column="column as IColumn<T>" :title="title" />
+        <slot name="headerCell" :column="column as K" :title="title" />
       </template>
 
       <template #emptyText>
