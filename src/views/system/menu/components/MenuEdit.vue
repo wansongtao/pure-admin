@@ -16,14 +16,15 @@ const $emits = defineEmits<{
 
 const open = ref(false)
 const detail = ref<IMenuDetail>()
-const handleOpen = () => {
-  getMenuDetail($props.id).then((res) => {
-    detail.value = res.data
+const handleOpen = async () => {
+  const { result } = await getMenuDetail($props.id)
+  if (result) {
+    detail.value = result.data
     open.value = true
-  })
+  }
 }
 
-const handleEdit = (data: IMenuParam) => {
+const handleEdit = async (data: IMenuParam) => {
   data = removeSameProtoAndValue(data, detail.value!)
 
   // 移除默认值
@@ -34,11 +35,12 @@ const handleEdit = (data: IMenuParam) => {
     }
   })
 
-  updateMenu($props.id, data).then(() => {
+  const { result } = await updateMenu($props.id, data)
+  if (result) {
     open.value = false
     $emits('handleSuccess')
     message.success('修改菜单成功')
-  })
+  }
 }
 </script>
 

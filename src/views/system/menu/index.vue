@@ -71,7 +71,10 @@ const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListI
 ]
 
 const requestData = async (params: IQueryMenuParam) => {
-  const result = await getMenuList(params)
+  const { result } = await getMenuList(params)
+  if (!result) {
+    return { data: [], total: 0 }
+  }
 
   return {
     data: result.data.list,

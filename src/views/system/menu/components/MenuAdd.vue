@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import MenuModal from './MenuModal.vue';
+import MenuModal from './MenuModal.vue'
 
 import { addMenu } from '@/api/menu'
-import { message } from 'ant-design-vue';
+import { message } from 'ant-design-vue'
 import { removeObjectEmptyProto } from '@/utils/index'
 
 import type { IMenuParam } from '@/types/api/menu'
@@ -17,15 +17,16 @@ const handleOpen = () => {
 }
 
 const modalRef = ref<InstanceType<typeof MenuModal>>()
-const handleAdd = (param: IMenuParam) => {
+const handleAdd = async (param: IMenuParam) => {
   const data = removeObjectEmptyProto(param)
 
-  addMenu(data).then(() => {
+  const { result } = await addMenu(data)
+  if (result) {
     open.value = false
     modalRef.value?.resetForm()
     message.success('添加菜单成功')
     $emits('handleSuccess')
-  })
+  }
 }
 </script>
 
@@ -34,6 +35,4 @@ const handleAdd = (param: IMenuParam) => {
   <menu-modal ref="modalRef" v-model="open" @verify-success="handleAdd" />
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

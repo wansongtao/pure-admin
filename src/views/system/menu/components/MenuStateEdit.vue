@@ -11,15 +11,19 @@ const { hasPermission } = useAuthority()
 
 const disabled = defineModel<boolean>()
 const loading = ref(false)
-watch(disabled, (val) => {
+watch(disabled, async (val) => {
   loading.value = true
-  updateMenu($props.id, { disabled: val }).then(() => {
+  const { result, error } = await updateMenu($props.id, { disabled: val })
+  
+  loading.value = false
+  if (result) {
     message.success('菜单状态修改成功')
-  }).catch(() => {
+    return
+  }
+  if (error) {
     disabled.value = !disabled.value
-  }).finally(() => {
-    loading.value = false
-  })
+    return
+  }
 })
 </script>
 

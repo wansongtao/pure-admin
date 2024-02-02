@@ -26,7 +26,7 @@ const beforeOpenConfirm = () => {
   return true
 }
 
-const handleDelete = () => {
+const handleDelete = async () => {
   const success = (text = '删除菜单成功') => {
     message.success(text)
     $emits('handleSuccess')
@@ -34,15 +34,17 @@ const handleDelete = () => {
 
   const id = $props.id
   if (typeof id === 'number') {
-    deleteMenu(id).then(() => {
+    const { result } = await deleteMenu(id)
+    if (result) {
       success()
-    })
+    }
     return
   }
 
-  deleteMultipleMenus(id).then(() => {
+  const { result } = await deleteMultipleMenus(id)
+  if (result) {
     success('批量删除菜单成功')
-  })
+  }
 }
 </script>
 
