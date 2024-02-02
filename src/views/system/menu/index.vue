@@ -4,6 +4,7 @@ import MENU_ICON_MAP from '@/config/menuIcons'
 import MenuAdd from './components/MenuAdd.vue'
 import MenuEdit from './components/MenuEdit.vue'
 import MenuDelete from './components/MenuDelete.vue'
+import MenuStateEdit from './components/MenuStateEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
@@ -153,11 +154,7 @@ const deleteSuccess = () => {
           <component :is="MENU_ICON_MAP[record.icon]" v-if="record.icon" />
         </template>
         <template v-if="column.dataIndex === 'disabled'">
-          <a-switch
-            v-model:checked="record.disabled"
-            checked-children="是"
-            un-checked-children="否"
-          />
+          <menu-state-edit v-model="record.disabled" :id="record.id" />
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
