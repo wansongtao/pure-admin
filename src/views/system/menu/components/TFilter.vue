@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MENU_STATUS, MENU_TYPES } from '@/config/index'
+import { STATUS, MENU_TYPES } from '@/config/index'
 import { objectToArray } from '@/utils/index'
 
 import type { IBaseQuery } from '@/types/index'
@@ -43,7 +43,7 @@ const handleReset = () => {
 </script>
 
 <template>
-  <BaseFilter
+  <base-filter
     :span="8"
     :disabled-empty-search="disabled === undefined && type === undefined"
     @handle-search="handleSearch"
@@ -56,7 +56,7 @@ const handleReset = () => {
           style="width: 100%"
           placeholder="菜单状态"
           allow-clear
-          :options="MENU_STATUS"
+          :options="STATUS"
         ></a-select>
       </a-col>
       <a-col :span="4">
@@ -69,7 +69,7 @@ const handleReset = () => {
         ></a-select>
       </a-col>
     </template>
-  </BaseFilter>
+  </base-filter>
 </template>
 
 <style lang="scss" scoped></style>

@@ -120,7 +120,7 @@ const deleteSuccess = () => {
 
 <template>
   <div class="st-container">
-    <TFilter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
+    <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
 
     <div class="tool">
       <a-space>
@@ -165,7 +165,7 @@ const deleteSuccess = () => {
       </template>
     </base-table>
 
-    <BasePagination v-model:page="page" v-model:page-size="pageSize" :total="total" />
+    <base-pagination v-model:page="page" v-model:page-size="pageSize" :total="total" />
   </div>
 </template>
 
