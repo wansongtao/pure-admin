@@ -107,6 +107,10 @@ const deleteSuccess = () => {
   const lastPageSize = total.value % pageSize.value
   if (deleteNum >= lastPageSize) {
     checkedIds.value = []
+    if (page.value > 1) {
+      page.value -= 1
+      return
+    }
     getList()
     return
   }
