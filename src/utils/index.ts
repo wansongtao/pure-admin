@@ -143,8 +143,8 @@ export const recursionFindItem = <T extends Record<string, any>>(
   data: T[],
   compare: (value: T) => boolean,
   childrenKey = 'children'
-): T | null => {
-  let item: T | null = null
+): T | undefined => {
+  let item: T | undefined = undefined
 
   for (let i = 0; i < data.length; i++) {
     const value = data[i]
@@ -153,8 +153,13 @@ export const recursionFindItem = <T extends Record<string, any>>(
       break
     }
 
-    if (value[childrenKey]) {
-      item = recursionFindItem(value[childrenKey], compare, childrenKey)
+    if (!value[childrenKey]) {
+      continue
+    }
+
+    item = recursionFindItem(value[childrenKey], compare, childrenKey)
+    if (item !== undefined) {
+      break
     }
   }
 
