@@ -19,13 +19,20 @@ export interface IRoleQuery {
 
 export interface IRoleList {
   createTime: string
-  description: string
+  /**
+   * 角色描述
+   */
+  description?: string
   disabled: boolean
   id: number
   /**
-   * 角色名称
+   * 角色标识
    */
   name: string
+  /**
+   * 角色昵称
+   */
+  nickName?: string
 }
 
 export interface IRoleEditParam {
@@ -33,4 +40,5 @@ export interface IRoleEditParam {
   disabled?: boolean
   menuIds?: number[]
   name?: string
+  nickName?: string
 }
