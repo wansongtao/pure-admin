@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import TFilter from './components/TFilter.vue'
+import RoleStateEdit from './components/RoleStateEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
@@ -90,7 +91,7 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
     >
       <template #default="{ column, record }">
         <template v-if="column.dataIndex === 'disabled'">
-          {{ record.disabled ? '是' : '否' }}
+          <role-state-edit v-model="record.disabled" :id="record.id" />
         </template>
       </template>
     </base-table>

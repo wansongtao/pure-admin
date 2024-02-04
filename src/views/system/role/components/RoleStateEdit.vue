@@ -1,0 +1,41 @@
+<script lang="ts" setup>
+import { useAuthority } from '@/hooks/useAuthority'
+import { message } from 'ant-design-vue'
+import { updateRole } from '@/api/role'
+
+const $props = defineProps<{
+  id: number
+}>()
+
+const { hasPermission } = useAuthority()
+
+const disabled = defineModel<boolean>()
+const loading = ref(false)
+watch(disabled, async (val) => {
+  loading.value = true
+  const { result, error } = await updateRole($props.id, { disabled: val })
+
+  loading.value = false
+  if (result) {
+    message.success('角色状态修改成功')
+    return
+  }
+  if (error) {
+    disabled.value = !disabled.value
+    return
+  }
+})
+</script>
+
+<template>
+  <a-switch
+    v-if="hasPermission('system:role:edit')"
+    v-model:checked="disabled"
+    checked-children="是"
+    un-checked-children="否"
+    :loading="loading"
+  />
+  <span v-else>{{ disabled ? '是' : '否' }}</span>
+</template>
+
+<style lang="scss" scoped></style>
