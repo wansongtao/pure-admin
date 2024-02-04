@@ -3,6 +3,7 @@ import TFilter from './components/TFilter.vue'
 import RoleStateEdit from './components/RoleStateEdit.vue'
 import RoleAdd from './components/RoleAdd.vue'
 import RoleEdit from './components/RoleEdit.vue'
+import RoleDelete from './components/RoleDelete.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
@@ -67,7 +68,7 @@ const columns: (TableColumnProps & { dataIndex?: keyof IRoleList })[] = [
   }
 ]
 
-const { page, pageSize, total, loading, list, getList } = usePageRequest(requestData)
+const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
 
 const query = ref<IRoleQuery>({})
 const handleQuery = (data?: IRoleQuery) => {
@@ -83,6 +84,27 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
     return
   }
 }
+
+const checkedIds = ref<number[]>([])
+const deleteSuccess = () => {
+  if (page.value < lastPage.value) {
+    checkedIds.value = []
+    getList()
+    return
+  }
+
+  const deleteNum = checkedIds.value.length || 1
+  const lastPageSize = total.value % pageSize.value || pageSize.value
+  if (deleteNum >= lastPageSize) {
+    checkedIds.value = []
+    if (page.value > 1) {
+      page.value -= 1
+      return
+    }
+    getList()
+    return
+  }
+}
 </script>
 
 <template>
@@ -92,6 +114,7 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
     <div class="tool">
       <a-space>
         <role-add @handle-success="getList" />
+        <role-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
 
@@ -100,6 +123,8 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
       :default-show-operation="false"
       :loading="loading"
       :list="list"
+      default-row-selection
+      v-model:checked="checkedIds"
       @handle-sort="handleSort"
     >
       <template #default="{ column, record }">
@@ -109,6 +134,7 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
         <template v-if="column.key === 'operation'">
           <a-space>
             <role-edit :id="record.id" @handle-success="getList" />
+            <role-delete :id="record.id" @handle-success="deleteSuccess" />
           </a-space>
         </template>
       </template>
