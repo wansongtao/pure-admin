@@ -27,3 +27,10 @@ export interface IRoleList {
    */
   name: string
 }
+
+export interface IRoleEditParam {
+  description?: string
+  disabled?: boolean
+  menuIds?: number[]
+  name?: string
+}
