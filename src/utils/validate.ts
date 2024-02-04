@@ -73,9 +73,36 @@ export const validateMenuPermission = async (_rule: Rule, value: string) => {
 }
 
 export const validateMenuRedirect = async (_rule: Rule, value: string) => {
-  const regexp = /^[a-zA-Z/0-9]{2,50}$/
+  const regexp = /^[a-z/0-9]{2,50}$/
   if (!regexp.test(value)) {
     return Promise.reject('请输入2至50位由小写字母、数字、‘/’组成的重定向地址')
+  }
+
+  return Promise.resolve()
+}
+
+export const validateRoleName = async (_rule: Rule, value: string) => {
+  const regexp = /^[a-zA-Z0-9_-]{1,50}$/
+  if (!regexp.test(value)) {
+    return Promise.reject('请输入1至50位由字母、数字、‘_-’组成的角色标识')
+  }
+
+  return Promise.resolve()
+}
+
+export const validateRoleNickName = async (_rule: Rule, value: string) => {
+  const regexp = /^[a-zA-Z\u4e00-\u9fa5']{1,50}$/
+  if (!regexp.test(value)) {
+    return Promise.reject('请输入1至50位由中英文组成的角色昵称')
+  }
+
+  return Promise.resolve()
+}
+
+export const validateRoleDescription = async (_rule: Rule, value: string) => {
+  const regexp = /^[a-zA-Z\u4e00-\u9fa5'-]{1,150}$/
+  if (!regexp.test(value)) {
+    return Promise.reject('请输入1至150位由中英文组成的角色描述')
   }
 
   return Promise.resolve()
