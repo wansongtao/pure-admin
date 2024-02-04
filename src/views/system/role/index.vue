@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import TFilter from './components/TFilter.vue'
 import RoleStateEdit from './components/RoleStateEdit.vue'
+import RoleAdd from './components/RoleAdd.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
@@ -30,8 +31,13 @@ const columns: (TableColumnProps & { dataIndex?: keyof IRoleList })[] = [
   },
   {
     align: 'center',
-    title: '角色名称',
+    title: '角色标识',
     dataIndex: 'name'
+  },
+  {
+    align: 'center',
+    title: '角色昵称',
+    dataIndex: 'nickName'
   },
   {
     align: 'center',
@@ -82,6 +88,12 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
   <div class="st-container">
     <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
 
+    <div class="tool">
+      <a-space>
+        <role-add @handle-success="getList" />
+      </a-space>
+    </div>
+
     <base-table
       :columns="columns"
       :default-show-operation="false"
@@ -100,4 +112,8 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tool {
+  margin-top: 20px;
+}
+</style>
