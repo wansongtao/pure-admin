@@ -2,6 +2,7 @@
 import TFilter from './components/TFilter.vue'
 import RoleStateEdit from './components/RoleStateEdit.vue'
 import RoleAdd from './components/RoleAdd.vue'
+import RoleEdit from './components/RoleEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
@@ -104,6 +105,11 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
       <template #default="{ column, record }">
         <template v-if="column.dataIndex === 'disabled'">
           <role-state-edit v-model="record.disabled" :id="record.id" />
+        </template>
+        <template v-if="column.key === 'operation'">
+          <a-space>
+            <role-edit :id="record.id" @handle-success="getList" />
+          </a-space>
         </template>
       </template>
     </base-table>
