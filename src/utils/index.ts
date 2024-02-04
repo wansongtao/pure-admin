@@ -203,7 +203,7 @@ export const removeObjectEmptyProto = <T extends Record<any, any>>(data: T) => {
  * @param obj 比较对象
  * @returns 
  */
-export const removeSameProtoAndValue = <T extends Record<any, any>, K extends Record<any, any>>(
+export const removeSameValue = <T extends Record<any, any>, K extends Record<any, any>>(
   data: T,
   obj: K
 ) => {
