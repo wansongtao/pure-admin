@@ -42,3 +42,12 @@ export interface IRoleEditParam {
   name?: string
   nickName?: string
 }
+
+export interface IRoleDetail {
+  description?: string
+  disabled: boolean
+  id: number
+  menuIds: number[]
+  name: string
+  nickName?: string
+}
