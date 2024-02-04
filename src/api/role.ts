@@ -33,3 +33,18 @@ export const getRoleDetail = (id: number) => {
     method: 'get'
   })
 }
+
+export const deleteRole = (id: number) => {
+  return request<IBaseResponse>({
+    url: `/admin/role/${id}`,
+    method: 'delete'
+  })
+}
+
+export const deleteMultipleRoles = (data: number[]) => {
+  return request<IBaseResponse>({
+    url: '/admin/role',
+    method: 'delete',
+    data
+  })
+}
