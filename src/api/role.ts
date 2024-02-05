@@ -41,10 +41,12 @@ export const deleteRole = (id: number) => {
   })
 }
 
-export const deleteMultipleRoles = (data: number[]) => {
+export const deleteMultipleRoles = (id: number[]) => {
   return request<IBaseResponse>({
     url: '/admin/role',
     method: 'delete',
-    data
+    data: {
+      id
+    }
   })
 }
