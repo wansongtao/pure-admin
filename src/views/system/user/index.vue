@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import TFilter from './components/TFilter.vue'
+import UserDelete from './components/UserDelete.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getUserList } from '@/api/user'
@@ -78,13 +79,42 @@ const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | n
     return
   }
 }
+
+const checkedIds = ref<number[]>([])
+const deleteSuccess = () => {
+  if (page.value < lastPage.value) {
+    checkedIds.value = []
+    getList()
+    return
+  }
+
+  const deleteNum = checkedIds.value.length || 1
+  const lastPageSize = total.value % pageSize.value || pageSize.value
+  if (deleteNum >= lastPageSize) {
+    checkedIds.value = []
+    if (page.value > 1) {
+      page.value -= 1
+      return
+    }
+    getList()
+    return
+  }
+}
 </script>
 
 <template>
   <div class="st-container">
     <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
 
+    <div class="mt-20">
+      <a-space>
+        <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
+      </a-space>
+    </div>
+
     <base-table
+      v-model:checked="checkedIds"
+      default-row-selection
       :columns="columns"
       :default-show-operation="false"
       :loading="loading"
@@ -96,6 +126,11 @@ const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | n
           <div class="avatar">
             <img class="avatar_img" :src="record.avatar" alt="" />
           </div>
+        </template>
+        <template v-if="column.key === 'operation'">
+          <a-space>
+            <user-delete :id="record.id" @handle-success="deleteSuccess" />
+          </a-space>
         </template>
       </template>
     </base-table>
@@ -116,5 +151,9 @@ const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | n
     height: 50px;
     border-radius: 50%;
   }
+}
+
+.mt-20 {
+  margin-top: 20px;
 }
 </style>
