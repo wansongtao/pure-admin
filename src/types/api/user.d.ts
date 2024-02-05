@@ -40,3 +40,10 @@ export interface IUserList {
    */
   userName: string
 }
+
+export interface IUserEdit {
+  avatar?: string
+  disabled?: boolean
+  nickName?: string
+  roles?: number[]
+}
