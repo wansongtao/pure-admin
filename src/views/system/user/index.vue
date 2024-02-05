@@ -70,13 +70,27 @@ const handleQuery = (data?: IUserQuery) => {
 
   getList(query.value)
 }
+
+const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
+  if (fieldName === 'createTime') {
+    query.value.isDesc = order === 'ascend' ? 0 : 1
+    getList(query.value)
+    return
+  }
+}
 </script>
 
 <template>
   <div class="st-container">
     <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
-    
-    <base-table :columns="columns" :default-show-operation="false" :loading="loading" :list="list">
+
+    <base-table
+      :columns="columns"
+      :default-show-operation="false"
+      :loading="loading"
+      :list="list"
+      @handle-sort="handleSort"
+    >
       <template #default="{ column, record }">
         <template v-if="column.dataIndex === 'avatar'">
           <div class="avatar">
