@@ -37,11 +37,12 @@ const handleChangeStatus = $props.delay ? throttle(changeStatus, $props.delay) :
 <style lang="scss" scoped>
 .base-switch {
   position: relative;
-  border-radius: 11px;
   display: block;
   width: 40px;
   height: 22px;
   flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 11px;
   border: 1px solid var(--st-c-divider);
   background-color: var(--st-c-bg-mute);
   transition: border-color 0.25s, background-color 0.25s;
