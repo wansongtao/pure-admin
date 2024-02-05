@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import TFilter from './components/TFilter.vue'
+
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getUserList } from '@/api/user'
 
@@ -62,10 +64,18 @@ const columns: (TableColumnProps & { dataIndex?: keyof IUserList })[] = [
 ]
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
+const query = ref<IUserQuery>({})
+const handleQuery = (data?: IUserQuery) => {
+  query.value = data ?? {}
+
+  getList(query.value)
+}
 </script>
 
 <template>
   <div class="st-container">
+    <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
+    
     <base-table :columns="columns" :default-show-operation="false" :loading="loading" :list="list">
       <template #default="{ column, record }">
         <template v-if="column.dataIndex === 'avatar'">

@@ -2,6 +2,10 @@ export interface IUserQuery {
   endTime?: string
   isDesc?: 0 | 1
   /**
+   * 0=false，1=true
+   */
+  disabled?: 0 | 1
+  /**
    * 用户名/昵称
    */
   keyword?: string
