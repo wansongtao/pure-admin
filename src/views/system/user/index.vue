@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import TFilter from './components/TFilter.vue'
 import UserDelete from './components/UserDelete.vue'
+import UserStateEdit from './components/UserStateEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getUserList } from '@/api/user'
@@ -126,6 +127,9 @@ const deleteSuccess = () => {
           <div class="avatar">
             <img class="avatar_img" :src="record.avatar" alt="" />
           </div>
+        </template>
+        <template v-if="column.dataIndex === 'disabled'">
+          <user-state-edit v-model="record.disabled" :id="record.id" />
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
