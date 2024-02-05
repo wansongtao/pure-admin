@@ -11,7 +11,14 @@ const { hasPermission } = useAuthority()
 
 const disabled = defineModel<boolean>()
 const loading = ref(false)
+
+let isSkipOnce = false
 watch(disabled, async (val) => {
+  if (isSkipOnce) {
+    isSkipOnce = false
+    return
+  }
+
   loading.value = true
   const { result, error } = await updateMenu($props.id, { disabled: val })
   
@@ -21,6 +28,7 @@ watch(disabled, async (val) => {
     return
   }
   if (error) {
+    isSkipOnce = true
     disabled.value = !disabled.value
     return
   }
