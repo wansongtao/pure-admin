@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import permissionSelect from './permissionSelect.vue'
+import PermissionSelect from './PermissionSelect.vue'
 
 import { useMenuTree } from '@/hooks/useMenuTree'
 import { validateRoleDescription, validateRoleName, validateRoleNickName } from '@/utils/validate'
