@@ -39,9 +39,6 @@ const loginRules: Record<keyof ILoginParams, Rule[]> = {
 }
 
 const loginFormRef = ref<FormInstance>()
-const resetForm = () => {
-  loginFormRef.value?.resetFields()
-}
 
 const loginForm = ref<ILoginParams>({
   userName: '',
@@ -60,7 +57,6 @@ const handleLogin = () => {
     userStore
       .login(loginForm.value)
       .then(() => {
-        resetForm()
         router.replace((router.currentRoute.value.query.redirect as string) || '/')
       })
       .catch(() => {
@@ -83,7 +79,7 @@ const handleLogin = () => {
         </div>
       </div>
       <img src="@/assets/img/login-logo.png" alt="" class="login_left_logo" />
-      <IconWater class="login_left_wave" />
+      <icon-water class="login_left_wave" />
     </div>
     <div class="login_right">
       <div class="login_right_wrap">
@@ -92,14 +88,14 @@ const handleLogin = () => {
           <a-form-item name="userName">
             <a-input v-model:value="loginForm.userName" placeholder="请输入用户名">
               <template #prefix>
-                <UserOutlined class="site-form-item-icon" />
+                <user-outlined class="site-form-item-icon" />
               </template>
             </a-input>
           </a-form-item>
           <a-form-item name="password">
             <a-input-password v-model:value="loginForm.password" placeholder="请输入密码">
               <template #prefix>
-                <LockOutlined class="site-form-item-icon" />
+                <lock-outlined class="site-form-item-icon" />
               </template>
             </a-input-password>
           </a-form-item>
@@ -115,7 +111,7 @@ const handleLogin = () => {
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <ImgCaptcha v-model="refreshCaptcha" />
+                <img-captcha v-model="refreshCaptcha" />
               </a-col>
             </a-row>
           </a-form-item>
