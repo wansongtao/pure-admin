@@ -128,7 +128,7 @@ defineExpose({
       <a-form-item label="是否禁用：" required name="disabled">
         <a-switch v-model:checked="formState.disabled" />
       </a-form-item>
-      <a-form-item label="是否禁用：" name="description">
+      <a-form-item label="角色描述：" name="description">
         <a-textarea v-model:value="formState.description" show-count :rows="4" :maxlength="150" />
       </a-form-item>
     </a-form>
