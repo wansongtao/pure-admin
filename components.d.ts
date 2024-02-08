@@ -37,10 +37,12 @@ declare module 'vue' {
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect']
+    AUpload: typeof import('ant-design-vue/es')['Upload']
     BaseFilter: typeof import('./src/components/BaseFilter/index.vue')['default']
     BasePagination: typeof import('./src/components/BasePagination/index.vue')['default']
     BaseSwitch: typeof import('./src/components/BaseSwitch/index.vue')['default']
     BaseTable: typeof import('./src/components/BaseTable/index.vue')['default']
+    BaseUpload: typeof import('./src/components/BaseUpload/index.vue')['default']
     ButtonCollapsed: typeof import('./src/components/ButtonCollapsed/index.vue')['default']
     ButtonDelete: typeof import('./src/components/ButtonDelete/index.vue')['default']
     IconMoon: typeof import('./src/components/icons/IconMoon.vue')['default']
@@ -50,5 +52,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ScreenFull: typeof import('./src/components/ScreenFull/index.vue')['default']
     TagLink: typeof import('./src/components/TagLink/index.vue')['default']
+    UploadAvatar: typeof import('./src/components/UploadAvatar/index.vue')['default']
   }
 }
