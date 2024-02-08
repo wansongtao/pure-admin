@@ -1,7 +1,7 @@
 import { request } from '@/utils/request'
 
 import type { IBaseList, IBaseResponse } from '@/types'
-import type { IUserQuery, IUserList, IUserEdit } from '@/types/api/user'
+import type { IUserQuery, IUserList, IUserEdit, IUserDetail } from '@/types/api/user'
 
 export const getUserList = (params: IUserQuery) => {
   return request<IBaseResponse<IBaseList<IUserList>>>({
@@ -33,5 +33,12 @@ export const updateUser = (id: number, data: IUserEdit) => {
     url: `/admin/user/${id}`,
     method: 'put',
     data
+  })
+}
+
+export const getUserDetail = (id: number) => {
+  return request<IBaseResponse<IUserDetail>>({
+    url: `/admin/user/${id}`,
+    method: 'get'
   })
 }

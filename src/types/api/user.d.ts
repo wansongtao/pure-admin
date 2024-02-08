@@ -47,3 +47,12 @@ export interface IUserEdit {
   nickName?: string
   roles?: number[]
 }
+
+export interface IUserDetail {
+  avatar?: string
+  disabled: boolean
+  id: number
+  nickName?: string
+  roles?: number[]
+  userName: string
+}
