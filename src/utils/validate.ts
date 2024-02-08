@@ -107,3 +107,12 @@ export const validateRoleDescription = async (_rule: Rule, value: string) => {
 
   return Promise.resolve()
 }
+
+export const validateNickName = async (_rule: Rule, value: string) => {
+  const regexp = /^[a-zA-Z\u4e00-\u9fa5']{1,50}$/
+  if (!regexp.test(value)) {
+    return Promise.reject('请输入1至50位由中英文组成的昵称')
+  }
+
+  return Promise.resolve()
+}
