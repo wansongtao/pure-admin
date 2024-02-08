@@ -1,7 +1,13 @@
 import { request } from '@/utils/request'
 
 import type { IBaseList, IBaseResponse } from '@/types'
-import type { IRoleList, IRoleQuery, IRoleEditParam, IRoleDetail } from '@/types/api/role'
+import type {
+  IRoleList,
+  IRoleQuery,
+  IRoleEditParam,
+  IRoleDetail,
+  IRoleTree
+} from '@/types/api/role'
 
 export const getRoleList = (params: IRoleQuery) => {
   return request<IBaseResponse<IBaseList<IRoleList>>>({
@@ -48,5 +54,12 @@ export const deleteMultipleRoles = (id: number[]) => {
     data: {
       id
     }
+  })
+}
+
+export const getRoleTree = () => {
+  return request<IBaseResponse<IRoleTree[]>>({
+    url: '/admin/role/tree',
+    method: 'get'
   })
 }

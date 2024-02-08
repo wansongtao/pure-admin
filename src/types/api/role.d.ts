@@ -51,3 +51,8 @@ export interface IRoleDetail {
   name: string
   nickName?: string
 }
+
+export interface IRoleTree {
+  id: number
+  name: string
+}
