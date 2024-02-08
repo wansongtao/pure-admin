@@ -44,3 +44,17 @@ export const getUserInfo = () => {
     method: 'GET'
   })
 }
+
+export const uploadFile = (file: File) => {
+  const data = new FormData()
+  data.append('file', file)
+
+  return request<IBaseResponse<string>>({
+    url: '/admin/upload',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data
+  })
+}
