@@ -218,3 +218,9 @@ export const removeSameValue = <T extends Record<any, any>, K extends Record<any
 
   return data
 }
+
+export const getBase64 = (img: Blob, callback: (base64Url: string) => void) => {
+  const reader = new FileReader()
+  reader.addEventListener('load', () => callback(reader.result as string))
+  reader.readAsDataURL(img)
+}
