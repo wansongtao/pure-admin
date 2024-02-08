@@ -2,6 +2,7 @@
 import TFilter from './components/TFilter.vue'
 import UserDelete from './components/UserDelete.vue'
 import UserStateEdit from './components/UserStateEdit.vue'
+import UserEdit from './components/UserEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getUserList } from '@/api/user'
@@ -133,6 +134,7 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
+            <user-edit :id="record.id" @handle-success="getList" />
             <user-delete :id="record.id" @handle-success="deleteSuccess" />
           </a-space>
         </template>
