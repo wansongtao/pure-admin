@@ -28,6 +28,11 @@ const handleOpen = async () => {
 
 const handleEdit = async (data: IRoleEditParam) => {
   data = removeSameValue(data, detail.value!)
+  if (Object.keys(data).length === 0) {
+    message.warn('您没有修改任何信息！')
+    return
+  }
+  
   const { result } = await updateRole($props.id, data)
   if (result) {
     open.value = false
