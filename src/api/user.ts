@@ -42,3 +42,11 @@ export const getUserDetail = (id: number) => {
     method: 'get'
   })
 }
+
+export const addUser = (data: IUserEdit) => {
+  return request<IBaseResponse>({
+    url: '/admin/user',
+    method: 'post',
+    data
+  })
+}
