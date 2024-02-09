@@ -17,7 +17,7 @@ dayjs.locale('zh-cn')
     }"
     :locale="zhCN"
   >
-    <RouterView />
+    <router-view />
   </a-config-provider>
 </template>
 

@@ -4,7 +4,7 @@ import { debounce } from '@/utils'
 
 const isRefresh = defineModel<boolean>()
 const img = ref<string>('')
-const getCaptchaImg = debounce(async () => {
+const onGetCaptchaImg = debounce(async () => {
   const { result } = await getCaptcha()
   img.value = result?.data ?? ''
   isRefresh.value = false
@@ -17,7 +17,7 @@ watch(
       return
     }
 
-    getCaptchaImg()
+    onGetCaptchaImg()
   },
   {
     immediate: true
@@ -26,7 +26,7 @@ watch(
 </script>
 
 <template>
-  <img :src="img" alt="captcha" class="code" @click="getCaptchaImg" />
+  <img :src="img" alt="captcha" class="code" @click="onGetCaptchaImg" />
 </template>
 
 <style lang="scss" scoped>

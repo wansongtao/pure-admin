@@ -51,13 +51,14 @@ const loading = ref<boolean>(false)
 
 const userStore = useUserStore()
 const router = useRouter()
-const handleLogin = () => {
+const onLogin = () => {
   loginFormRef.value?.validate().then(() => {
     loading.value = true
     userStore
       .login(loginForm.value)
       .then(() => {
-        router.replace((router.currentRoute.value.query.redirect as string) || '/')
+        const url = router.currentRoute.value.query.redirect as string
+        router.replace(url || '/')
       })
       .catch(() => {
         refreshCaptcha.value = true
@@ -106,7 +107,7 @@ const handleLogin = () => {
                   <a-input
                     v-model:value="loginForm.captcha"
                     placeholder="请输入验证码"
-                    @keyup.enter="handleLogin"
+                    @keyup.enter="onLogin"
                   ></a-input>
                 </a-form-item>
               </a-col>
@@ -116,7 +117,7 @@ const handleLogin = () => {
             </a-row>
           </a-form-item>
           <a-form-item>
-            <a-button type="primary" :loading="loading" block @click="handleLogin">登录</a-button>
+            <a-button type="primary" :loading="loading" block @click="onLogin">登录</a-button>
           </a-form-item>
         </a-form>
       </div>
