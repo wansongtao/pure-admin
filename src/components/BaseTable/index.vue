@@ -162,7 +162,7 @@ const handleDelete = (id: Key, record: T) => {
       :pagination="false"
       :scroll="scroll"
       :row-selection="rowSelectionConfig"
-      :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : '')"
+      :row-class-name="(_record: T, index: number) => (index % 2 === 1 ? 'table-striped' : '')"
       :transform-cell-text="transformCellText"
       @change="handleSort"
     >
