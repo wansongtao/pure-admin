@@ -35,6 +35,11 @@ const handleEdit = async (data: IMenuParam) => {
     }
   })
 
+  if (Object.keys(data).length === 0) {
+    message.warn('您没有修改任何信息！')
+    return
+  }
+
   const { result } = await updateMenu($props.id, data)
   if (result) {
     open.value = false
