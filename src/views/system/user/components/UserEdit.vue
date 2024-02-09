@@ -47,7 +47,7 @@ const handleEdit = async (data: IUserEdit) => {
 
 <template>
   <a-button
-    v-permission="['system:role:edit']"
+    v-permission="['system:user:edit']"
     type="primary"
     size="small"
     ghost
