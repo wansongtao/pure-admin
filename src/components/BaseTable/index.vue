@@ -178,7 +178,7 @@ const handleDelete = (id: Key, record: T) => {
               @click="handleEdit(record[rowKey], record as T)"
               >编辑</a-button
             >
-            <ButtonDelete @handle-ok="handleDelete(record[rowKey], record as T)" />
+            <button-delete @handle-ok="handleDelete(record[rowKey], record as T)" />
           </a-space>
         </template>
       </template>

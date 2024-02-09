@@ -142,7 +142,7 @@ const handleReset = () => {
         @click="handleSearch"
       >
         <template #icon>
-          <SearchOutlined />
+          <search-outlined />
         </template>
         查询
       </a-button>
@@ -153,7 +153,7 @@ const handleReset = () => {
         @click="handleReset"
       >
         <template #icon>
-          <SyncOutlined />
+          <sync-outlined />
         </template>
         重置
       </a-button>

@@ -26,8 +26,8 @@ const handleChangeStatus = $props.delay ? throttle(changeStatus, $props.delay) :
     <span class="switch-check" :class="checked ? 'switch-check--active' : ''">
       <span class="switch-icon">
         <slot :checked="checked">
-          <IconSun v-show="!checked" />
-          <IconMoon v-show="checked" />
+          <icon-sun v-show="!checked" />
+          <icon-moon v-show="checked" />
         </slot>
       </span>
     </span>

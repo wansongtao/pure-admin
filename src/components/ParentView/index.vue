@@ -18,9 +18,9 @@ const setStore = useSettingStore()
 <template>
   <router-view v-slot="{ Component }">
     <transition name="slide-fade">
-      <KeepAlive :include="setStore.cacheRoutes">
+      <keep-alive :include="setStore.cacheRoutes">
         <component :is="Component" />
-      </KeepAlive>
+      </keep-alive>
     </transition>
   </router-view>
 </template>
