@@ -40,7 +40,7 @@ const handleEdit = async (data: IRoleEditParam) => {
   if (result) {
     open.value = false
     $emits('handleSuccess')
-    message.success('修改菜单成功')
+    message.success('修改角色成功')
   }
 }
 </script>
