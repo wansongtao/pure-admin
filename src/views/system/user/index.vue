@@ -3,6 +3,7 @@ import TFilter from './components/TFilter.vue'
 import UserDelete from './components/UserDelete.vue'
 import UserStateEdit from './components/UserStateEdit.vue'
 import UserEdit from './components/UserEdit.vue'
+import UserAdd from './components/UserAdd.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getUserList } from '@/api/user'
@@ -110,6 +111,7 @@ const deleteSuccess = () => {
 
     <div class="mt-20">
       <a-space>
+        <user-add @handle-success="getList" />
         <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
