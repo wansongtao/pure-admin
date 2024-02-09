@@ -26,14 +26,17 @@ const handleOpen = async () => {
   detail.value = result.data
 }
 
+const loading = ref(false)
 const handleEdit = async (data: IRoleEditParam) => {
   data = removeSameValue(data, detail.value!)
   if (Object.keys(data).length === 0) {
     message.warn('您没有修改任何信息！')
     return
   }
-  
+
+  loading.value = true
   const { result } = await updateRole($props.id, data)
+  loading.value = false
   if (result) {
     open.value = false
     $emits('handleSuccess')
@@ -51,7 +54,13 @@ const handleEdit = async (data: IRoleEditParam) => {
     @click="handleOpen"
     >编辑</a-button
   >
-  <role-modal v-model="open" title="编辑角色" :details="detail" @on-ok="handleEdit" />
+  <role-modal
+    v-model="open"
+    v-model:loading="loading"
+    title="编辑角色"
+    :details="detail"
+    @on-ok="handleEdit"
+  />
 </template>
 
 <style lang="scss" scoped></style>

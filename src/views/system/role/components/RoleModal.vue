@@ -18,6 +18,8 @@ const $props = withDefaults(
   }
 )
 
+const confirmLoading = defineModel<boolean>('loading', { default: false })
+
 const { menuTree, fetchMenuTree } = useMenuTree(undefined, false)
 
 const open = defineModel<boolean>()
@@ -107,7 +109,7 @@ defineExpose({
 </script>
 
 <template>
-  <a-modal :open="open" :title="title" @cancel="handleCancel" @ok="handleOk">
+  <a-modal :open="open" :confirm-loading="confirmLoading" :title="title" @cancel="handleCancel" @ok="handleOk">
     <a-form
       ref="formRef"
       :model="formState"
