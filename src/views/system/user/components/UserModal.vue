@@ -24,6 +24,7 @@ const $emits = defineEmits<{
   onOk: [data: IUserInfo]
 }>()
 
+const confirmLoading = defineModel<boolean>('loading', { default: false })
 const open = defineModel<boolean>()
 
 const { roleTree, fetchRoleTree } = useRoleTree(false)
@@ -110,7 +111,13 @@ defineExpose({
 </script>
 
 <template>
-  <a-modal :open="open" :title="title" @cancel="handleCancel" @ok="handleOk">
+  <a-modal
+    :open="open"
+    :confirm-loading="confirmLoading"
+    :title="title"
+    @cancel="handleCancel"
+    @ok="handleOk"
+  >
     <a-form
       ref="formRef"
       :model="formState"

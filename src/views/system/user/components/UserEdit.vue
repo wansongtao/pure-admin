@@ -26,6 +26,7 @@ const handleOpen = async () => {
   detail.value = result.data
 }
 
+const loading = ref(false)
 const handleEdit = async (data: IUserEdit) => {
   data = removeSameValue(data, detail.value!)
   if (Object.keys(data).length === 0) {
@@ -33,7 +34,9 @@ const handleEdit = async (data: IUserEdit) => {
     return
   }
 
+  loading.value = true
   const { result } = await updateUser($props.id, data)
+  loading.value = false
   if (result) {
     open.value = false
     $emits('handleSuccess')
@@ -51,9 +54,13 @@ const handleEdit = async (data: IUserEdit) => {
     @click="handleOpen"
     >编辑</a-button
   >
-  <user-modal v-model="open" title="编辑用户信息" :details="detail" @on-ok="handleEdit" />
+  <user-modal
+    v-model="open"
+    v-model:loading="loading"
+    title="编辑用户信息"
+    :details="detail"
+    @on-ok="handleEdit"
+  />
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
