@@ -25,6 +25,7 @@ const $props = withDefaults(
     title: '新增菜单'
   }
 )
+const confirmLoading = defineModel<boolean>('loading', { default: false })
 
 const menuTypes = objectToArray(MENU_TYPES)
 const { menuTree, fetchMenuTree } = useMenuTree((data) => {
@@ -156,7 +157,13 @@ defineExpose({
 
 <template>
   <div class="menu_modal">
-    <a-modal :open="open" :title="title" @cancel="handleCancel" @ok="handleOk">
+    <a-modal
+      :open="open"
+      :confirm-loading="confirmLoading"
+      :title="title"
+      @cancel="handleCancel"
+      @ok="handleOk"
+    >
       <a-form
         ref="formRef"
         :model="formState"

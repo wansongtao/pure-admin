@@ -24,6 +24,7 @@ const handleOpen = async () => {
   }
 }
 
+const loading = ref(false)
 const handleEdit = async (data: IMenuParam) => {
   data = removeSameValue(data, detail.value!)
 
@@ -40,7 +41,9 @@ const handleEdit = async (data: IMenuParam) => {
     return
   }
 
+  loading.value = true
   const { result } = await updateMenu($props.id, data)
+  loading.value = false
   if (result) {
     open.value = false
     $emits('handleSuccess')
@@ -58,7 +61,13 @@ const handleEdit = async (data: IMenuParam) => {
     @click="handleOpen"
     >编辑</a-button
   >
-  <menu-modal v-model="open" title="编辑菜单" :details="detail" @verify-success="handleEdit" />
+  <menu-modal
+    v-model="open"
+    v-model:loading="loading"
+    title="编辑菜单"
+    :details="detail"
+    @verify-success="handleEdit"
+  />
 </template>
 
 <style lang="scss" scoped></style>

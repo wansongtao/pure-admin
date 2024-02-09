@@ -16,11 +16,14 @@ const handleOpen = () => {
   open.value = true
 }
 
+const loading = ref(false)
 const modalRef = ref<InstanceType<typeof MenuModal>>()
 const handleAdd = async (param: IMenuParam) => {
   const data = removeObjectEmptyProto(param)
 
+  loading.value = true
   const { result } = await addMenu(data)
+  loading.value = false
   if (result) {
     open.value = false
     modalRef.value?.resetForm()
@@ -32,7 +35,7 @@ const handleAdd = async (param: IMenuParam) => {
 
 <template>
   <a-button v-permission="['system:menu:add']" type="primary" @click="handleOpen">新增</a-button>
-  <menu-modal ref="modalRef" v-model="open" @verify-success="handleAdd" />
+  <menu-modal ref="modalRef" v-model="open" v-model:loading="loading" @verify-success="handleAdd" />
 </template>
 
 <style lang="scss" scoped></style>
