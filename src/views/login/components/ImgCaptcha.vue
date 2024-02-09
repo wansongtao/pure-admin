@@ -11,11 +11,13 @@ const getCaptchaImg = debounce(async () => {
 }, 400)
 
 watch(
-  () => isRefresh.value,
+  isRefresh,
   (val) => {
-    if (val) {
-      getCaptchaImg()
+    if (!val) {
+      return
     }
+
+    getCaptchaImg()
   },
   {
     immediate: true
