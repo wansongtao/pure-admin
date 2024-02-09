@@ -57,7 +57,7 @@ const handleEdit = async (data: IUserEdit) => {
   <user-modal
     v-model="open"
     v-model:loading="loading"
-    title="编辑用户信息"
+    title="编辑用户"
     :details="detail"
     @on-ok="handleEdit"
   />
