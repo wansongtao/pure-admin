@@ -58,3 +58,21 @@ export interface IMenuData {
    */
   children?: IMenuData[]
 }
+
+export interface IProfile {
+  avatar?: string
+  birthday?: string
+  /**
+   * 个人简介
+   */
+  description?: string
+  email?: string
+  nickName?: string
+  phone?: string
+  roles: string[]
+  /**
+   * 0 女，1 男，2 其他
+   */
+  sex: 0 | 1 | 2
+  userName: string
+}

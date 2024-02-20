@@ -1,7 +1,7 @@
 import { request } from '@/utils/request'
 
 import type { IBaseResponse } from '@/types/index'
-import type { ILoginParams, IMenuData, IUserInfo } from '@/types/api/common'
+import type { ILoginParams, IMenuData, IUserInfo, IProfile } from '@/types/api/common'
 
 export const getCaptcha = () => {
   return request<IBaseResponse<string>>({
@@ -56,5 +56,12 @@ export const uploadFile = (file: File) => {
       'Content-Type': 'multipart/form-data'
     },
     data
+  })
+}
+
+export const getProfile = () => {
+  return request<IBaseResponse<IProfile>>({
+    url: '/admin/profile',
+    method: 'get'
   })
 }
