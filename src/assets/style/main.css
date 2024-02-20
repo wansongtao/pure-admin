@@ -30,3 +30,9 @@
   fill: currentColor;
   overflow: hidden;
 }
+
+.flex_center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
