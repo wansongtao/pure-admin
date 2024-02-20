@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PlusOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 
 import { getBase64 } from '@/utils/index'
@@ -14,23 +14,6 @@ defineOptions({
 
 const imgUrl = defineModel<string>('imgUrl', { default: '' })
 
-const fileList = ref<UploadProps['fileList']>([])
-watch(imgUrl, (url) => {
-  if (!url) {
-    fileList.value = []
-    return
-  }
-
-  fileList.value = [
-    {
-      uid: '-1',
-      name: '',
-      status: 'done',
-      url
-    }
-  ]
-})
-
 const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
   const isLt2M = file.size < maxSize
   if (!isLt2M) {
@@ -40,7 +23,7 @@ const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
   return true
 }
 
-const imageFile = ref<FileType>()
+let imgFile: FileType | null = null
 const beforeUpload: UploadProps['beforeUpload'] = (file) => {
   const result = verifyFileSize(file)
   if (!result) {
@@ -48,17 +31,8 @@ const beforeUpload: UploadProps['beforeUpload'] = (file) => {
     return
   }
 
-  imageFile.value = file
+  imgFile = file
   getBase64(file, (base64Url: string) => {
-    fileList.value = [
-      {
-        uid: '-1',
-        name: file.name,
-        status: 'done',
-        url: base64Url
-      }
-    ]
-
     imgUrl.value = base64Url
   })
 
@@ -66,24 +40,23 @@ const beforeUpload: UploadProps['beforeUpload'] = (file) => {
 }
 
 const handleRemove = () => {
-  fileList.value = []
-  imageFile.value = undefined
+  imgFile = null
   imgUrl.value = ''
 }
 
 const handleUpload = () => {
   return new Promise<string>((resolve, reject) => {
-    if (!imageFile.value) {
+    if (!imgFile) {
       reject('file undefined')
       return
     }
-    const isLt2M = verifyFileSize(imageFile.value)
+    const isLt2M = verifyFileSize(imgFile)
     if (!isLt2M) {
       reject('Image must smaller than 2MB!')
       return
     }
 
-    uploadFile(imageFile.value).then((data) => {
+    uploadFile(imgFile).then((data) => {
       const { result, error } = data
       if (error) {
         reject(error)
@@ -91,6 +64,7 @@ const handleUpload = () => {
       }
 
       imgUrl.value = result!.data
+      imgFile = null
       resolve(result!.data)
     })
   })
@@ -103,36 +77,59 @@ defineExpose({
 
 <template>
   <a-upload
-    v-model:file-list="fileList"
-    accept="image/jpeg,image/png"
-    :max-count="1"
     name="avatar"
-    list-type="picture-card"
-    class="avatar-uploader"
     action=""
+    accept="image/jpeg,image/png,image/jpg,image/gif"
+    :max-count="1"
+    :file-list="[]"
     :before-upload="beforeUpload"
-    @remove="handleRemove"
   >
-    <div>
-      <plus-outlined />
-      <div class="ant-upload-text">上传头像</div>
+    <div class="avatar flex_center" :class="imgUrl ? '' : 'avatar--border'">
+      <img v-if="imgUrl" :src="imgUrl" alt="avatar" class="avatar_img" />
+      <plus-outlined v-else />
+
+      <div v-if="imgUrl" class="avatar_mask flex_center">
+        <delete-outlined @click.stop="handleRemove" />
+      </div>
     </div>
   </a-upload>
 </template>
 
 <style lang="scss" scoped>
-.avatar-uploader > .ant-upload {
+.avatar {
+  position: relative;
+  box-sizing: border-box;
   overflow: hidden;
-  width: 128px;
-  height: 128px;
-}
-.ant-upload-select-picture-card i {
-  font-size: 32px;
-  color: #999;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #3875f6;
+  }
+
+  .avatar_img {
+    width: 100%;
+  }
+
+  .avatar_mask {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    background-color: rgba($color: #000000, $alpha: 0.6);
+    transition: all 0.3s;
+    cursor: auto;
+  }
+
+  &:hover .avatar_mask {
+    opacity: 1;
+  }
 }
 
-.ant-upload-select-picture-card .ant-upload-text {
-  margin-top: 8px;
-  color: var(--st-c-text-2);
+.avatar--border {
+  border: 2px dotted #999;
 }
 </style>
