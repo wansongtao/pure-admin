@@ -3,7 +3,7 @@ import UserModal from './UserModal.vue'
 
 import { message } from 'ant-design-vue'
 import { getUserDetail, updateUser } from '@/api/user'
-import { removeSameValue } from '@/utils'
+import { getChangedData } from '@/utils'
 
 import type { IUserDetail, IUserEdit } from '@/types/api/user'
 
@@ -28,7 +28,7 @@ const handleOpen = async () => {
 
 const loading = ref(false)
 const handleEdit = async (data: IUserEdit) => {
-  data = removeSameValue(data, detail.value!)
+  data = getChangedData(data, detail.value!)
   if (Object.keys(data).length === 0) {
     message.warn('您没有修改任何信息！')
     return

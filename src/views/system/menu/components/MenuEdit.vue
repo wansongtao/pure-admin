@@ -3,7 +3,7 @@ import MenuModal from './MenuModal.vue'
 
 import { message } from 'ant-design-vue'
 import { getMenuDetail, updateMenu } from '@/api/menu'
-import { removeSameValue } from '@/utils/index'
+import { getChangedData } from '@/utils/index'
 
 import type { IMenuParam, IMenuDetail } from '@/types/api/menu'
 
@@ -26,7 +26,7 @@ const handleOpen = async () => {
 
 const loading = ref(false)
 const handleEdit = async (data: IMenuParam) => {
-  data = removeSameValue(data, detail.value!)
+  data = getChangedData(data, detail.value!)
 
   // 移除默认值
   const keys = Object.keys(data) as (keyof IMenuParam)[]

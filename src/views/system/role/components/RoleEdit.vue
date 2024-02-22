@@ -3,7 +3,7 @@ import RoleModal from './RoleModal.vue'
 
 import { message } from 'ant-design-vue'
 import { getRoleDetail, updateRole } from '@/api/role'
-import { removeSameValue } from '@/utils'
+import { getChangedData } from '@/utils'
 
 import type { IRoleDetail, IRoleEditParam } from '@/types/api/role'
 
@@ -28,7 +28,7 @@ const handleOpen = async () => {
 
 const loading = ref(false)
 const handleEdit = async (data: IRoleEditParam) => {
-  data = removeSameValue(data, detail.value!)
+  data = getChangedData(data, detail.value!)
   if (Object.keys(data).length === 0) {
     message.warn('您没有修改任何信息！')
     return

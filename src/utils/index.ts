@@ -198,25 +198,26 @@ export const removeObjectEmptyProto = <T extends Record<any, any>>(data: T) => {
 }
 
 /**
- * 移除对象中与另一个对象中属性值都相同的key
- * @param data 需要移除属性的对象
- * @param obj 比较对象
+ * 获取数据中变化了的部分
+ * @param data 变更后的数据
+ * @param agoObj 历史(对比)数据
  * @returns 
  */
-export const removeSameValue = <T extends Record<any, any>, K extends Record<any, any>>(
+export const getChangedData = <T extends Record<any, any>, K extends Record<any, any>>(
   data: T,
-  obj: K
+  agoObj: K
 ) => {
-  const keys: (keyof K)[] = Object.keys(obj)
+  const changedData = {} as T
 
+  const keys: (keyof K)[] = Object.keys(data)
   keys.forEach((k) => {
-    const value = data[k] as any
-    if (value === obj[k]) {
-      delete data[k]
+    const newValue = data[k] as any
+    if (newValue !== agoObj[k]) {
+      changedData[k] = newValue
     }
   })
 
-  return data
+  return changedData
 }
 
 export const getBase64 = (img: Blob, callback: (base64Url: string) => void) => {
