@@ -23,6 +23,9 @@ const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
   return true
 }
 
+const $emits = defineEmits<{
+  selectFile: [file: FileType]
+}>()
 let imgFile: FileType | null = null
 const beforeUpload: UploadProps['beforeUpload'] = (file) => {
   const result = verifyFileSize(file)
@@ -32,6 +35,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (file) => {
   }
 
   imgFile = file
+  $emits('selectFile', file)
   getBase64(file, (base64Url: string) => {
     imgUrl.value = base64Url
   })
@@ -88,8 +92,8 @@ defineExpose({
       <img v-if="imgUrl" :src="imgUrl" alt="avatar" class="avatar_img" />
       <plus-outlined v-else />
 
-      <div v-if="imgUrl" class="avatar_mask flex_center">
-        <delete-outlined @click.stop="handleRemove" />
+      <div v-if="imgUrl" class="avatar_mask flex_center" @click.stop>
+        <delete-outlined @click="handleRemove" />
       </div>
     </div>
   </a-upload>
