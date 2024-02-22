@@ -79,3 +79,11 @@ export const updateProfile = (data: IProfileParam) => {
     data
   })
 }
+
+export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
+  return request<IBaseResponse>({
+    url: '/admin/auth/password',
+    method: 'put',
+    data
+  })
+}
