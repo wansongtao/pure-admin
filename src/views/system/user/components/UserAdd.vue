@@ -3,7 +3,7 @@ import UserModal from './UserModal.vue'
 
 import { addUser } from '@/api/user'
 import { message } from 'ant-design-vue'
-import { removeObjectEmptyProto } from '@/utils/index'
+import { getTrulyObject } from '@/utils/index'
 
 import type { IUserEdit } from '@/types/api/user'
 
@@ -19,7 +19,7 @@ const handleOpen = () => {
 const loading = ref(false)
 const modalRef = ref<InstanceType<typeof UserModal>>()
 const handleAdd = async (param: IUserEdit) => {
-  const data = removeObjectEmptyProto(param)
+  const data = getTrulyObject(param)
 
   loading.value = true
   const { result } = await addUser(data)

@@ -183,18 +183,36 @@ export const objectToArray = <T extends Record<any, unknown>>(data: T) => {
 }
 
 /**
- * 移除对象中的无意义属性
+ * 获取对象中值为 truly 的部分
  * @param data
  * @returns
  */
-export const removeObjectEmptyProto = <T extends Record<any, any>>(data: T) => {
+export const getTrulyObject = <T extends Record<any, any>>(data: T) => {
+  const trulyObject = {} as T
+
   const keys: (keyof T)[] = Object.keys(data)
   keys.forEach((k) => {
-    if (data[k] === undefined || data[k] === '' || data[k] === null) {
-      delete data[k]
+    const value = data[k] as any
+    if (value === undefined || value === '' || value === null) {
+      return
     }
+
+    if (Array.isArray(value) && value.length === 0) {
+      return
+    }
+
+    if (value instanceof Object) {
+      if (value.length === 0) {
+        return
+      }
+
+      trulyObject[k] = getTrulyObject(value)
+      return
+    }
+
+    trulyObject[k] = value
   })
-  return data
+  return trulyObject
 }
 
 /**

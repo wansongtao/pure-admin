@@ -3,7 +3,7 @@ import RoleModal from './RoleModal.vue'
 
 import { addRole } from '@/api/role'
 import { message } from 'ant-design-vue'
-import { removeObjectEmptyProto } from '@/utils/index'
+import { getTrulyObject } from '@/utils/index'
 
 import type { IRoleEditParam } from '@/types/api/role'
 
@@ -19,7 +19,7 @@ const handleOpen = () => {
 const loading = ref(false)
 const modalRef = ref<InstanceType<typeof RoleModal>>()
 const handleAdd = async (param: IRoleEditParam) => {
-  const data = removeObjectEmptyProto(param)
+  const data = getTrulyObject(param)
 
   loading.value = true
   const { result } = await addRole(data)
