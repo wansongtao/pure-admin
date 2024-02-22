@@ -1,7 +1,13 @@
 import { request } from '@/utils/request'
 
 import type { IBaseResponse } from '@/types/index'
-import type { ILoginParams, IMenuData, IUserInfo, IProfile } from '@/types/api/common'
+import type {
+  ILoginParams,
+  IMenuData,
+  IUserInfo,
+  IProfile,
+  IProfileParam
+} from '@/types/api/common'
 
 export const getCaptcha = () => {
   return request<IBaseResponse<string>>({
@@ -63,5 +69,13 @@ export const getProfile = () => {
   return request<IBaseResponse<IProfile>>({
     url: '/admin/profile',
     method: 'get'
+  })
+}
+
+export const updateProfile = (data: IProfileParam) => {
+  return request<IBaseResponse>({
+    url: '/admin/profile',
+    method: 'put',
+    data
   })
 }
