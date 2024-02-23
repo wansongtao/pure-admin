@@ -54,13 +54,15 @@ const onTabChange = (value: string) => {
           :active-tab-key="key"
           @tabChange="(key) => onTabChange(key)"
         >
-          <user-info-form
-            v-show="key === 'info'"
-            :details="profile"
-            @on-change="handleChangeProfile"
-          />
+          <div class="h-animate" :style="key === 'pwd' ? 'height: 200px;' : 'height: 434px;'">
+            <user-info-form
+              v-show="key === 'info'"
+              :details="profile"
+              @on-change="handleChangeProfile"
+            />
 
-          <password-form v-show="key === 'pwd'" />
+            <password-form v-show="key === 'pwd'" />
+          </div>
         </a-card>
       </a-col>
     </a-row>
@@ -70,5 +72,10 @@ const onTabChange = (value: string) => {
 <style lang="scss" scoped>
 .profile {
   padding: 20px;
+}
+
+.h-animate {
+  overflow: hidden;
+  transition: height ease-in-out 0.3s;
 }
 </style>
