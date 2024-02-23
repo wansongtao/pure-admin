@@ -3,6 +3,7 @@ import UserCard from './components/UserCard.vue'
 import UserInfoForm from './components/UserInfoForm.vue'
 import PasswordForm from './components/PasswordForm.vue'
 
+import { useRouteQuery } from '@vueuse/router'
 import { getProfile } from '@/api/common'
 
 import type { IProfile, IProfileParam } from '@/types/api/common'
@@ -35,7 +36,8 @@ const tabList: { key: IKey; tab: string }[] = [
   { key: 'info', tab: '个人信息修改' },
   { key: 'pwd', tab: '密码修改' }
 ]
-const key = ref<IKey>('info')
+
+const key = useRouteQuery<IKey>('key', 'info')
 const onTabChange = (value: string) => {
   key.value = value as IKey
 }
@@ -52,7 +54,7 @@ const onTabChange = (value: string) => {
           style="width: 100%"
           :tab-list="tabList"
           :active-tab-key="key"
-          @tabChange="(key) => onTabChange(key)"
+          @tabChange="onTabChange"
         >
           <div class="h-animate" :style="key === 'pwd' ? 'height: 200px;' : 'height: 434px;'">
             <user-info-form
