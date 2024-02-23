@@ -21,11 +21,12 @@ const adminRoute: RouteRecordRaw = {
     },
     {
       path: 'profile',
-      name: 'profileView',
+      name: 'ProfileView',
       component: () => import('@/views/profile/index.vue'),
       meta: {
         title: '个人中心',
-        hidden: true
+        hidden: true,
+        cache: true
       }
     }
   ]
