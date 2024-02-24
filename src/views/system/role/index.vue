@@ -12,7 +12,7 @@ import type { IRoleQuery, IRoleList } from '@/types/api/role'
 import type { TableColumnProps } from 'ant-design-vue'
 
 defineOptions({
-  name: 'SystemRole'
+  name: 'SystemRoleIndex'
 })
 
 const requestData = async (params: IRoleQuery) => {

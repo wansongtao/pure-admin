@@ -12,7 +12,7 @@ import type { IUserQuery, IUserList } from '@/types/api/user'
 import type { TableColumnProps } from 'ant-design-vue'
 
 defineOptions({
-  name: 'SystemUser'
+  name: 'SystemUserIndex'
 })
 
 const requestData = async (params: IUserQuery) => {

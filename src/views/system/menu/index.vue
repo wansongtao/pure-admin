@@ -14,7 +14,7 @@ import type { IQueryMenuParam, IMenuListItem } from '@/types/api/menu'
 import type { TableColumnProps } from 'ant-design-vue'
 
 defineOptions({
-  name: 'SystemMenu'
+  name: 'SystemMenuIndex'
 })
 
 const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListItem })[] = [
