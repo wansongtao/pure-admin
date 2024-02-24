@@ -36,7 +36,7 @@ const handleReset = () => {
 </script>
 
 <template>
-  <BaseFilter
+  <base-filter
     :span="8"
     :disabled-empty-search="disabled === undefined"
     @handle-search="handleSearch"
@@ -53,7 +53,7 @@ const handleReset = () => {
         ></a-select>
       </a-col>
     </template>
-  </BaseFilter>
+  </base-filter>
 </template>
 
 <style lang="scss" scoped></style>

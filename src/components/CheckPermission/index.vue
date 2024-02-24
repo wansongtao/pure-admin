@@ -3,7 +3,7 @@ import { hasPermissions } from '@/utils/authority'
 import { useUserStore } from '@/stores/user'
 
 defineOptions({
-  name: 'checkPermission'
+  name: 'CheckPermission'
 })
 
 const $props = defineProps<{

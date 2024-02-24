@@ -36,7 +36,7 @@ const handleReset = () => {
 </script>
 
 <template>
-  <BaseFilter
+  <base-filter
     :span="8"
     placeholder="请输入用户名、昵称关键字"
     :disabled-empty-search="disabled === undefined"
@@ -54,7 +54,7 @@ const handleReset = () => {
         ></a-select>
       </a-col>
     </template>
-  </BaseFilter>
+  </base-filter>
 </template>
 
 <style lang="scss" scoped>

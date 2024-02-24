@@ -6,7 +6,7 @@ import dayjs, { type Dayjs } from 'dayjs'
 import type { IBaseQuery } from '@/types/index'
 
 defineOptions({
-  name: 'baseFilter'
+  name: 'BaseFilter'
 })
 const $emits = defineEmits<{
   handleSearch: [query: IBaseQuery]

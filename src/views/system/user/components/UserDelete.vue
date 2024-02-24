@@ -49,7 +49,7 @@ const handleDelete = async () => {
 </script>
 
 <template>
-  <ButtonDelete
+  <button-delete
     v-permission="['system:user:del']"
     :size="isSingle ? 'small' : 'middle'"
     :text="isSingle ? '删除' : '批量删除'"
