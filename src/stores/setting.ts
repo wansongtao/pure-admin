@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { getTheme, setTheme } from '@/utils/theme'
 import { getSystemTheme } from '@/utils/index'
 import { getMenus } from '@/api/common'
-import { generateAsideMenu, generateCacheRouteNames, generateRoutes } from '@/utils/menu'
+import { generateMenus, generateCacheRoutes, generateRoutes } from '@/utils/menu'
 
 import type { IMenuItem, ITagLinkItem } from '@/types'
 
@@ -42,8 +42,8 @@ export const useSettingStore = defineStore('setting', () => {
   async function getRoutesAction() {
     const { result } = await getMenus()
     const route = generateRoutes(result?.data ?? [])
-    cacheRoutes.value = generateCacheRouteNames(route.children ?? [])
-    menus.value = generateAsideMenu(route.children ?? [])
+    cacheRoutes.value = generateCacheRoutes(route.children ?? [])
+    menus.value = generateMenus(route.children ?? [])
 
     return route
   }

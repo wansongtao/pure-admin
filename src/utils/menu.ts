@@ -21,7 +21,7 @@ const getFullPath = (path: string, parentPath = '/') => {
   return parentPath + path
 }
 
-export const generateAsideMenu = (routes: RouteRecordRaw[], parentPath = ''): IMenuItem[] => {
+export const generateMenus = (routes: RouteRecordRaw[], parentPath = ''): IMenuItem[] => {
   const menus: IMenuItem[] = []
 
   routes.forEach((item) => {
@@ -43,7 +43,7 @@ export const generateAsideMenu = (routes: RouteRecordRaw[], parentPath = ''): IM
     }
 
     if (item.children?.length) {
-      menuItem.children = generateAsideMenu(item.children, path)
+      menuItem.children = generateMenus(item.children, path)
     }
 
     menus.push(menuItem)
@@ -52,7 +52,7 @@ export const generateAsideMenu = (routes: RouteRecordRaw[], parentPath = ''): IM
   return menus
 }
 
-export const generateCacheRouteNames = (routes: RouteRecordRaw[]): string[] => {
+export const generateCacheRoutes = (routes: RouteRecordRaw[]): string[] => {
   const cacheRouteNames: string[] = []
 
   routes.forEach((route) => {
@@ -61,7 +61,7 @@ export const generateCacheRouteNames = (routes: RouteRecordRaw[]): string[] => {
     }
 
     if (route.children?.length) {
-      cacheRouteNames.push(...generateCacheRouteNames(route.children))
+      cacheRouteNames.push(...generateCacheRoutes(route.children))
     }
   })
 
