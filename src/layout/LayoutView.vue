@@ -8,18 +8,18 @@ import { useSettingStore } from '@/stores/setting'
 // 显式设置width，解决某些特殊情况下，响应式宽度失效的问题（例如：a-table设置了scroll属性）。
 const setStore = useSettingStore()
 const style = computed(() => {
-  return  `width: calc(100% - var(${setStore.collapsed ? '--st-aside-w-s' : '--st-aside-w'}));`
+  return `width: calc(100% - var(${setStore.collapsed ? '--st-aside-w-s' : '--st-aside-w'}));`
 })
 </script>
 
 <template>
   <div class="layout">
-    <AsideView />
+    <aside-view />
     <div class="layout_container" :style="style">
-      <HeaderView />
-      <LinkHistory />
+      <header-view />
+      <link-history />
       <div class="layout-main st-transition-bg">
-        <ParentView />
+        <parent-view />
       </div>
     </div>
   </div>

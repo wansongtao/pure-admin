@@ -32,7 +32,7 @@ const handlePersonalPage = () => {
         <img :src="userInfo.avatar" alt="" class="avatar" />
       </div>
       <div class="name">{{ userInfo.nickName }}</div>
-      <DownOutlined :style="{ fontSize: '14px', color: 'var(--st-c-icon)' }" />
+      <down-outlined :style="{ fontSize: '14px', color: 'var(--st-c-icon)' }" />
     </div>
     <template #overlay>
       <a-menu>

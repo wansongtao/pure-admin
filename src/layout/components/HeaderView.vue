@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import AvatarDropdown from './AvatarDropdown.vue';
-import BreadCrumb from './BreadCrumb.vue';
-import SwitchTheme from './SwitchTheme.vue';
+import AvatarDropdown from './AvatarDropdown.vue'
+import BreadCrumb from './BreadCrumb.vue'
+import SwitchTheme from './SwitchTheme.vue'
 
 defineOptions({
   name: 'HeaderView'
@@ -11,13 +11,13 @@ defineOptions({
 <template>
   <header class="header flex">
     <div class="flex">
-      <ButtonCollapsed />
-      <BreadCrumb />
+      <button-collapsed />
+      <bread-crumb />
     </div>
     <div class="flex">
-      <ScreenFull />
-      <SwitchTheme />
-      <AvatarDropdown />
+      <screen-full />
+      <switch-theme />
+      <avatar-dropdown />
     </div>
   </header>
 </template>

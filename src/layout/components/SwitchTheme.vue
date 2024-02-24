@@ -9,7 +9,7 @@ const checked = computed(() => setStore.theme === 'dark')
 </script>
 
 <template>
-  <BaseSwitch :value="checked" :delay="300" @onChange="toggleTheme" />
+  <base-switch :value="checked" :delay="300" @onChange="toggleTheme" />
 </template>
 
 <style lang="scss" scoped></style>
