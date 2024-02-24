@@ -10,7 +10,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import type { IMenuItem } from '@/types/index'
 
 const getFullPath = (path: string, parentPath = '/') => {
-  if ((parentPath[parentPath.length - 1] !== '/') && path.indexOf('/') !== 0) {
+  if (parentPath[parentPath.length - 1] !== '/' && path.indexOf('/') !== 0) {
     return parentPath + '/' + path
   }
 
@@ -81,7 +81,11 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
 
       if (item.component && COMPONENT_MAP[item.component]) {
         route.component = COMPONENT_MAP[item.component]
-        route.name = item.component.replace(/[/]|(.vue)/g, '')
+        route.name = item.component
+          .replace(/.vue/g, '')
+          .split('/')
+          .map((item) => item.replace(/^\S/, (s) => s.toUpperCase()))
+          .join('')
       }
 
       if (item.title) {
