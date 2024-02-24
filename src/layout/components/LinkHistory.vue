@@ -24,9 +24,16 @@ const isEqual = (a: Item, b: Item) => {
   return false
 }
 
-const setStore = useSettingStore()
 const tags = ref<ITagLinkItem[]>([])
+const tagLinks = localStorage.getItem('tagLinks')
+if (tagLinks) {
+  tags.value = JSON.parse(tagLinks)
+}
+window.onbeforeunload = () => {
+  localStorage.setItem('tagLinks', JSON.stringify(tags.value))
+}
 
+const setStore = useSettingStore()
 watch(
   () => setStore.defaultTagLinks,
   (defaultTagLinks) => {
@@ -96,8 +103,8 @@ const onClose = (index: number) => {
 <template>
   <div ref="scrollElement" class="scrollbar-wrap" @wheel="onWheel">
     <div class="scrollbar">
-      <TransitionGroup name="tags">
-        <TagLink
+      <transition-group name="tags">
+        <tag-link
           v-for="(item, idx) in tags"
           :key="item.path"
           :title="item.title"
@@ -105,10 +112,10 @@ const onClose = (index: number) => {
           :path="item.path"
         >
           <div v-if="!item.hiddenCloseIcon" class="icon--close" @click.stop="onClose(idx)">
-            <CloseOutlined />
+            <close-outlined />
           </div>
-        </TagLink>
-      </TransitionGroup>
+        </tag-link>
+      </transition-group>
     </div>
   </div>
 </template>
