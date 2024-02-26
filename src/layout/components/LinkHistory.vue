@@ -55,8 +55,8 @@ watch(
 
 const route = useRoute()
 watch(
-  () => route.path,
-  (path) => {
+  () => route.fullPath,
+  (fullPath) => {
     const title = (route.meta.title as string) || (route.name as string)
     if (!title) {
       return
@@ -68,9 +68,10 @@ watch(
       }
     })
 
+    const path = route.path
     const tag = tags.value.find((item) => isEqual(item, { path, title }))
     if (tag) {
-      tag.path = route.fullPath
+      tag.path = fullPath
       tag.checked = true
       return
     }
