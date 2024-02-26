@@ -107,7 +107,7 @@ const onClose = (index: number) => {
       <transition-group name="tags">
         <tag-link
           v-for="(item, idx) in tags"
-          :key="item.path"
+          :key="item.title"
           :title="item.title"
           :checked="item.checked"
           :path="item.path"
