@@ -1,18 +1,18 @@
-import type { IQueryMenuParam, IMenuType } from '@/types/api/menu'
+import type { IMenuType } from '@/types/api/menu'
 
 export const ALL_PERMISSION = '*:*:*'
 
 export const STATUS: {
   readonly label: string
-  readonly value: IQueryMenuParam['disabled']
+  readonly value: 0 | 1
 }[] = [
   {
     label: '启用',
-    value: 1
+    value: 0
   },
   {
     label: '禁用',
-    value: 0
+    value: 1
   }
 ]
 
