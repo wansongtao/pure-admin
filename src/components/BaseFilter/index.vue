@@ -14,13 +14,15 @@ const $emits = defineEmits<{
 }>()
 const $props = withDefaults(
   defineProps<{
+    keyword?: string
+    dateRange?: [string, string]
     /**
      * 预设时间范围
      */
     rangePresets?: { label: string; value: [Dayjs, Dayjs] }[]
     /**
      * 不可选择的时间，默认当前时间之后的时间
-     * @param current 
+     * @param current
      */
     disabledDate?: (current: Dayjs) => boolean
     dateFormat?: string
@@ -85,6 +87,16 @@ const query = ref<{
   keyword: '',
   dateRange: undefined
 })
+watch(
+  [() => $props.keyword, () => $props.dateRange],
+  ([val, date]) => {
+    query.value.keyword = val ?? ''
+    query.value.dateRange = date
+  },
+  {
+    immediate: true
+  }
+)
 
 const isDisabledSearch = computed(() => {
   const { keyword, dateRange } = query.value
