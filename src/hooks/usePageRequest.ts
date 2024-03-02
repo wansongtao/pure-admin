@@ -1,5 +1,6 @@
-import { ref, watch, shallowRef, computed } from 'vue'
+import { ref, shallowRef, computed, watch } from 'vue'
 import { debounce } from '@/utils'
+import { useQuery } from './useQuery'
 
 import type { Ref, ShallowRef } from 'vue'
 
@@ -20,7 +21,7 @@ export const usePageRequest = <
     defaultPageSize = 10,
     deep = true,
     delay = 200,
-    immediate = true
+    autoWatchPage = false
   }: {
     defaultPage?: number
     defaultPageSize?: number
@@ -32,14 +33,17 @@ export const usePageRequest = <
      * 防抖时间，单位ms
      */
     delay?: number
-    immediate?: boolean
+    /**
+     * 是否自动监听page与pageSize的变化
+     */
+    autoWatchPage?: boolean
   } = {}
 ) => {
   const list: K = (deep ? ref([]) : shallowRef([])) as unknown as K
   const loading = ref(false)
   const total = ref(0)
-  const page = ref(defaultPage)
-  const pageSize = ref(defaultPageSize)
+  const page = useQuery('page', defaultPage, { transform: Number })
+  const pageSize = useQuery('pageSize', defaultPageSize, { transform: Number })
 
   const lastPage = computed(() => {
     if (!total.value || !pageSize.value) {
@@ -52,11 +56,9 @@ export const usePageRequest = <
   /**
    * 请求列表数据，自动带上page与pageSize，只传入其他query即可
    */
-  const getList: (query?: Q) => void = debounce((query?: Q) => {
-    const param = { page: page.value, pageSize: pageSize.value, ...query } as unknown as Q
-
+  const getList: (query: Q) => void = debounce((query: Q) => {
     loading.value = true
-    requestData(param)
+    requestData(query)
       .then((res) => {
         list.value = res.data
         total.value = res.total
@@ -66,13 +68,15 @@ export const usePageRequest = <
       })
   }, delay ?? 0)
 
-  watch(
-    [page, pageSize],
-    () => {
-      getList()
-    },
-    { immediate }
-  )
+  if (autoWatchPage) {
+    watch(
+      [page, pageSize],
+      ([page, pageSize]) => {
+        getList({ page, pageSize } as unknown as Q)
+      },
+      { immediate: true }
+    )
+  }
 
   return {
     list,
