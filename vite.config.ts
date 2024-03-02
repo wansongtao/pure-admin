@@ -36,7 +36,8 @@ export default defineConfig({
   },
   server: {
     open: true,
-    host: '0.0.0.0',
+    host: 'localhost',
+    port: 3000,
     proxy: {
       '/dev': {
         target: 'https://mock.apifox.com/m1/3925622-0-default',
