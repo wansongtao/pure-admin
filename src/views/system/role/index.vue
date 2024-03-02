@@ -104,7 +104,7 @@ const query = computed(() => {
 })
 
 const handleQuery = (data?: IRoleQuery) => {
-  name.value = data?.name
+  name.value = data?.name ?? ''
   disabled.value = data?.disabled
   startTime.value = data?.startTime
   endTime.value = data?.endTime

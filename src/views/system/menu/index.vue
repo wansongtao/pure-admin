@@ -119,7 +119,7 @@ const query = computed(() => {
 })
 
 const handleQuery = (data?: IQueryMenuParam) => {
-  title.value = data?.title
+  title.value = data?.title ?? ''
   disabled.value = data?.disabled
   type.value = data?.type
   startTime.value = data?.startTime

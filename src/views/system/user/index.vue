@@ -105,7 +105,7 @@ const query = computed(() => {
 })
 
 const handleQuery = (data?: IUserQuery) => {
-  keyword.value = data?.keyword
+  keyword.value = data?.keyword ?? ''
   disabled.value = data?.disabled
   startTime.value = data?.startTime
   endTime.value = data?.endTime
