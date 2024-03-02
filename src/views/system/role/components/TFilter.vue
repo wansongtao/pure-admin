@@ -51,11 +51,15 @@ watch(
 </script>
 
 <template>
+  <!-- vue不能正确监听dateRange属性的变化，只要props任一属性变化了都会触发监听该数组的watch。
+    使用computed返回该数组再传给组件即可解决。 -->
+  <!-- :date-range="[query?.startTime ?? '', query?.endTime ?? '']" -->
   <base-filter
     :span="8"
     :disabled-empty-search="disabled === undefined"
     :keyword="query?.name"
-    :date-range="[query?.startTime ?? '', query?.endTime ?? '']"
+    :default-start-time="query?.startTime"
+    :default-end-time="query?.endTime"
     placeholder="请输入角色名称"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
@@ -75,4 +79,3 @@ watch(
 </template>
 
 <style lang="scss" scoped></style>
- 

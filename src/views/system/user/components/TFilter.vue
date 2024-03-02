@@ -56,7 +56,8 @@ watch(
     placeholder="请输入用户名、昵称关键字"
     :disabled-empty-search="disabled === undefined"
     :keyword="query?.keyword"
-    :date-range="[query?.startTime ?? '', query?.endTime ?? '']"
+    :default-start-time="query?.startTime"
+    :default-end-time="query?.endTime"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
   >

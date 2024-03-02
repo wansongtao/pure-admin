@@ -63,7 +63,8 @@ watch(
     :span="8"
     :disabled-empty-search="disabled === undefined && type === undefined"
     :keyword="query?.title"
-    :date-range="[query?.startTime ?? '', query?.endTime ?? '']"
+    :default-start-time="query?.startTime"
+    :default-end-time="query?.endTime"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
   >
