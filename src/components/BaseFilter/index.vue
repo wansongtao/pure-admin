@@ -15,7 +15,8 @@ const $emits = defineEmits<{
 const $props = withDefaults(
   defineProps<{
     keyword?: string
-    dateRange?: [string, string]
+    defaultStartTime?: string
+    defaultEndTime?: string
     /**
      * 预设时间范围
      */
@@ -88,10 +89,16 @@ const query = ref<{
   dateRange: undefined
 })
 watch(
-  [() => $props.keyword, () => $props.dateRange],
-  ([val, date]) => {
+  [() => $props.keyword, () => $props.defaultStartTime, () => $props.defaultEndTime],
+  ([val, start, end]) => {
     query.value.keyword = val ?? ''
-    query.value.dateRange = date
+    if (start) {
+      query.value.dateRange = [start, end ?? '']
+      return
+    }
+    if (end) {
+      query.value.dateRange = [start ?? '', end]
+    }
   },
   {
     immediate: true
