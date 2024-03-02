@@ -1,8 +1,8 @@
 /**
-  * @question 为什么不使用vueuse的useRouteQuery
-  * @answer 因为vueuse的useRouteQuery会在修改值时，自动修改所有的query，而不是仅修改当前页面组件的query
+ * @question 为什么不使用vueuse的useRouteQuery
+ * @answer 因为vueuse的useRouteQuery会在修改值时，自动修改所有的query，而不是仅修改当前页面组件的query
  */
-import { nextTick, computed } from 'vue'
+import { nextTick, watch, ref, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 type IValue = string | number | string[] | null | undefined
@@ -22,52 +22,43 @@ export const useQuery = <T extends IValue, K extends IValue = T>(
   options: {
     transform?: (value: any) => K
     mode?: 'push' | 'replace'
+    isEncodeURIComponent?: boolean
   } = {}
 ) => {
-  const { mode = 'push', transform = (value) => value } = options
+  const { mode = 'push', transform = (value) => value, isEncodeURIComponent = false } = options
 
   const route = useRoute()
   const router = useRouter()
   const currentPath = route.path
 
-  const setQueryQueue = (value: T | K) => {
-    const currentPageQueries = queriesQueue.get(currentPath) || {}
-    currentPageQueries[name] = value
-    queriesQueue.set(currentPath, currentPageQueries)
-  }
-  
-  const get = () => {
-    const currentPageQueries = queriesQueue.get(currentPath)
-    if (currentPath !== route.path) {
-      if (currentPageQueries && currentPageQueries[name] !== undefined) {
-        return currentPageQueries[name]
+  const query = ref(defaultValue) as Ref<T | K>
+  watch(
+    () => route.query[name],
+    (value) => {
+      if (route.path !== currentPath) {
+        return
       }
 
-      return defaultValue
-    }
-
-    if (!currentPageQueries || currentPageQueries[name] === undefined) {
-      if (route.query[name] !== undefined) {
-        const value = transform(route.query[name])
-        setQueryQueue(value)
-        return value
+      if (value === undefined) {
+        query.value = defaultValue as T
+        return
       }
-      return defaultValue
+
+      if (!isEncodeURIComponent) {
+        query.value = transform(value)
+        return
+      }
+
+      query.value = transform(decodeURIComponent(value as string))
+    },
+    {
+      immediate: true
     }
+  )
 
-    return transform(currentPageQueries[name])
-  }
-
-  const set = (value: T | K) => {
+  watch(query, (value) => {
     const currentPageQueries = queriesQueue.get(currentPath) || {}
-    if (
-      (currentPageQueries[name] === undefined && value === defaultValue) ||
-      value === transform(currentPageQueries[name])
-    ) {
-      return
-    }
-
-    currentPageQueries[name] = value
+    currentPageQueries[name] = isEncodeURIComponent ? encodeURIComponent(value as string) : value
     queriesQueue.set(currentPath, currentPageQueries)
 
     nextTick(() => {
@@ -86,11 +77,6 @@ export const useQuery = <T extends IValue, K extends IValue = T>(
         hash
       })
     })
-  }
-
-  const query = computed({
-    get,
-    set
   })
 
   return query
