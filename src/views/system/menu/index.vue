@@ -9,6 +9,7 @@ import MenuStateEdit from './components/MenuStateEdit.vue'
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
 import { MENU_TYPES } from '@/config/index'
+import { useQuery } from '@/hooks/useQuery'
 
 import type { IQueryMenuParam, IMenuListItem } from '@/types/api/menu'
 import type { TableColumnProps } from 'ant-design-vue'
@@ -16,6 +17,15 @@ import type { TableColumnProps } from 'ant-design-vue'
 defineOptions({
   name: 'SystemMenuIndex'
 })
+
+const requestData = async (params: IQueryMenuParam) => {
+  const { result } = await getMenuList(params)
+
+  return {
+    data: result?.data.list ?? [],
+    total: result?.data.total ?? 0
+  }
+}
 
 const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListItem })[] = [
   {
@@ -70,28 +80,55 @@ const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListI
   }
 ]
 
-const requestData = async (params: IQueryMenuParam) => {
-  const { result } = await getMenuList(params)
-
-  return {
-    data: result?.data.list ?? [],
-    total: result?.data.total ?? 0
-  }
-}
+const title = useQuery<IQueryMenuParam['title']>('title', undefined, { isEncodeURIComponent: true })
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IQueryMenuParam['disabled']
+})
+const type = useQuery<IQueryMenuParam['type']>('type')
+const startTime = useQuery<IQueryMenuParam['startTime']>('startTime')
+const endTime = useQuery<IQueryMenuParam['endTime']>('endTime')
+const isDesc = useQuery('isDesc', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IQueryMenuParam['isDesc']
+})
 
 const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
 
-const query = ref<IQueryMenuParam>({})
-const handleQuery = (data?: IQueryMenuParam) => {
-  query.value = data ?? {}
+const query = computed(() => {
+  const data: IQueryMenuParam = { page: page.value, pageSize: pageSize.value }
+  if (title.value) {
+    data.title = title.value
+  }
+  if (disabled.value !== undefined) {
+    data.disabled = disabled.value
+  }
+  if (type.value) {
+    data.type = type.value
+  }
+  if (startTime.value) {
+    data.startTime = startTime.value
+  }
+  if (endTime.value) {
+    data.endTime = endTime.value
+  }
+  if (isDesc.value !== undefined) {
+    data.isDesc = isDesc.value
+  }
 
-  getList(query.value)
+  getList(data)
+  return data
+})
+
+const handleQuery = (data?: IQueryMenuParam) => {
+  title.value = data?.title
+  disabled.value = data?.disabled
+  type.value = data?.type
+  startTime.value = data?.startTime
+  endTime.value = data?.endTime
 }
 
 const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
   if (fieldName === 'createTime') {
-    query.value.isDesc = order === 'ascend' ? 0 : 1
-    getList(query.value)
+    isDesc.value = order === 'ascend' ? 0 : 1
     return
   }
 }
@@ -100,7 +137,7 @@ const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
   if (page.value < lastPage.value) {
     checkedIds.value = []
-    getList()
+    getList(query.value)
     return
   }
 
@@ -112,7 +149,7 @@ const deleteSuccess = () => {
       page.value -= 1
       return
     }
-    getList()
+    getList(query.value)
     return
   }
 }
@@ -120,11 +157,16 @@ const deleteSuccess = () => {
 
 <template>
   <div class="st-container">
-    <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
+    <t-filter
+      :loading="loading"
+      :query="query"
+      @handle-search="handleQuery"
+      @handle-reset="handleQuery"
+    />
 
     <div class="tool">
       <a-space>
-        <menu-add @handle-success="getList" />
+        <menu-add @handle-success="getList(query)" />
         <menu-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
@@ -158,7 +200,7 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <menu-edit :id="record.id" @handle-success="getList" />
+            <menu-edit :id="record.id" @handle-success="getList(query)" />
             <menu-delete :id="record.id" @handle-success="deleteSuccess" />
           </a-space>
         </template>

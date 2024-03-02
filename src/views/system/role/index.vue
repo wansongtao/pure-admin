@@ -7,6 +7,7 @@ import RoleDelete from './components/RoleDelete.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
+import { useQuery } from '@/hooks/useQuery'
 
 import type { IRoleQuery, IRoleList } from '@/types/api/role'
 import type { TableColumnProps } from 'ant-design-vue'
@@ -68,19 +69,50 @@ const columns: (TableColumnProps & { dataIndex?: keyof IRoleList })[] = [
   }
 ]
 
+const name = useQuery<IRoleQuery['name']>('name', undefined, { isEncodeURIComponent: true })
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['disabled']
+})
+const startTime = useQuery<IRoleQuery['startTime']>('startTime')
+const endTime = useQuery<IRoleQuery['endTime']>('endTime')
+const isDesc = useQuery('isDesc', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['isDesc']
+})
+
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
 
-const query = ref<IRoleQuery>({})
-const handleQuery = (data?: IRoleQuery) => {
-  query.value = data ?? {}
+const query = computed(() => {
+  const data: IRoleQuery = { page: page.value, pageSize: pageSize.value }
+  if (name.value) {
+    data.name = name.value
+  }
+  if (disabled.value !== undefined) {
+    data.disabled = disabled.value
+  }
+  if (startTime.value) {
+    data.startTime = startTime.value
+  }
+  if (endTime.value) {
+    data.endTime = endTime.value
+  }
+  if (isDesc.value !== undefined) {
+    data.isDesc = isDesc.value
+  }
 
-  getList(query.value)
+  getList(data)
+  return data
+})
+
+const handleQuery = (data?: IRoleQuery) => {
+  name.value = data?.name
+  disabled.value = data?.disabled
+  startTime.value = data?.startTime
+  endTime.value = data?.endTime
 }
 
 const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
   if (fieldName === 'createTime') {
-    query.value.isDesc = order === 'ascend' ? 0 : 1
-    getList(query.value)
+    isDesc.value = order === 'ascend' ? 0 : 1
     return
   }
 }
@@ -89,7 +121,7 @@ const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
   if (page.value < lastPage.value) {
     checkedIds.value = []
-    getList()
+    getList(query.value)
     return
   }
 
@@ -101,7 +133,7 @@ const deleteSuccess = () => {
       page.value -= 1
       return
     }
-    getList()
+    getList(query.value)
     return
   }
 }
@@ -109,11 +141,16 @@ const deleteSuccess = () => {
 
 <template>
   <div class="st-container">
-    <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
+    <t-filter
+      :loading="loading"
+      :query="query"
+      @handle-search="handleQuery"
+      @handle-reset="handleQuery"
+    />
 
     <div class="tool">
       <a-space>
-        <role-add @handle-success="getList" />
+        <role-add @handle-success="getList(query)" />
         <role-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
@@ -133,7 +170,7 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <role-edit :id="record.id" @handle-success="getList" />
+            <role-edit :id="record.id" @handle-success="getList(query)" />
             <role-delete :id="record.id" @handle-success="deleteSuccess" />
           </a-space>
         </template>

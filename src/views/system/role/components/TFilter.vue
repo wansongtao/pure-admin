@@ -4,6 +4,9 @@ import { STATUS } from '@/config/index'
 import type { IBaseQuery } from '@/types/index'
 import type { IRoleQuery } from '@/types/api/role'
 
+const $props = defineProps<{
+  query?: IRoleQuery
+}>()
 const $emits = defineEmits<{
   handleSearch: [query: IRoleQuery]
   handleReset: []
@@ -33,12 +36,27 @@ const handleReset = () => {
 
   $emits('handleReset')
 }
+
+watch(
+  () => $props.query,
+  (query) => {
+    if (query) {
+      disabled.value = query.disabled
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
   <base-filter
     :span="8"
     :disabled-empty-search="disabled === undefined"
+    :keyword="query?.name"
+    :date-range="[query?.startTime ?? '', query?.endTime ?? '']"
+    placeholder="请输入角色名称"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
   >

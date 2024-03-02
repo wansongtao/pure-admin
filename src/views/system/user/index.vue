@@ -6,6 +6,7 @@ import UserEdit from './components/UserEdit.vue'
 import UserAdd from './components/UserAdd.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
+import { useQuery } from '@/hooks/useQuery'
 import { getUserList } from '@/api/user'
 
 import type { IUserQuery, IUserList } from '@/types/api/user'
@@ -67,18 +68,52 @@ const columns: (TableColumnProps & { dataIndex?: keyof IUserList })[] = [
   }
 ]
 
-const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
-const query = ref<IUserQuery>({})
-const handleQuery = (data?: IUserQuery) => {
-  query.value = data ?? {}
+const keyword = useQuery<IUserQuery['keyword']>('keyword', undefined, {
+  isEncodeURIComponent: true
+})
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['disabled']
+})
+const startTime = useQuery<IUserQuery['startTime']>('startTime')
+const endTime = useQuery<IUserQuery['endTime']>('endTime')
+const isDesc = useQuery('isDesc', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['isDesc']
+})
 
-  getList(query.value)
+const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
+
+const query = computed(() => {
+  const data: IUserQuery = { page: page.value, pageSize: pageSize.value }
+  if (keyword.value) {
+    data.keyword = keyword.value
+  }
+  if (disabled.value !== undefined) {
+    data.disabled = disabled.value
+  }
+  if (startTime.value) {
+    data.startTime = startTime.value
+  }
+  if (endTime.value) {
+    data.endTime = endTime.value
+  }
+  if (isDesc.value !== undefined) {
+    data.isDesc = isDesc.value
+  }
+
+  getList(data)
+  return data
+})
+
+const handleQuery = (data?: IUserQuery) => {
+  keyword.value = data?.keyword
+  disabled.value = data?.disabled
+  startTime.value = data?.startTime
+  endTime.value = data?.endTime
 }
 
 const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
   if (fieldName === 'createTime') {
-    query.value.isDesc = order === 'ascend' ? 0 : 1
-    getList(query.value)
+    isDesc.value = order === 'ascend' ? 0 : 1
     return
   }
 }
@@ -87,7 +122,7 @@ const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
   if (page.value < lastPage.value) {
     checkedIds.value = []
-    getList()
+    getList(query.value)
     return
   }
 
@@ -99,7 +134,7 @@ const deleteSuccess = () => {
       page.value -= 1
       return
     }
-    getList()
+    getList(query.value)
     return
   }
 }
@@ -107,11 +142,16 @@ const deleteSuccess = () => {
 
 <template>
   <div class="st-container">
-    <t-filter :loading="loading" @handle-search="handleQuery" @handle-reset="handleQuery" />
+    <t-filter
+      :loading="loading"
+      :query="query"
+      @handle-search="handleQuery"
+      @handle-reset="handleQuery"
+    />
 
     <div class="mt-20">
       <a-space>
-        <user-add @handle-success="getList" />
+        <user-add @handle-success="getList(query)" />
         <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
       </a-space>
     </div>
@@ -136,7 +176,7 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <user-edit :id="record.id" @handle-success="getList" />
+            <user-edit :id="record.id" @handle-success="getList(query)" />
             <user-delete :id="record.id" @handle-success="deleteSuccess" />
           </a-space>
         </template>

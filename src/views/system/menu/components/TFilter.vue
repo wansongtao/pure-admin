@@ -5,6 +5,9 @@ import { objectToArray } from '@/utils/index'
 import type { IBaseQuery } from '@/types/index'
 import type { IQueryMenuParam } from '@/types/api/menu'
 
+const $props = defineProps<{
+  query?: IQueryMenuParam
+}>()
 const $emits = defineEmits<{
   handleSearch: [query: IQueryMenuParam]
   handleReset: []
@@ -40,12 +43,27 @@ const handleReset = () => {
 
   $emits('handleReset')
 }
+
+watch(
+  () => $props.query,
+  (query) => {
+    if (query) {
+      disabled.value = query.disabled
+      type.value = query.type
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
   <base-filter
     :span="8"
     :disabled-empty-search="disabled === undefined && type === undefined"
+    :keyword="query?.title"
+    :date-range="[query?.startTime ?? '', query?.endTime ?? '']"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
   >
@@ -73,4 +91,3 @@ const handleReset = () => {
 </template>
 
 <style lang="scss" scoped></style>
- 
