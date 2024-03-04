@@ -3,22 +3,22 @@ import { STATUS, MENU_TYPES } from '@/config/index'
 import { objectToArray } from '@/utils/index'
 
 import type { IBaseQuery } from '@/types/index'
-import type { IQueryMenuParam } from '@/types/api/menu'
+import type { IMenuQuery } from '@/types/api/menu'
 
 const $props = defineProps<{
-  query?: IQueryMenuParam
+  query?: IMenuQuery
 }>()
 const $emits = defineEmits<{
-  handleSearch: [query: IQueryMenuParam]
+  handleSearch: [query: IMenuQuery]
   handleReset: []
 }>()
 
 const menuTypes = objectToArray(MENU_TYPES)
 
-const disabled = ref<IQueryMenuParam['disabled']>(undefined)
-const type = ref<IQueryMenuParam['type']>(undefined)
+const disabled = ref<IMenuQuery['disabled']>(undefined)
+const type = ref<IMenuQuery['type']>(undefined)
 const handleSearch = (data: IBaseQuery) => {
-  const params: IQueryMenuParam = {}
+  const params: IMenuQuery = {}
   if (data?.keyword) {
     params.title = data.keyword
   }

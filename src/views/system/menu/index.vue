@@ -11,14 +11,14 @@ import { getMenuList } from '@/api/menu'
 import { MENU_TYPES } from '@/config/index'
 import { useQuery } from '@/hooks/useQuery'
 
-import type { IQueryMenuParam, IMenuListItem } from '@/types/api/menu'
+import type { IMenuQuery, IMenuListItem } from '@/types/api/menu'
 import type { TableColumnProps } from 'ant-design-vue'
 
 defineOptions({
   name: 'SystemMenuIndex'
 })
 
-const requestData = async (params: IQueryMenuParam) => {
+const requestData = async (params: IMenuQuery) => {
   const { result } = await getMenuList(params)
 
   return {
@@ -27,7 +27,16 @@ const requestData = async (params: IQueryMenuParam) => {
   }
 }
 
-const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListItem })[] = [
+const timeSort = useQuery<IMenuQuery['timeSort']>('timeSort')
+const title = useQuery<IMenuQuery['title']>('title', undefined, { isEncodeURIComponent: true })
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IMenuQuery['disabled']
+})
+const type = useQuery<IMenuQuery['type']>('type')
+const startTime = useQuery<IMenuQuery['startTime']>('startTime')
+const endTime = useQuery<IMenuQuery['endTime']>('endTime')
+
+const columns = ref<(TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListItem })[]>([
   {
     align: 'center',
     title: '菜单名称',
@@ -69,6 +78,7 @@ const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListI
     title: '添加时间',
     dataIndex: 'createTime',
     sorter: true,
+    sortOrder: timeSort.value,
     width: 180
   },
   {
@@ -78,23 +88,12 @@ const columns: (TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListI
     fixed: 'right',
     width: 160
   }
-]
-
-const title = useQuery<IQueryMenuParam['title']>('title', undefined, { isEncodeURIComponent: true })
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IQueryMenuParam['disabled']
-})
-const type = useQuery<IQueryMenuParam['type']>('type')
-const startTime = useQuery<IQueryMenuParam['startTime']>('startTime')
-const endTime = useQuery<IQueryMenuParam['endTime']>('endTime')
-const isDesc = useQuery('isDesc', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IQueryMenuParam['isDesc']
-})
+])
 
 const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
 
 const query = computed(() => {
-  const data: IQueryMenuParam = { page: page.value, pageSize: pageSize.value }
+  const data: IMenuQuery = { page: page.value, pageSize: pageSize.value }
   if (title.value) {
     data.title = title.value
   }
@@ -110,15 +109,15 @@ const query = computed(() => {
   if (endTime.value) {
     data.endTime = endTime.value
   }
-  if (isDesc.value !== undefined) {
-    data.isDesc = isDesc.value
+  if (timeSort.value) {
+    data.timeSort = timeSort.value
   }
 
   getList(data)
   return data
 })
 
-const handleQuery = (data?: IQueryMenuParam) => {
+const handleQuery = (data?: IMenuQuery) => {
   title.value = data?.title ?? ''
   disabled.value = data?.disabled
   type.value = data?.type
@@ -127,8 +126,14 @@ const handleQuery = (data?: IQueryMenuParam) => {
 }
 
 const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
+  columns.value.forEach((item) => {
+    if (item.dataIndex === fieldName) {
+      item.sortOrder = order
+    }
+  })
+
   if (fieldName === 'createTime') {
-    isDesc.value = order === 'ascend' ? 0 : 1
+    timeSort.value = order as any
     return
   }
 }
