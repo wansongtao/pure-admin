@@ -12,7 +12,7 @@ import { MENU_TYPES } from '@/config/index'
 import { useQuery } from '@/hooks/useQuery'
 
 import type { IMenuQuery, IMenuListItem } from '@/types/api/menu'
-import type { TableColumnProps } from 'ant-design-vue'
+import type { IBaseColumn } from '@/types/ant-design'
 
 defineOptions({
   name: 'SystemMenuIndex'
@@ -36,7 +36,7 @@ const type = useQuery<IMenuQuery['type']>('type')
 const startTime = useQuery<IMenuQuery['startTime']>('startTime')
 const endTime = useQuery<IMenuQuery['endTime']>('endTime')
 
-const columns = ref<(TableColumnProps<IMenuListItem> & { dataIndex?: keyof IMenuListItem })[]>([
+const columns = ref<IBaseColumn<IMenuListItem>[]>([
   {
     align: 'center',
     title: '菜单名称',

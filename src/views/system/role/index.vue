@@ -10,7 +10,7 @@ import { getRoleList } from '@/api/role'
 import { useQuery } from '@/hooks/useQuery'
 
 import type { IRoleQuery, IRoleList } from '@/types/api/role'
-import type { TableColumnProps } from 'ant-design-vue'
+import type { IBaseColumn } from '@/types/ant-design'
 
 defineOptions({
   name: 'SystemRoleIndex'
@@ -33,7 +33,7 @@ const startTime = useQuery<IRoleQuery['startTime']>('startTime')
 const endTime = useQuery<IRoleQuery['endTime']>('endTime')
 const timeSort = useQuery<IRoleQuery['timeSort']>('timeSort')
 
-const columns = ref<(TableColumnProps & { dataIndex?: keyof IRoleList })[]>([
+const columns = ref<IBaseColumn<IRoleList>[]>([
   {
     align: 'center',
     title: '角色ID',

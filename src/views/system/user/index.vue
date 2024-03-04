@@ -10,13 +10,11 @@ import { useQuery } from '@/hooks/useQuery'
 import { getUserList } from '@/api/user'
 
 import type { IUserQuery, IUserList } from '@/types/api/user'
-import type { TableColumnProps } from 'ant-design-vue'
+import type { IBaseColumn } from '@/types/ant-design'
 
 defineOptions({
   name: 'SystemUserIndex'
 })
-
-type IColumn = TableColumnProps & { dataIndex?: keyof IUserList }
 
 const requestData = async (params: IUserQuery) => {
   const { result } = await getUserList(params)
@@ -37,7 +35,7 @@ const startTime = useQuery<IUserQuery['startTime']>('startTime')
 const endTime = useQuery<IUserQuery['endTime']>('endTime')
 const timeSort = useQuery<IUserQuery['timeSort']>('timeSort')
 
-const columns = ref<IColumn[]>([
+const columns = ref<IBaseColumn<IUserList>[]>([
   {
     align: 'center',
     title: '用户ID',
