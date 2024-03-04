@@ -4,10 +4,7 @@ export interface IRoleQuery {
    */
   disabled?: 0 | 1
   endTime?: string
-  /**
-   * 0 false，1 true 是否按添加时间降序，默认true
-   */
-  isDesc?: 0 | 1
+  timeSort?: 'ascend' | 'descend'
   /**
    * 依据name模糊查询
    */

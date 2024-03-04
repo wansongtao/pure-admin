@@ -25,7 +25,15 @@ const requestData = async (params: IRoleQuery) => {
   }
 }
 
-const columns: (TableColumnProps & { dataIndex?: keyof IRoleList })[] = [
+const name = useQuery<IRoleQuery['name']>('name', undefined, { isEncodeURIComponent: true })
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['disabled']
+})
+const startTime = useQuery<IRoleQuery['startTime']>('startTime')
+const endTime = useQuery<IRoleQuery['endTime']>('endTime')
+const timeSort = useQuery<IRoleQuery['timeSort']>('timeSort')
+
+const columns = ref<(TableColumnProps & { dataIndex?: keyof IRoleList })[]>([
   {
     align: 'center',
     title: '角色ID',
@@ -58,6 +66,7 @@ const columns: (TableColumnProps & { dataIndex?: keyof IRoleList })[] = [
     title: '添加时间',
     dataIndex: 'createTime',
     sorter: true,
+    sortOrder: timeSort.value,
     width: 180
   },
   {
@@ -67,17 +76,7 @@ const columns: (TableColumnProps & { dataIndex?: keyof IRoleList })[] = [
     fixed: 'right',
     width: 160
   }
-]
-
-const name = useQuery<IRoleQuery['name']>('name', undefined, { isEncodeURIComponent: true })
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['disabled']
-})
-const startTime = useQuery<IRoleQuery['startTime']>('startTime')
-const endTime = useQuery<IRoleQuery['endTime']>('endTime')
-const isDesc = useQuery('isDesc', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['isDesc']
-})
+])
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
 
@@ -95,8 +94,8 @@ const query = computed(() => {
   if (endTime.value) {
     data.endTime = endTime.value
   }
-  if (isDesc.value !== undefined) {
-    data.isDesc = isDesc.value
+  if (timeSort.value) {
+    data.timeSort = timeSort.value
   }
 
   getList(data)
@@ -111,8 +110,14 @@ const handleQuery = (data?: IRoleQuery) => {
 }
 
 const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
+  columns.value.forEach((item) => {
+    if (item.dataIndex === fieldName) {
+      item.sortOrder = order
+    }
+  })
+
   if (fieldName === 'createTime') {
-    isDesc.value = order === 'ascend' ? 0 : 1
+    timeSort.value = order as any
     return
   }
 }
