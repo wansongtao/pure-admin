@@ -16,6 +16,8 @@ defineOptions({
   name: 'SystemUserIndex'
 })
 
+type IColumn = TableColumnProps & { dataIndex?: keyof IUserList }
+
 const requestData = async (params: IUserQuery) => {
   const { result } = await getUserList(params)
 
@@ -25,7 +27,17 @@ const requestData = async (params: IUserQuery) => {
   }
 }
 
-const columns: (TableColumnProps & { dataIndex?: keyof IUserList })[] = [
+const keyword = useQuery<IUserQuery['keyword']>('keyword', undefined, {
+  isEncodeURIComponent: true
+})
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['disabled']
+})
+const startTime = useQuery<IUserQuery['startTime']>('startTime')
+const endTime = useQuery<IUserQuery['endTime']>('endTime')
+const timeSort = useQuery<IUserQuery['timeSort']>('timeSort')
+
+const columns = ref<IColumn[]>([
   {
     align: 'center',
     title: '用户ID',
@@ -57,6 +69,7 @@ const columns: (TableColumnProps & { dataIndex?: keyof IUserList })[] = [
     title: '添加时间',
     dataIndex: 'createTime',
     sorter: true,
+    sortOrder: timeSort.value,
     width: 180
   },
   {
@@ -66,19 +79,7 @@ const columns: (TableColumnProps & { dataIndex?: keyof IUserList })[] = [
     fixed: 'right',
     width: 160
   }
-]
-
-const keyword = useQuery<IUserQuery['keyword']>('keyword', undefined, {
-  isEncodeURIComponent: true
-})
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['disabled']
-})
-const startTime = useQuery<IUserQuery['startTime']>('startTime')
-const endTime = useQuery<IUserQuery['endTime']>('endTime')
-const isDesc = useQuery('isDesc', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['isDesc']
-})
+])
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
 
@@ -96,8 +97,8 @@ const query = computed(() => {
   if (endTime.value) {
     data.endTime = endTime.value
   }
-  if (isDesc.value !== undefined) {
-    data.isDesc = isDesc.value
+  if (timeSort.value) {
+    data.timeSort = timeSort.value
   }
 
   getList(data)
@@ -112,8 +113,14 @@ const handleQuery = (data?: IUserQuery) => {
 }
 
 const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
+  columns.value.forEach((item) => {
+    if (item.dataIndex === fieldName) {
+      item.sortOrder = order
+    }
+  })
+
   if (fieldName === 'createTime') {
-    isDesc.value = order === 'ascend' ? 0 : 1
+    timeSort.value = order as IUserQuery['timeSort']
     return
   }
 }

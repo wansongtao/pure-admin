@@ -1,6 +1,6 @@
 export interface IUserQuery {
   endTime?: string
-  isDesc?: 0 | 1
+  timeSort?: 'ascend' | 'descend'
   /**
    * 0=false，1=true
    */
