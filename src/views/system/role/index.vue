@@ -25,14 +25,7 @@ const requestData = async (params: IRoleQuery) => {
   }
 }
 
-const name = useQuery<IRoleQuery['name']>('name', undefined, { isEncodeURIComponent: true })
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['disabled']
-})
-const startTime = useQuery<IRoleQuery['startTime']>('startTime')
-const endTime = useQuery<IRoleQuery['endTime']>('endTime')
 const timeSort = useQuery<IRoleQuery['timeSort']>('timeSort')
-
 const columns = ref<IBaseColumn<IRoleList>[]>([
   {
     align: 'center',
@@ -77,8 +70,27 @@ const columns = ref<IBaseColumn<IRoleList>[]>([
     width: 160
   }
 ])
+const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
+  columns.value.forEach((item) => {
+    if (item.dataIndex === fieldName) {
+      item.sortOrder = order
+    }
+  })
+
+  if (fieldName === 'createTime') {
+    timeSort.value = order as IRoleQuery['timeSort']
+    return
+  }
+}
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
+
+const name = useQuery<IRoleQuery['name']>('name', undefined, { isEncodeURIComponent: true })
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['disabled']
+})
+const startTime = useQuery<IRoleQuery['startTime']>('startTime')
+const endTime = useQuery<IRoleQuery['endTime']>('endTime')
 
 const query = computed(() => {
   const data: IRoleQuery = { page: page.value, pageSize: pageSize.value }
@@ -107,19 +119,6 @@ const handleQuery = (data?: IRoleQuery) => {
   disabled.value = data?.disabled
   startTime.value = data?.startTime
   endTime.value = data?.endTime
-}
-
-const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
-  columns.value.forEach((item) => {
-    if (item.dataIndex === fieldName) {
-      item.sortOrder = order
-    }
-  })
-
-  if (fieldName === 'createTime') {
-    timeSort.value = order as any
-    return
-  }
 }
 
 const checkedIds = ref<number[]>([])

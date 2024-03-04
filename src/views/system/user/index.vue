@@ -25,14 +25,6 @@ const requestData = async (params: IUserQuery) => {
   }
 }
 
-const keyword = useQuery<IUserQuery['keyword']>('keyword', undefined, {
-  isEncodeURIComponent: true
-})
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['disabled']
-})
-const startTime = useQuery<IUserQuery['startTime']>('startTime')
-const endTime = useQuery<IUserQuery['endTime']>('endTime')
 const timeSort = useQuery<IUserQuery['timeSort']>('timeSort')
 
 const columns = ref<IBaseColumn<IUserList>[]>([
@@ -78,8 +70,29 @@ const columns = ref<IBaseColumn<IUserList>[]>([
     width: 160
   }
 ])
+const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
+  columns.value.forEach((item) => {
+    if (item.dataIndex === fieldName) {
+      item.sortOrder = order
+    }
+  })
+
+  if (fieldName === 'createTime') {
+    timeSort.value = order as IUserQuery['timeSort']
+    return
+  }
+}
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
+
+const keyword = useQuery<IUserQuery['keyword']>('keyword', undefined, {
+  isEncodeURIComponent: true
+})
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['disabled']
+})
+const startTime = useQuery<IUserQuery['startTime']>('startTime')
+const endTime = useQuery<IUserQuery['endTime']>('endTime')
 
 const query = computed(() => {
   const data: IUserQuery = { page: page.value, pageSize: pageSize.value }
@@ -108,19 +121,6 @@ const handleQuery = (data?: IUserQuery) => {
   disabled.value = data?.disabled
   startTime.value = data?.startTime
   endTime.value = data?.endTime
-}
-
-const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
-  columns.value.forEach((item) => {
-    if (item.dataIndex === fieldName) {
-      item.sortOrder = order
-    }
-  })
-
-  if (fieldName === 'createTime') {
-    timeSort.value = order as IUserQuery['timeSort']
-    return
-  }
 }
 
 const checkedIds = ref<number[]>([])

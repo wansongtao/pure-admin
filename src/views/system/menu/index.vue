@@ -28,14 +28,6 @@ const requestData = async (params: IMenuQuery) => {
 }
 
 const timeSort = useQuery<IMenuQuery['timeSort']>('timeSort')
-const title = useQuery<IMenuQuery['title']>('title', undefined, { isEncodeURIComponent: true })
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IMenuQuery['disabled']
-})
-const type = useQuery<IMenuQuery['type']>('type')
-const startTime = useQuery<IMenuQuery['startTime']>('startTime')
-const endTime = useQuery<IMenuQuery['endTime']>('endTime')
-
 const columns = ref<IBaseColumn<IMenuListItem>[]>([
   {
     align: 'center',
@@ -89,8 +81,28 @@ const columns = ref<IBaseColumn<IMenuListItem>[]>([
     width: 160
   }
 ])
+const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
+  columns.value.forEach((item) => {
+    if (item.dataIndex === fieldName) {
+      item.sortOrder = order
+    }
+  })
+
+  if (fieldName === 'createTime') {
+    timeSort.value = order as IMenuQuery['timeSort']
+    return
+  }
+}
 
 const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
+
+const title = useQuery<IMenuQuery['title']>('title', undefined, { isEncodeURIComponent: true })
+const disabled = useQuery('disabled', undefined, {
+  transform: (val) => (val !== undefined ? Number(val) : undefined) as IMenuQuery['disabled']
+})
+const type = useQuery<IMenuQuery['type']>('type')
+const startTime = useQuery<IMenuQuery['startTime']>('startTime')
+const endTime = useQuery<IMenuQuery['endTime']>('endTime')
 
 const query = computed(() => {
   const data: IMenuQuery = { page: page.value, pageSize: pageSize.value }
@@ -123,19 +135,6 @@ const handleQuery = (data?: IMenuQuery) => {
   type.value = data?.type
   startTime.value = data?.startTime
   endTime.value = data?.endTime
-}
-
-const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
-  columns.value.forEach((item) => {
-    if (item.dataIndex === fieldName) {
-      item.sortOrder = order
-    }
-  })
-
-  if (fieldName === 'createTime') {
-    timeSort.value = order as any
-    return
-  }
 }
 
 const checkedIds = ref<number[]>([])
