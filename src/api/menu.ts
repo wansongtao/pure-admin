@@ -3,13 +3,13 @@ import { request } from '@/utils/request'
 import type { IBaseList, IBaseResponse } from '@/types/index'
 import type {
   IMenuListItem,
-  IQueryMenuParam,
+  IMenuQuery,
   IMenuTree,
   IMenuParam,
   IMenuDetail
 } from '@/types/api/menu'
 
-export const getMenuList = (params: IQueryMenuParam) => {
+export const getMenuList = (params: IMenuQuery) => {
   return request<IBaseResponse<IBaseList<IMenuListItem>>>({
     url: '/admin/menu',
     method: 'GET',

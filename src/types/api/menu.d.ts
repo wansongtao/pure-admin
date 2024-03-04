@@ -1,6 +1,6 @@
 export type IMenuType = 'directory' | 'menu' | 'button'
 
-export interface IQueryMenuParam {
+export interface IMenuQuery {
   title?: string
   startTime?: string
   endTime?: string
@@ -8,7 +8,7 @@ export interface IQueryMenuParam {
   disabled?: 0 | 1
   page?: number
   pageSize?: number
-  isDesc?: 0 | 1
+  timeSort?: 'ascend' | 'descend'
 }
 
 export interface IMenuListItem {
