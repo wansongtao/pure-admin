@@ -34,7 +34,7 @@ const handleAdd = async (param: IMenuParam) => {
 </script>
 
 <template>
-  <a-button v-permission="['system:menu:add']" type="primary" @click="handleOpen">新增</a-button>
+  <a-button type="primary" @click="handleOpen">新增</a-button>
   <menu-modal ref="modalRef" v-model="open" v-model:loading="loading" @verify-success="handleAdd" />
 </template>
 
