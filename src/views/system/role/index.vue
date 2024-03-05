@@ -8,12 +8,29 @@ import RoleDelete from './components/RoleDelete.vue'
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
 import { useQuery } from '@/hooks/useQuery'
+import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IRoleQuery, IRoleList } from '@/types/api/role'
 import type { IBaseColumn } from '@/types/ant-design'
 
 defineOptions({
   name: 'SystemRoleIndex'
+})
+
+const { hasPermission } = useAuthority()
+const isShowTool = computed(() => {
+  return hasPermission(['system:role:add', 'system:role:del'], true)
+})
+const tableScroll = computed(() => {
+  return isShowTool.value
+    ? {
+        scrollToFirstRowOnChange: true,
+        y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 262px)'
+      }
+    : {
+        scrollToFirstRowOnChange: true,
+        y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 212px)'
+      }
 })
 
 const requestData = async (params: IRoleQuery) => {
@@ -26,50 +43,58 @@ const requestData = async (params: IRoleQuery) => {
 }
 
 const timeSort = useQuery<IRoleQuery['timeSort']>('timeSort')
-const columns = ref<IBaseColumn<IRoleList>[]>([
-  {
-    align: 'center',
-    title: '角色ID',
-    dataIndex: 'id',
-    width: 100
-  },
-  {
-    align: 'center',
-    title: '角色标识',
-    dataIndex: 'name'
-  },
-  {
-    align: 'center',
-    title: '角色昵称',
-    dataIndex: 'nickName'
-  },
-  {
-    align: 'center',
-    title: '角色描述',
-    dataIndex: 'description',
-    ellipsis: true
-  },
-  {
-    align: 'center',
-    title: '是否禁用',
-    dataIndex: 'disabled'
-  },
-  {
-    align: 'center',
-    title: '添加时间',
-    dataIndex: 'createTime',
-    sorter: true,
-    sortOrder: timeSort.value,
-    width: 180
-  },
-  {
-    align: 'center',
-    title: '操作',
-    key: 'operation',
-    fixed: 'right',
-    width: 160
+const columns = computed(() => {
+  const list: IBaseColumn<IRoleList>[] = [
+    {
+      align: 'center',
+      title: '角色ID',
+      dataIndex: 'id',
+      width: 100
+    },
+    {
+      align: 'center',
+      title: '角色标识',
+      dataIndex: 'name'
+    },
+    {
+      align: 'center',
+      title: '角色昵称',
+      dataIndex: 'nickName'
+    },
+    {
+      align: 'center',
+      title: '角色描述',
+      dataIndex: 'description',
+      ellipsis: true
+    },
+    {
+      align: 'center',
+      title: '是否禁用',
+      dataIndex: 'disabled'
+    },
+    {
+      align: 'center',
+      title: '添加时间',
+      dataIndex: 'createTime',
+      sorter: true,
+      sortOrder: timeSort.value,
+      width: 180
+    }
+  ]
+
+  if (hasPermission(['system:role:edit', 'system:role:del'], true)) {
+    list.push({
+      align: 'center',
+      title: '操作',
+      key: 'operation',
+      fixed: 'right',
+      width: 160
+    })
   }
-])
+
+  return list
+})
+
 const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
   columns.value.forEach((item) => {
     if (item.dataIndex === fieldName) {
@@ -152,7 +177,7 @@ const deleteSuccess = () => {
       @handle-reset="handleQuery"
     />
 
-    <div class="tool">
+    <div class="tool" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:role:add">
           <role-add @handle-success="getList(query)" />
@@ -165,7 +190,7 @@ const deleteSuccess = () => {
 
     <base-table
       :columns="columns"
-      :default-show-operation="false"
+      :scroll="tableScroll"
       :loading="loading"
       :list="list"
       default-row-selection
@@ -181,7 +206,7 @@ const deleteSuccess = () => {
             <check-permission permissions="system:role:edit">
               <role-edit :id="record.id" @handle-success="getList(query)" />
             </check-permission>
-            
+
             <check-permission permissions="system:role:del">
               <role-delete :id="record.id" @handle-success="deleteSuccess" />
             </check-permission>
