@@ -54,7 +54,6 @@ const handleEdit = async (data: IMenuParam) => {
 
 <template>
   <a-button
-    v-permission="['system:menu:edit']"
     type="primary"
     size="small"
     ghost

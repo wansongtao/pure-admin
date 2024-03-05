@@ -204,8 +204,12 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <menu-edit :id="record.id" @handle-success="getList(query)" />
-            <menu-delete :id="record.id" @handle-success="deleteSuccess" />
+            <check-permission permissions="['system:menu:edit']">
+              <menu-edit :id="record.id" @handle-success="getList(query)" />
+            </check-permission>
+            <check-permission permissions="['system:menu:del']">
+              <menu-delete :id="record.id" @handle-success="deleteSuccess" />
+            </check-permission>
           </a-space>
         </template>
       </template>
