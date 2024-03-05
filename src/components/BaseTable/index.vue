@@ -25,23 +25,17 @@ defineSlots<{
 
 const $emits = defineEmits<{
   handleSort: [fieldName: keyof T, order?: 'descend' | 'ascend' | null]
-  handleEdit: [id: Key, record: T]
-  handleDelete: [id: Key, record: T]
 }>()
 const $props = withDefaults(
   defineProps<{
     rowKey?: string
-    columns: K[]
+    columns: K[] 
     list?: T[]
     loading?: boolean
     scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string }
     defaultExpandAllRows?: boolean
     defaultExpandFirstRows?: boolean
     defaultExpandedRowKeys?: string[]
-    /**
-     * 展示默认操作项（删除/编辑按钮）
-     */
-    defaultShowOperation?: boolean
     /**
      * 展示默认选择配置
      */
@@ -53,6 +47,7 @@ const $props = withDefaults(
       record: T
       index: number
     }) => any
+    rowClassName?: (record: T, index: number) => string
   }>(),
   {
     rowKey: 'id',
@@ -61,7 +56,6 @@ const $props = withDefaults(
       y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 262px)'
     }),
     defaultExpandFirstRows: false,
-    defaultShowOperation: true,
     defaultRowSelection: false,
     transformCellText: ({
       text,
@@ -82,22 +76,10 @@ const $props = withDefaults(
       }
 
       return text
-    }
+    },
+    rowClassName: (_record: T, index: number) => (index % 2 === 1 ? 'table-striped' : '')
   }
 )
-
-const columnList = computed(() => {
-  const defaultItem = {
-    align: 'center',
-    title: '操作',
-    key: 'operation',
-    fixed: 'right',
-    width: 160
-  }
-
-  const list = $props.defaultShowOperation ? [...$props.columns, defaultItem] : $props.columns
-  return list as TableColumnProps[]
-})
 
 const selectedRowKeys = defineModel<Key[]>('checked', { default: [] })
 const rowSelectionConfig = computed(() => {
@@ -140,13 +122,6 @@ const handleSort = (_p: any, _f: any, sorter: SorterResult | SorterResult[]) => 
 
   $emits('handleSort', fieldName, order)
 }
-
-const handleEdit = (id: Key, record: T) => {
-  $emits('handleEdit', id, record)
-}
-const handleDelete = (id: Key, record: T) => {
-  $emits('handleDelete', id, record)
-}
 </script>
 
 <template>
@@ -155,32 +130,19 @@ const handleDelete = (id: Key, record: T) => {
       v-bind="$attrs"
       class="ant-table-striped"
       :row-key="rowKey"
-      :columns="columnList"
+      :columns="columns as TableColumnProps[]"
       :data-source="list"
       v-model:expanded-row-keys="expandedRowKeys"
       :loading="loading"
       :pagination="false"
       :scroll="scroll"
       :row-selection="rowSelectionConfig"
-      :row-class-name="(_record: T, index: number) => (index % 2 === 1 ? 'table-striped' : '')"
+      :row-class-name="rowClassName"
       :transform-cell-text="transformCellText"
       @change="handleSort"
     >
       <template #bodyCell="{ column, record, index, text }">
-        <slot :column="(column as K)" :record="record as T" :index="index" :text="text" />
-
-        <template v-if="column.key === 'operation' && defaultShowOperation">
-          <a-space>
-            <a-button
-              type="primary"
-              size="small"
-              ghost
-              @click="handleEdit(record[rowKey], record as T)"
-              >编辑</a-button
-            >
-            <button-delete @handle-ok="handleDelete(record[rowKey], record as T)" />
-          </a-space>
-        </template>
+        <slot :column="column as K" :record="record as T" :index="index" :text="text" />
       </template>
 
       <template #headerCell="{ column, title }">
