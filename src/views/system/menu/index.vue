@@ -45,59 +45,67 @@ const requestData = async (params: IMenuQuery) => {
 }
 
 const timeSort = useQuery<IMenuQuery['timeSort']>('timeSort')
-const columns = ref<IBaseColumn<IMenuListItem>[]>([
-  {
-    align: 'center',
-    title: '菜单名称',
-    dataIndex: 'title',
-    ellipsis: true
-  },
-  {
-    align: 'center',
-    title: '菜单路径',
-    dataIndex: 'path',
-    ellipsis: true
-  },
-  {
-    align: 'center',
-    title: '菜单权限',
-    dataIndex: 'permission',
-    ellipsis: true
-  },
-  {
-    align: 'center',
-    title: '菜单类型',
-    dataIndex: 'type',
-    width: 100
-  },
-  {
-    align: 'center',
-    title: '菜单图标',
-    dataIndex: 'icon',
-    width: 100
-  },
-  {
-    align: 'center',
-    title: '是否禁用',
-    dataIndex: 'disabled',
-    width: 100
-  },
-  {
-    align: 'center',
-    title: '添加时间',
-    dataIndex: 'createTime',
-    sorter: true,
-    sortOrder: timeSort.value,
-    width: 180
-  },
-  {
-    align: 'center',
-    title: '操作',
-    key: 'operation',
-    fixed: 'right',
-    width: 160
+const columns = computed(() => {
+  const list: IBaseColumn<IMenuListItem>[] = [
+    {
+      align: 'center',
+      title: '菜单名称',
+      dataIndex: 'title',
+      ellipsis: true
+    },
+    {
+      align: 'center',
+      title: '菜单路径',
+      dataIndex: 'path',
+      ellipsis: true
+    },
+    {
+      align: 'center',
+      title: '菜单权限',
+      dataIndex: 'permission',
+      ellipsis: true
+    },
+    {
+      align: 'center',
+      title: '菜单类型',
+      dataIndex: 'type',
+      width: 100
+    },
+    {
+      align: 'center',
+      title: '菜单图标',
+      dataIndex: 'icon',
+      width: 100
+    },
+    {
+      align: 'center',
+      title: '是否禁用',
+      dataIndex: 'disabled',
+      width: 100
+    },
+    {
+      align: 'center',
+      title: '添加时间',
+      dataIndex: 'createTime',
+      sorter: true,
+      sortOrder: timeSort.value,
+      width: 180
+    }
+  ]
+
+  if (hasPermission(['system:menu:edit', 'system:menu:del'], true)) {
+    list.push({
+      align: 'center',
+      title: '操作',
+      key: 'operation',
+      fixed: 'right',
+      width: 160
+    })
   }
-])
+
+  return list
+})
+
 const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
   columns.value.forEach((item) => {
     if (item.dataIndex === fieldName) {
