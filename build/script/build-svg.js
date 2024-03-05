@@ -4,6 +4,11 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+/**
+ * 处理单色图标的fill和class，使其可以通过css控制颜色
+ * @param {string} path 
+ * @param {string} [className='svg-icon'] 
+ */
 const updateMonochromeSvg = async (path, className = 'svg-icon') => {
   const monochromePath = resolve(__dirname, path)
 
