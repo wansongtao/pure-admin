@@ -10,12 +10,29 @@ import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
 import { MENU_TYPES } from '@/config/index'
 import { useQuery } from '@/hooks/useQuery'
+import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IMenuQuery, IMenuListItem } from '@/types/api/menu'
 import type { IBaseColumn } from '@/types/ant-design'
 
 defineOptions({
   name: 'SystemMenuIndex'
+})
+
+const { hasPermission } = useAuthority()
+const isShowTool = computed(() => {
+  return hasPermission(['system:menu:add', 'system:menu:del'], true)
+})
+const tableScroll = computed(() => {
+  return isShowTool.value
+    ? {
+        scrollToFirstRowOnChange: true,
+        y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 262px)'
+      }
+    : {
+        scrollToFirstRowOnChange: true,
+        y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 212px)'
+      }
 })
 
 const requestData = async (params: IMenuQuery) => {
@@ -168,7 +185,7 @@ const deleteSuccess = () => {
       @handle-reset="handleQuery"
     />
 
-    <div class="tool">
+    <div class="tool" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:menu:add">
           <menu-add @handle-success="getList(query)" />
@@ -188,7 +205,7 @@ const deleteSuccess = () => {
       default-expand-first-rows
       default-row-selection
       v-model:checked="checkedIds"
-      :default-show-operation="false"
+      :scroll="tableScroll"
       @handle-sort="handleSort"
     >
       <template #default="{ column, record }">
