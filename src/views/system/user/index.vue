@@ -8,12 +8,29 @@ import UserAdd from './components/UserAdd.vue'
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { useQuery } from '@/hooks/useQuery'
 import { getUserList } from '@/api/user'
+import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IUserQuery, IUserList } from '@/types/api/user'
 import type { IBaseColumn } from '@/types/ant-design'
 
 defineOptions({
   name: 'SystemUserIndex'
+})
+
+const { hasPermission } = useAuthority()
+const isShowTool = computed(() => {
+  return hasPermission(['system:user:add', 'system:user:del'], true)
+})
+const tableScroll = computed(() => {
+  return isShowTool.value
+    ? {
+        scrollToFirstRowOnChange: true,
+        y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 262px)'
+      }
+    : {
+        scrollToFirstRowOnChange: true,
+        y: 'calc(100vh - var(--st-scrollbar-h) - var(--st-header-h) - 212px)'
+      }
 })
 
 const requestData = async (params: IUserQuery) => {
@@ -26,50 +43,57 @@ const requestData = async (params: IUserQuery) => {
 }
 
 const timeSort = useQuery<IUserQuery['timeSort']>('timeSort')
+const columns = computed(() => {
+  const list: IBaseColumn<IUserList>[] = [
+    {
+      align: 'center',
+      title: '用户ID',
+      dataIndex: 'id',
+      width: 100
+    },
+    {
+      align: 'center',
+      title: '用户名',
+      dataIndex: 'userName'
+    },
+    {
+      align: 'center',
+      title: '角色头像',
+      dataIndex: 'avatar'
+    },
+    {
+      align: 'center',
+      title: '用户昵称',
+      dataIndex: 'nickName'
+    },
+    {
+      align: 'center',
+      title: '是否禁用',
+      dataIndex: 'disabled'
+    },
+    {
+      align: 'center',
+      title: '添加时间',
+      dataIndex: 'createTime',
+      sorter: true,
+      sortOrder: timeSort.value,
+      width: 180
+    }
+  ]
 
-const columns = ref<IBaseColumn<IUserList>[]>([
-  {
-    align: 'center',
-    title: '用户ID',
-    dataIndex: 'id',
-    width: 100
-  },
-  {
-    align: 'center',
-    title: '用户名',
-    dataIndex: 'userName'
-  },
-  {
-    align: 'center',
-    title: '角色头像',
-    dataIndex: 'avatar'
-  },
-  {
-    align: 'center',
-    title: '用户昵称',
-    dataIndex: 'nickName'
-  },
-  {
-    align: 'center',
-    title: '是否禁用',
-    dataIndex: 'disabled'
-  },
-  {
-    align: 'center',
-    title: '添加时间',
-    dataIndex: 'createTime',
-    sorter: true,
-    sortOrder: timeSort.value,
-    width: 180
-  },
-  {
-    align: 'center',
-    title: '操作',
-    key: 'operation',
-    fixed: 'right',
-    width: 160
+  if (hasPermission(['system:user:edit', 'system:user:del'], true)) {
+    list.push({
+      align: 'center',
+      title: '操作',
+      key: 'operation',
+      fixed: 'right',
+      width: 160
+    })
   }
-])
+
+  return list
+})
+
 const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
   columns.value.forEach((item) => {
     if (item.dataIndex === fieldName) {
@@ -154,7 +178,7 @@ const deleteSuccess = () => {
       @handle-reset="handleQuery"
     />
 
-    <div class="mt-20">
+    <div class="mt-20" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:user:add">
           <user-add @handle-success="getList(query)" />
@@ -169,7 +193,7 @@ const deleteSuccess = () => {
       v-model:checked="checkedIds"
       default-row-selection
       :columns="columns"
-      :default-show-operation="false"
+      :scroll="tableScroll"
       :loading="loading"
       :list="list"
       @handle-sort="handleSort"
