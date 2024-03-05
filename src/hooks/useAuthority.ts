@@ -6,11 +6,11 @@ export const useAuthority = () => {
   const userStore = useUserStore()
   const { userInfo } = storeToRefs(userStore)
 
-  const hasPermission = (...rest: string[]) => {
-    return hasPermissions(userInfo.value.permissions, rest)
+  const hasPermission = (perm: string | string[], or?: boolean) => {
+    return hasPermissions(userInfo.value.permissions, perm, or)
   }
-  const hasRole = (...rest: string[]) => {
-    return hasRoles(userInfo.value.roles, rest)
+  const hasRole = (role: string | string[], or?: boolean) => {
+    return hasRoles(userInfo.value.roles, role, or)
   }
 
   return {
