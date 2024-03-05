@@ -156,8 +156,12 @@ const deleteSuccess = () => {
 
     <div class="mt-20">
       <a-space>
-        <user-add @handle-success="getList(query)" />
-        <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
+        <check-permission permissions="system:user:add">
+          <user-add @handle-success="getList(query)" />
+        </check-permission>
+        <check-permission permissions="system:user:del">
+          <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
+        </check-permission>
       </a-space>
     </div>
 
@@ -181,8 +185,12 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <user-edit :id="record.id" @handle-success="getList(query)" />
-            <user-delete :id="record.id" @handle-success="deleteSuccess" />
+            <check-permission permissions="system:user:edit">
+              <user-edit :id="record.id" @handle-success="getList(query)" />
+            </check-permission>
+            <check-permission permissions="system:user:del">
+              <user-delete :id="record.id" @handle-success="deleteSuccess" />
+            </check-permission>
           </a-space>
         </template>
       </template>

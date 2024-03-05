@@ -50,7 +50,6 @@ const handleDelete = async () => {
 
 <template>
   <button-delete
-    v-permission="['system:role:del']"
     :size="isSingle ? 'small' : 'middle'"
     :text="isSingle ? '删除' : '批量删除'"
     :confirm-config="{

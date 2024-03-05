@@ -46,14 +46,7 @@ const handleEdit = async (data: IRoleEditParam) => {
 </script>
 
 <template>
-  <a-button
-    v-permission="['system:role:edit']"
-    type="primary"
-    size="small"
-    ghost
-    @click="handleOpen"
-    >编辑</a-button
-  >
+  <a-button type="primary" size="small" ghost @click="handleOpen">编辑</a-button>
   <role-modal
     v-model="open"
     v-model:loading="loading"

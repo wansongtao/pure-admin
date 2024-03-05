@@ -154,8 +154,12 @@ const deleteSuccess = () => {
 
     <div class="tool">
       <a-space>
-        <role-add @handle-success="getList(query)" />
-        <role-delete :id="checkedIds" @handle-success="deleteSuccess" />
+        <check-permission permissions="system:role:add">
+          <role-add @handle-success="getList(query)" />
+        </check-permission>
+        <check-permission permissions="system:role:del">
+          <role-delete :id="checkedIds" @handle-success="deleteSuccess" />
+        </check-permission>
       </a-space>
     </div>
 
@@ -174,8 +178,13 @@ const deleteSuccess = () => {
         </template>
         <template v-if="column.key === 'operation'">
           <a-space>
-            <role-edit :id="record.id" @handle-success="getList(query)" />
-            <role-delete :id="record.id" @handle-success="deleteSuccess" />
+            <check-permission permissions="system:role:edit">
+              <role-edit :id="record.id" @handle-success="getList(query)" />
+            </check-permission>
+            
+            <check-permission permissions="system:role:del">
+              <role-delete :id="record.id" @handle-success="deleteSuccess" />
+            </check-permission>
           </a-space>
         </template>
       </template>

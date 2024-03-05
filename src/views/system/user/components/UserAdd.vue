@@ -36,7 +36,7 @@ const handleAdd = async (param: IUserEdit) => {
 </script>
 
 <template>
-  <a-button v-permission="['system:user:add']" type="primary" @click="handleOpen">新增</a-button>
+  <a-button type="primary" @click="handleOpen">新增</a-button>
   <user-modal ref="modalRef" v-model="open" v-model:loading="loading" @on-ok="handleAdd" />
 </template>
 
