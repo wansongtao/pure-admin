@@ -219,7 +219,7 @@ export const getTrulyObject = <T extends Record<any, any>>(data: T) => {
  * 获取数据中变化了的部分
  * @param data 变更后的数据
  * @param agoObj 历史(对比)数据
- * @returns 
+ * @returns
  */
 export const getChangedData = <T extends Record<any, any>, K extends Record<any, any>>(
   data: T,
@@ -230,6 +230,10 @@ export const getChangedData = <T extends Record<any, any>, K extends Record<any,
   const keys: (keyof K)[] = Object.keys(data)
   keys.forEach((k) => {
     const newValue = data[k] as any
+    if ((newValue === '' || newValue === null) && agoObj[k] === undefined) {
+      return
+    }
+
     if (newValue !== agoObj[k]) {
       changedData[k] = newValue
     }
