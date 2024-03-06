@@ -24,7 +24,7 @@ const $emits = defineEmits<{
   onOk: [data: IUserInfo]
 }>()
 
-const confirmLoading = defineModel<boolean>('loading', { default: false })
+const loading = defineModel<boolean>('loading', { default: false })
 const open = defineModel<boolean>()
 
 const { roleTree, fetchRoleTree } = useRoleTree(false)
@@ -36,7 +36,7 @@ watch(open, (val) => {
   fetchRoleTree()
 })
 
-const rules: Record<string, Rule[]> = {
+const rules: {[key in keyof IUserInfo]: Rule[]}= {
   userName: [
     {
       required: true,
@@ -113,7 +113,7 @@ defineExpose({
 <template>
   <a-modal
     :open="open"
-    :confirm-loading="confirmLoading"
+    :confirm-loading="loading"
     :title="title"
     @cancel="handleCancel"
     @ok="handleOk"
@@ -130,7 +130,7 @@ defineExpose({
         <upload-avatar ref="uploadRef" v-model:img-url="formState.avatar" />
       </a-form-item>
       <a-form-item label="用户名：" name="userName">
-        <a-input v-model:value="formState.userName" :readonly="!!details" />
+        <a-input v-model:value="formState.userName" :disabled="!!details" />
       </a-form-item>
       <a-form-item label="用户角色：" name="roles">
         <a-select
