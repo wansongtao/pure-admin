@@ -15,10 +15,14 @@ const $emits = defineEmits<{
 }>()
 
 const open = ref(false)
+const loading = ref(false)
 const detail = ref<IRoleDetail>()
+
 const handleOpen = async () => {
   open.value = true
+  loading.value = true
   const { result } = await getRoleDetail($props.id)
+  loading.value = false
   if (!result) {
     return
   }
@@ -26,7 +30,6 @@ const handleOpen = async () => {
   detail.value = result.data
 }
 
-const loading = ref(false)
 const handleEdit = async (data: IRoleEditParam) => {
   data = getChangedData(data, detail.value!)
   if (Object.keys(data).length === 0) {

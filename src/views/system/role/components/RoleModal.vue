@@ -18,7 +18,7 @@ const $props = withDefaults(
   }
 )
 
-const confirmLoading = defineModel<boolean>('loading', { default: false })
+const loading = defineModel<boolean>('loading', { default: false })
 
 const { menuTree, fetchMenuTree } = useMenuTree(undefined, false)
 
@@ -29,7 +29,7 @@ watch(open, (val) => {
   }
 })
 
-const rules: Record<string, Rule[]> = {
+const rules: { [key in keyof IRoleEditParam]: Rule[] } = {
   name: [
     {
       required: true,
@@ -45,7 +45,7 @@ const rules: Record<string, Rule[]> = {
   description: [
     {
       required: false,
-      validator: validateRoleDescription,
+      validator: validateRoleDescription
     }
   ]
 }
@@ -109,7 +109,13 @@ defineExpose({
 </script>
 
 <template>
-  <a-modal :open="open" :confirm-loading="confirmLoading" :title="title" @cancel="handleCancel" @ok="handleOk">
+  <a-modal
+    :open="open"
+    :confirm-loading="loading"
+    :title="title"
+    @cancel="handleCancel"
+    @ok="handleOk"
+  >
     <a-form
       ref="formRef"
       :model="formState"
