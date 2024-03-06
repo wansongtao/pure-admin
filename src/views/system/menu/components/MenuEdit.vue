@@ -15,27 +15,20 @@ const $emits = defineEmits<{
 }>()
 
 const open = ref(false)
+const loading = ref(false)
 const detail = ref<IMenuDetail>()
+
 const handleOpen = async () => {
+  open.value = true
+  loading.value = true
+
   const { result } = await getMenuDetail($props.id)
-  if (result) {
-    detail.value = result.data
-    open.value = true
-  }
+  loading.value = false
+  detail.value = result?.data
 }
 
-const loading = ref(false)
 const handleEdit = async (data: IMenuParam) => {
   data = getChangedData(data, detail.value!)
-
-  // 移除默认值
-  const keys = Object.keys(data) as (keyof IMenuParam)[]
-  keys.forEach((k) => {
-    if (detail.value![k] === undefined && !data[k]) {
-      delete data[k]
-    }
-  })
-
   if (Object.keys(data).length === 0) {
     message.warn('您没有修改任何信息！')
     return

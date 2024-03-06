@@ -25,7 +25,7 @@ const $props = withDefaults(
     title: '新增菜单'
   }
 )
-const confirmLoading = defineModel<boolean>('loading', { default: false })
+const loading = defineModel<boolean>('loading', { default: false })
 
 const menuTypes = objectToArray(MENU_TYPES)
 const { menuTree, fetchMenuTree } = useMenuTree((data) => {
@@ -43,7 +43,7 @@ watch(open, (val) => {
   }
 })
 
-const rules: Record<string, Rule[]> = {
+const rules: { [key in keyof IMenuParam]: Rule[] } = {
   title: [
     {
       required: true,
@@ -67,6 +67,13 @@ const rules: Record<string, Rule[]> = {
     {
       required: false,
       validator: validateMenuRedirect,
+      trigger: 'change'
+    }
+  ],
+  component: [
+    {
+      required: false,
+      validator: validateMenuComponent,
       trigger: 'change'
     }
   ]
@@ -159,7 +166,7 @@ defineExpose({
   <div class="menu_modal">
     <a-modal
       :open="open"
-      :confirm-loading="confirmLoading"
+      :confirm-loading="loading"
       :title="title"
       @cancel="handleCancel"
       @ok="handleOk"
@@ -208,13 +215,7 @@ defineExpose({
           <a-form-item
             label="组件路径："
             name="component"
-            :rules="[
-              {
-                required: formState.type === 'menu',
-                validator: validateMenuComponent,
-                trigger: 'change'
-              }
-            ]"
+            :required="formState.type === 'menu'"
           >
             <a-input v-model:value="formState.component" />
           </a-form-item>
