@@ -139,18 +139,24 @@ const handleOk = async () => {
   }
 
   formRef.value?.validate(nameList).then(() => {
-    const data = { ...formState.value }
+    const data: IMenuParam = { }
     if (formState.value.type === 'button') {
-      delete data['cache']
-      delete data['component']
-      delete data['hidden']
-      delete data['icon']
-      delete data['path']
-      delete data['props']
-      delete data['redirect']
+      data.pid = formState.value.pid
+      data.type = formState.value.type
+      data.title = formState.value.title
+      data.disabled = formState.value.disabled
+      data.permission = formState.value.permission
     } else if (formState.value.type === 'directory') {
-      delete data['cache']
-      delete data['props']
+      data.pid = formState.value.pid
+      data.type = formState.value.type
+      data.title = formState.value.title
+      data.permission = formState.value.permission
+      data.disabled = formState.value.disabled
+      data.hidden = formState.value.hidden
+      data.path = formState.value.path
+      data.component = formState.value.component
+      data.redirect = formState.value.redirect
+      data.icon = formState.value.icon
     }
 
     $emits('verifySuccess', data)
