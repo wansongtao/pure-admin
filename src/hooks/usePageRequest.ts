@@ -56,9 +56,11 @@ export const usePageRequest = <
   /**
    * 请求列表数据，自动带上page与pageSize，只传入其他query即可
    */
-  const getList: (query: Q) => void = debounce((query: Q) => {
+  const getList: (query?: Q) => void = debounce((query?: Q) => {
+    const params = { page: page.value, pageSize: pageSize.value, ...query } as unknown as Q
     loading.value = true
-    requestData(query)
+    
+    requestData(params)
       .then((res) => {
         list.value = res.data
         total.value = res.total
@@ -71,8 +73,8 @@ export const usePageRequest = <
   if (autoWatchPage) {
     watch(
       [page, pageSize],
-      ([page, pageSize]) => {
-        getList({ page, pageSize } as unknown as Q)
+      () => {
+        getList()
       },
       { immediate: true }
     )
