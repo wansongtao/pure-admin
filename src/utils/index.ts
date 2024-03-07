@@ -247,3 +247,87 @@ export const getBase64 = (img: Blob, callback: (base64Url: string) => void) => {
   reader.addEventListener('load', () => callback(reader.result as string))
   reader.readAsDataURL(img)
 }
+
+/**
+ * 页面失活(无操作)
+ * @param callback 页面一定时长无操作时触发
+ * @param timeout 时长，默认15s，单位：秒
+ * @param immediate 是否立即开始，默认 false
+ * @returns
+ */
+export function pageDeactivated(
+  callback: () => void,
+  timeout = 15,
+  immediate = false
+) {
+  let pageTimer: NodeJS.Timeout | undefined = undefined;
+  let beginTime = 0;
+
+  /**
+   * 清除当前开始的失活计时器
+   */
+  const onClearTimer = () => {
+    pageTimer && clearTimeout(pageTimer);
+    pageTimer = undefined;
+  };
+
+  const startTimer = () => {
+    const currentTime = Date.now();
+    // 避免频繁触发
+    if (pageTimer && currentTime - beginTime < 100) {
+      return;
+    }
+
+    onClearTimer();
+    beginTime = currentTime;
+    pageTimer = setTimeout(() => {
+      callback();
+    }, timeout * 1000);
+  };
+  // 处理标签页隐藏后再显示引起的精度问题
+  const onPageVisibility = () => {
+    onClearTimer();
+
+    if (document.visibilityState === 'visible') {
+      const currentTime = Date.now();
+      if (currentTime - beginTime >= timeout * 1000) {
+        callback();
+        return;
+      }
+
+      pageTimer = setTimeout(() => {
+        callback();
+      }, timeout * 1000 - (currentTime - beginTime));
+    }
+  };
+
+  /**
+   * 开始监听失活
+   */
+  const onStartDeactivated = () => {
+    startTimer();
+    document.addEventListener('mousedown', startTimer);
+    document.addEventListener('mousemove', startTimer);
+    document.addEventListener('visibilitychange', onPageVisibility);
+  };
+
+  if (immediate) {
+    onStartDeactivated();
+  }
+
+  /**
+   * 停止监听失活
+   */
+  const onStopDeactivated = () => {
+    onClearTimer();
+    document.removeEventListener('mousedown', startTimer);
+    document.removeEventListener('mousemove', startTimer);
+    document.removeEventListener('visibilitychange', onPageVisibility);
+  };
+
+  return {
+    onStartDeactivated,
+    onStopDeactivated,
+    onClearTimer
+  };
+}
