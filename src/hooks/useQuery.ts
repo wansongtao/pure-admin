@@ -5,9 +5,9 @@
 import { nextTick, watch, ref, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-type IValue = string | number | string[] | null | undefined
+type IQuery = string | number | string[] | null | undefined
 
-const queriesQueue = new Map<string, Record<string, IValue>>()
+const queriesQueue = new Map<string, Record<string, IQuery>>()
 
 /**
  * 获取当前页面的query
@@ -16,7 +16,7 @@ const queriesQueue = new Map<string, Record<string, IValue>>()
  * @param options
  * @returns
  */
-export const useQuery = <T extends IValue, K extends IValue = T>(
+export const useQuery = <T extends IQuery, K extends IQuery = T>(
   name: string,
   defaultValue?: T,
   options: {
@@ -30,8 +30,8 @@ export const useQuery = <T extends IValue, K extends IValue = T>(
   const route = useRoute()
   const router = useRouter()
   const currentPath = route.path
-
   const query = ref(defaultValue) as Ref<T | K>
+
   watch(
     () => route.query[name],
     (value) => {
@@ -56,18 +56,23 @@ export const useQuery = <T extends IValue, K extends IValue = T>(
     }
   )
 
-  watch(query, (value) => {
+  const setQueryQueue = (value: IQuery) => {
     const currentPageQueries = queriesQueue.get(currentPath) || {}
-    currentPageQueries[name] = isEncodeURIComponent ? encodeURIComponent(value as string) : value
+    if (value === null || value === undefined) {
+      currentPageQueries[name] = value
+    } else {
+      currentPageQueries[name] = isEncodeURIComponent ? encodeURIComponent(value as string) : value
+    }
+
     queriesQueue.set(currentPath, currentPageQueries)
+  }
+
+  watch(query, (value) => {
+    setQueryQueue(value as IQuery)
 
     nextTick(() => {
-      if (Object.keys(currentPageQueries).length === 0) {
-        return
-      }
-
+      const currentPageQueries = queriesQueue.get(currentPath) || {}
       const { params, query: oldQuery, hash } = route
-
       router[mode]({
         params,
         query: {
@@ -80,4 +85,42 @@ export const useQuery = <T extends IValue, K extends IValue = T>(
   })
 
   return query
+}
+
+export const useObjectQuery = <T extends Record<string, any>>(
+  name: string,
+  defaultValue?: T,
+  options: {
+    transform?: (value: string | undefined) => string
+    mode?: 'push' | 'replace'
+    isEncodeURIComponent?: boolean
+  } = {}
+) => {
+  const str = useQuery<string | undefined>(name, undefined, {
+    isEncodeURIComponent: true,
+    ...options
+  })
+
+  const search = computed({
+    get: () => {
+      try {
+        return str.value !== undefined ? JSON.parse(str.value) : {}
+      } catch (error) {
+        return {}
+      }
+    },
+    set: (val: T) => {
+      try {
+        str.value = val !== undefined ? JSON.stringify(val) : undefined
+      } catch (error) {
+        str.value = undefined
+      }
+    }
+  })
+
+  if (defaultValue !== undefined) {
+    search.value = defaultValue
+  }
+
+  return search
 }
