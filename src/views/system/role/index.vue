@@ -7,7 +7,7 @@ import RoleDelete from './components/RoleDelete.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getRoleList } from '@/api/role'
-import { useQuery } from '@/hooks/useQuery'
+import { useObjectQuery } from '@/hooks/useQuery'
 import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IRoleQuery, IRoleList } from '@/types/api/role'
@@ -42,7 +42,8 @@ const requestData = async (params: IRoleQuery) => {
   }
 }
 
-const timeSort = useQuery<IRoleQuery['timeSort']>('timeSort')
+const search = useObjectQuery<IRoleQuery>('search')
+
 const columns = computed(() => {
   const list: IBaseColumn<IRoleList>[] = [
     {
@@ -77,7 +78,7 @@ const columns = computed(() => {
       title: '添加时间',
       dataIndex: 'createTime',
       sorter: true,
-      sortOrder: timeSort.value,
+      sortOrder: search.value.timeSort,
       width: 180
     }
   ]
@@ -103,54 +104,32 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
   })
 
   if (fieldName === 'createTime') {
-    timeSort.value = order as IRoleQuery['timeSort']
+    search.value.timeSort = order as IRoleQuery['timeSort']
     return
   }
 }
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
 
-const name = useQuery<IRoleQuery['name']>('name', undefined, { isEncodeURIComponent: true })
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IRoleQuery['disabled']
-})
-const startTime = useQuery<IRoleQuery['startTime']>('startTime')
-const endTime = useQuery<IRoleQuery['endTime']>('endTime')
-
-const query = computed(() => {
-  const data: IRoleQuery = { page: page.value, pageSize: pageSize.value }
-  if (name.value) {
-    data.name = name.value
+watch(
+  [search, page, pageSize],
+  () => {
+    getList(search.value)
+  },
+  {
+    immediate: true
   }
-  if (disabled.value !== undefined) {
-    data.disabled = disabled.value
-  }
-  if (startTime.value) {
-    data.startTime = startTime.value
-  }
-  if (endTime.value) {
-    data.endTime = endTime.value
-  }
-  if (timeSort.value) {
-    data.timeSort = timeSort.value
-  }
-
-  getList(data)
-  return data
-})
+)
 
 const handleQuery = (data?: IRoleQuery) => {
-  name.value = data?.name ?? ''
-  disabled.value = data?.disabled
-  startTime.value = data?.startTime
-  endTime.value = data?.endTime
+  search.value = data!
 }
 
 const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
   if (page.value < lastPage.value) {
     checkedIds.value = []
-    getList(query.value)
+    getList(search.value)
     return
   }
 
@@ -162,7 +141,7 @@ const deleteSuccess = () => {
       page.value -= 1
       return
     }
-    getList(query.value)
+    getList(search.value)
     return
   }
 }
@@ -172,7 +151,7 @@ const deleteSuccess = () => {
   <div class="st-container">
     <t-filter
       :loading="loading"
-      :query="query"
+      :query="search"
       @handle-search="handleQuery"
       @handle-reset="handleQuery"
     />
@@ -180,7 +159,7 @@ const deleteSuccess = () => {
     <div class="tool" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:role:add">
-          <role-add @handle-success="getList(query)" />
+          <role-add @handle-success="getList(search)" />
         </check-permission>
         <check-permission permissions="system:role:del">
           <role-delete :id="checkedIds" @handle-success="deleteSuccess" />
@@ -204,7 +183,7 @@ const deleteSuccess = () => {
         <template v-if="column.key === 'operation'">
           <a-space>
             <check-permission permissions="system:role:edit">
-              <role-edit :id="record.id" @handle-success="getList(query)" />
+              <role-edit :id="record.id" @handle-success="getList(search)" />
             </check-permission>
 
             <check-permission permissions="system:role:del">

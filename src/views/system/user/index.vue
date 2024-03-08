@@ -6,7 +6,7 @@ import UserEdit from './components/UserEdit.vue'
 import UserAdd from './components/UserAdd.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
-import { useQuery } from '@/hooks/useQuery'
+import { useObjectQuery } from '@/hooks/useQuery'
 import { getUserList } from '@/api/user'
 import { useAuthority } from '@/hooks/useAuthority'
 
@@ -42,7 +42,8 @@ const requestData = async (params: IUserQuery) => {
   }
 }
 
-const timeSort = useQuery<IUserQuery['timeSort']>('timeSort')
+const search = useObjectQuery<IUserQuery>('search')
+
 const columns = computed(() => {
   const list: IBaseColumn<IUserList>[] = [
     {
@@ -76,7 +77,7 @@ const columns = computed(() => {
       title: '添加时间',
       dataIndex: 'createTime',
       sorter: true,
-      sortOrder: timeSort.value,
+      sortOrder: search.value.timeSort,
       width: 180
     }
   ]
@@ -102,56 +103,32 @@ const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | n
   })
 
   if (fieldName === 'createTime') {
-    timeSort.value = order as IUserQuery['timeSort']
+    search.value.timeSort = order as IUserQuery['timeSort']
     return
   }
 }
 
 const { page, pageSize, total, loading, list, getList, lastPage } = usePageRequest(requestData)
 
-const keyword = useQuery<IUserQuery['keyword']>('keyword', undefined, {
-  isEncodeURIComponent: true
-})
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IUserQuery['disabled']
-})
-const startTime = useQuery<IUserQuery['startTime']>('startTime')
-const endTime = useQuery<IUserQuery['endTime']>('endTime')
-
-const query = computed(() => {
-  const data: IUserQuery = { page: page.value, pageSize: pageSize.value }
-  if (keyword.value) {
-    data.keyword = keyword.value
+watch(
+  [search, page, pageSize],
+  () => {
+    getList(search.value)
+  },
+  {
+    immediate: true
   }
-  if (disabled.value !== undefined) {
-    data.disabled = disabled.value
-  }
-  if (startTime.value) {
-    data.startTime = startTime.value
-  }
-  if (endTime.value) {
-    data.endTime = endTime.value
-  }
-  if (timeSort.value) {
-    data.timeSort = timeSort.value
-  }
-
-  getList(data)
-  return data
-})
+)
 
 const handleQuery = (data?: IUserQuery) => {
-  keyword.value = data?.keyword ?? ''
-  disabled.value = data?.disabled
-  startTime.value = data?.startTime
-  endTime.value = data?.endTime
+  search.value = data!
 }
 
 const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
   if (page.value < lastPage.value) {
     checkedIds.value = []
-    getList(query.value)
+    getList(search.value)
     return
   }
 
@@ -163,7 +140,7 @@ const deleteSuccess = () => {
       page.value -= 1
       return
     }
-    getList(query.value)
+    getList(search.value)
     return
   }
 }
@@ -173,7 +150,7 @@ const deleteSuccess = () => {
   <div class="st-container">
     <t-filter
       :loading="loading"
-      :query="query"
+      :query="search"
       @handle-search="handleQuery"
       @handle-reset="handleQuery"
     />
@@ -181,7 +158,7 @@ const deleteSuccess = () => {
     <div class="mt-20" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:user:add">
-          <user-add @handle-success="getList(query)" />
+          <user-add @handle-success="getList(search)" />
         </check-permission>
         <check-permission permissions="system:user:del">
           <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
@@ -210,7 +187,7 @@ const deleteSuccess = () => {
         <template v-if="column.key === 'operation'">
           <a-space>
             <check-permission permissions="system:user:edit">
-              <user-edit :id="record.id" @handle-success="getList(query)" />
+              <user-edit :id="record.id" @handle-success="getList(search)" />
             </check-permission>
             <check-permission permissions="system:user:del">
               <user-delete :id="record.id" @handle-success="deleteSuccess" />

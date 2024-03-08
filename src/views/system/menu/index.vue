@@ -9,7 +9,7 @@ import MenuStateEdit from './components/MenuStateEdit.vue'
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
 import { MENU_TYPES } from '@/config/index'
-import { useQuery } from '@/hooks/useQuery'
+import { useObjectQuery } from '@/hooks/useQuery'
 import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IMenuQuery, IMenuListItem } from '@/types/api/menu'
@@ -44,7 +44,8 @@ const requestData = async (params: IMenuQuery) => {
   }
 }
 
-const timeSort = useQuery<IMenuQuery['timeSort']>('timeSort')
+const search = useObjectQuery<IMenuQuery>('search')
+
 const columns = computed(() => {
   const list: IBaseColumn<IMenuListItem>[] = [
     {
@@ -88,7 +89,7 @@ const columns = computed(() => {
       title: '添加时间',
       dataIndex: 'createTime',
       sorter: true,
-      sortOrder: timeSort.value,
+      sortOrder: search.value.timeSort,
       width: 180
     }
   ]
@@ -106,6 +107,18 @@ const columns = computed(() => {
   return list
 })
 
+const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
+
+watch(
+  [search, page, pageSize],
+  () => {
+    getList(search.value)
+  },
+  {
+    immediate: true
+  }
+)
+
 const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
   columns.value.forEach((item) => {
     if (item.dataIndex === fieldName) {
@@ -114,59 +127,20 @@ const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend'
   })
 
   if (fieldName === 'createTime') {
-    timeSort.value = order as IMenuQuery['timeSort']
+    search.value.timeSort = order as IMenuQuery['timeSort']
     return
   }
 }
 
-const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
-
-const title = useQuery<IMenuQuery['title']>('title', undefined, { isEncodeURIComponent: true })
-const disabled = useQuery('disabled', undefined, {
-  transform: (val) => (val !== undefined ? Number(val) : undefined) as IMenuQuery['disabled']
-})
-const type = useQuery<IMenuQuery['type']>('type')
-const startTime = useQuery<IMenuQuery['startTime']>('startTime')
-const endTime = useQuery<IMenuQuery['endTime']>('endTime')
-
-const query = computed(() => {
-  const data: IMenuQuery = { page: page.value, pageSize: pageSize.value }
-  if (title.value) {
-    data.title = title.value
-  }
-  if (disabled.value !== undefined) {
-    data.disabled = disabled.value
-  }
-  if (type.value) {
-    data.type = type.value
-  }
-  if (startTime.value) {
-    data.startTime = startTime.value
-  }
-  if (endTime.value) {
-    data.endTime = endTime.value
-  }
-  if (timeSort.value) {
-    data.timeSort = timeSort.value
-  }
-
-  getList(data)
-  return data
-})
-
 const handleQuery = (data?: IMenuQuery) => {
-  title.value = data?.title ?? ''
-  disabled.value = data?.disabled
-  type.value = data?.type
-  startTime.value = data?.startTime
-  endTime.value = data?.endTime
+  search.value = data!
 }
 
 const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
   if (page.value < lastPage.value) {
     checkedIds.value = []
-    getList(query.value)
+    getList(search.value)
     return
   }
 
@@ -178,7 +152,7 @@ const deleteSuccess = () => {
       page.value -= 1
       return
     }
-    getList(query.value)
+    getList(search.value)
     return
   }
 }
@@ -188,7 +162,7 @@ const deleteSuccess = () => {
   <div class="st-container">
     <t-filter
       :loading="loading"
-      :query="query"
+      :query="search"
       @handle-search="handleQuery"
       @handle-reset="handleQuery"
     />
@@ -196,7 +170,7 @@ const deleteSuccess = () => {
     <div class="tool" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:menu:add">
-          <menu-add @handle-success="getList(query)" />
+          <menu-add @handle-success="getList(search)" />
         </check-permission>
 
         <check-permission permissions="system:menu:del">
@@ -235,7 +209,7 @@ const deleteSuccess = () => {
         <template v-if="column.key === 'operation'">
           <a-space>
             <check-permission permissions="system:menu:edit">
-              <menu-edit :id="record.id" @handle-success="getList(query)" />
+              <menu-edit :id="record.id" @handle-success="getList(search)" />
             </check-permission>
             <check-permission permissions="system:menu:del">
               <menu-delete :id="record.id" @handle-success="deleteSuccess" />
