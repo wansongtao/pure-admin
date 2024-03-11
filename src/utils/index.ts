@@ -271,7 +271,7 @@ export function pageDeactivated(
     pageTimer = undefined;
   };
 
-  const startTimer = () => {
+  const onStartTimer = () => {
     const currentTime = Date.now();
     // 避免频繁触发
     if (pageTimer && currentTime - beginTime < 100) {
@@ -305,25 +305,25 @@ export function pageDeactivated(
    * 开始监听失活
    */
   const onStartDeactivated = () => {
-    startTimer();
-    document.addEventListener('mousedown', startTimer);
-    document.addEventListener('mousemove', startTimer);
+    onStartTimer();
+    document.addEventListener('mousedown', onStartTimer);
+    document.addEventListener('mousemove', onStartTimer);
     document.addEventListener('visibilitychange', onPageVisibility);
   };
-
-  if (immediate) {
-    onStartDeactivated();
-  }
 
   /**
    * 停止监听失活
    */
   const onStopDeactivated = () => {
     onClearTimer();
-    document.removeEventListener('mousedown', startTimer);
-    document.removeEventListener('mousemove', startTimer);
+    document.removeEventListener('mousedown', onStartTimer);
+    document.removeEventListener('mousemove', onStartTimer);
     document.removeEventListener('visibilitychange', onPageVisibility);
   };
+
+  if (immediate) {
+    onStartDeactivated()
+  }
 
   return {
     onStartDeactivated,
