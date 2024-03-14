@@ -35,4 +35,8 @@ export default class EventBus<T extends Record<string | symbol, any>> {
       fns.splice(idx, 1)
     }
   }
+
+  clear() {
+    this.listeners = {} as any
+  }
 }
