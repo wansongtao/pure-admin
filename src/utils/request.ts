@@ -34,16 +34,6 @@ const getKey = (config: AxiosRequestConfig) => {
   return key
 }
 
-const historyRequests = new Map<string, number>()
-const isRedundantRequest = (key: string) => {
-  if (historyRequests.has(key)) {
-    return true
-  }
-
-  historyRequests.set(key, 1)
-  return false
-}
-
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API,
   timeout: 5000,
@@ -53,15 +43,17 @@ const instance = axios.create({
   }
 })
 
+const historyRequests = new Map<string, number>()
 instance.interceptors.request.use(
   (config) => {
     // 防止重复请求
     const key = getKey(config)
-    if (isRedundantRequest(key)) {
-      config.headers.key = key
+    config.headers.key = key
+    if (historyRequests.has(key)) {
       config.headers.requestTime = Date.now()
       return Promise.reject(new AxiosError('Redundant request', 'ERR_REPEATED', config))
     }
+    historyRequests.set(key, 1)
 
     if (config.headers?.isToken !== false) {
       const store = useUserStore()
@@ -110,7 +102,7 @@ instance.interceptors.response.use(
     const [data, error] = responseInterceptor(res)
 
     // 如果存在重复请求，则触发事件，将结果返回给请求
-    const key = getKey(res.config)
+    const key = res.config.headers.key as string
     if (historyRequests.has(key)) {
       historyRequests.delete(key)
       eventBus.$emit(key, data, error)
