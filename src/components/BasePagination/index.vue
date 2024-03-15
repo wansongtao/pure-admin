@@ -14,7 +14,7 @@ withDefaults(defineProps<{
   showTotal?: (total: number, range: [number, number]) => string
 }>(), {
   pageSizeOptions: () => ['10', '20', '30', '40', '50'],
-  hideOnSinglePage: true,
+  hideOnSinglePage: false,
   showQuickJumper: true,
   showSizeChanger: true,
   showTotal: (total: number) => `总计 ${total} 条`
