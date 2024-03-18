@@ -107,7 +107,7 @@ const columns = computed(() => {
   return list
 })
 
-const { page, pageSize, total, loading, list, lastPage, getList } = usePageRequest(requestData)
+const { page, pageSize, total, loading, list, getList } = usePageRequest(requestData)
 
 watch(
   [search, page, pageSize],
@@ -138,23 +138,16 @@ const handleQuery = (data?: IMenuQuery) => {
 
 const checkedIds = ref<number[]>([])
 const deleteSuccess = () => {
-  if (page.value < lastPage.value) {
-    checkedIds.value = []
-    getList(search.value)
+  const deleteCount = checkedIds.value.length
+  checkedIds.value = []
+
+  const lastPageSize = total.value % pageSize.value || pageSize.value
+  if (deleteCount >= lastPageSize && page.value > 1) {
+    page.value -= 1
     return
   }
 
-  const deleteNum = checkedIds.value.length || 1
-  const lastPageSize = total.value % pageSize.value || pageSize.value
-  if (deleteNum >= lastPageSize) {
-    checkedIds.value = []
-    if (page.value > 1) {
-      page.value -= 1
-      return
-    }
-    getList(search.value)
-    return
-  }
+  getList(search.value)
 }
 </script>
 
