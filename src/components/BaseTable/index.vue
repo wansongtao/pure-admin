@@ -85,6 +85,7 @@ const selectedRowKeys = defineModel<Key[]>('checked', { default: [] })
 const rowSelectionConfig = computed(() => {
   const defaultConfig: TableProps['rowSelection'] = {
     selectedRowKeys: selectedRowKeys.value,
+    preserveSelectedRowKeys: true,
     onChange: (keys: Key[]) => {
       selectedRowKeys.value = keys
     }
