@@ -11,6 +11,16 @@ export interface IBaseResponse<T = unknown> {
   data: T
 }
 
+export interface IConfigHeader {
+  headers?: { 
+    isToken?: boolean; 
+    /**
+     * 是否允许重复请求
+     */
+    isAllowRepetition?: boolean 
+  }
+}
+
 export interface IBaseList<T = unknown> {
   list: T[]
   /**

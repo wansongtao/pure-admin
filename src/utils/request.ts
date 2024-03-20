@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/user'
 import { getDataType } from '@/utils/index'
 import EventBus from '@/event/eventBus'
 
-import type { IBaseResponse } from '@/types/index'
+import type { IBaseResponse, IConfigHeader } from '@/types/index'
 
 const goToLogin = (seconds = 2) => {
   setTimeout(() => {
@@ -31,7 +31,7 @@ const getKey = (config: AxiosRequestConfig) => {
         key += `-${k}-${v}`
       }
     }
-    
+
     if (params && getDataType(params) === 'object') {
       key += `-${JSON.stringify(params)}`
     }
@@ -54,14 +54,15 @@ const instance = axios.create({
 const historyRequests = new Map<string, number>()
 instance.interceptors.request.use(
   (config) => {
-    // 防止重复请求
-    const key = getKey(config)
-    config.headers.key = key
-    if (historyRequests.has(key)) {
-      config.headers.requestTime = Date.now()
-      return Promise.reject(new AxiosError('Redundant request', 'ERR_REPEATED', config))
+    if (config.headers?.isAllowRepetition !== true) {
+      const key = getKey(config)
+      config.headers.key = key
+      if (historyRequests.has(key)) {
+        config.headers.requestTime = Date.now()
+        return Promise.reject(new AxiosError('Redundant request', 'ERR_REPEATED', config))
+      }
+      historyRequests.set(key, 1)
     }
-    historyRequests.set(key, 1)
 
     if (config.headers?.isToken !== false) {
       const store = useUserStore()
@@ -157,7 +158,9 @@ instance.interceptors.response.use(
   }
 )
 
-export const request = <T extends IBaseResponse | Blob, C = any>(config: AxiosRequestConfig<C>) => {
+export const request = <T extends IBaseResponse | Blob, C = any>(
+  config: AxiosRequestConfig<C> & IConfigHeader
+) => {
   return new Promise<{ result?: T; error?: AxiosError }>((resolve) => {
     instance
       .request<IBaseResponse | Blob>(config)
