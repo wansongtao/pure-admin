@@ -23,7 +23,15 @@ const getKey = (config: AxiosRequestConfig) => {
   try {
     if (data && getDataType(data) === 'object') {
       key += `-${JSON.stringify(data)}`
+    } else if (getDataType(data) === 'formdata') {
+      for (const [k, v] of data.entries()) {
+        if (v instanceof Blob) {
+          continue
+        }
+        key += `-${k}-${v}`
+      }
     }
+    
     if (params && getDataType(params) === 'object') {
       key += `-${JSON.stringify(params)}`
     }
