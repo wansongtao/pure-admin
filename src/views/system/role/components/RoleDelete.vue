@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { message } from 'ant-design-vue'
-import { deleteRole, deleteMultipleRoles } from '@/api/role'
+import { deleteRole, deleteRoles } from '@/api/role'
 
 const $props = defineProps<{
   id: number | number[]
@@ -41,7 +41,7 @@ const handleDelete = async () => {
     return
   }
 
-  const { result } = await deleteMultipleRoles(id)
+  const { result } = await deleteRoles(id)
   if (result) {
     success('批量删除角色成功')
   }

@@ -54,7 +54,7 @@ export const deleteMenu = (id: number) => {
   })
 }
 
-export const deleteMultipleMenus = (id: number[]) => {
+export const deleteMenus = (id: number[]) => {
   return request<IBaseResponse>({
     url: '/admin/menu',
     method: 'delete',

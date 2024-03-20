@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { message } from 'ant-design-vue'
-import { deleteUser, deleteMultipleUsers } from '@/api/user'
+import { deleteUser, deleteUsers } from '@/api/user'
 
 const $props = defineProps<{
   id: number | number[]
@@ -41,7 +41,7 @@ const handleDelete = async () => {
     return
   }
 
-  const { result } = await deleteMultipleUsers(id)
+  const { result } = await deleteUsers(id)
   if (result) {
     success('批量删除用户成功')
   }

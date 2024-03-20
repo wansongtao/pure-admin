@@ -18,7 +18,7 @@ export const deleteUser = (id: number) => {
   })
 }
 
-export const deleteMultipleUsers = (id: number[]) => {
+export const deleteUsers = (id: number[]) => {
   return request<IBaseResponse>({
     url: '/admin/user',
     method: 'delete',

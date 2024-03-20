@@ -47,7 +47,7 @@ export const deleteRole = (id: number) => {
   })
 }
 
-export const deleteMultipleRoles = (id: number[]) => {
+export const deleteRoles = (id: number[]) => {
   return request<IBaseResponse>({
     url: '/admin/role',
     method: 'delete',

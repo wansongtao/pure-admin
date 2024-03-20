@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { message } from 'ant-design-vue'
-import { deleteMenu, deleteMultipleMenus } from '@/api/menu'
+import { deleteMenu, deleteMenus } from '@/api/menu'
 
 const $props = defineProps<{
   id: number | number[]
@@ -41,7 +41,7 @@ const handleDelete = async () => {
     return
   }
 
-  const { result } = await deleteMultipleMenus(id)
+  const { result } = await deleteMenus(id)
   if (result) {
     success('批量删除菜单成功')
   }
