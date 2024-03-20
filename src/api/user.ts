@@ -50,3 +50,13 @@ export const addUser = (data: IUserEdit) => {
     data
   })
 }
+
+export const exportUserInfo = (ids: number[]) => {
+  return request<IBaseResponse<IUserList[]>>({
+    url: '/admin/user/export',
+    method: 'post',
+    data: {
+      ids
+    }
+  })
+}

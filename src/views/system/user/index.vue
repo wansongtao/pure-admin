@@ -4,6 +4,7 @@ import UserDelete from './components/UserDelete.vue'
 import UserStateEdit from './components/UserStateEdit.vue'
 import UserEdit from './components/UserEdit.vue'
 import UserAdd from './components/UserAdd.vue'
+import UserExport from './components/UserExport.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { useObjectQuery } from '@/hooks/useQuery'
@@ -19,7 +20,7 @@ defineOptions({
 
 const { hasPermission } = useAuthority()
 const isShowTool = computed(() => {
-  return hasPermission(['system:user:add', 'system:user:del'], true)
+  return hasPermission(['system:user:add', 'system:user:del', 'system:user:export'], true)
 })
 const tableScroll = computed(() => {
   return isShowTool.value
@@ -150,6 +151,9 @@ const deleteSuccess = () => {
 
     <div class="mt-20" v-if="isShowTool">
       <a-space>
+        <check-permission permissions="system:user:export">
+          <user-export v-model:ids="checkedIds" />
+        </check-permission>
         <check-permission permissions="system:user:add">
           <user-add @handle-success="getList(search)" />
         </check-permission>
