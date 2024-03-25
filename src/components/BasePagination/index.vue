@@ -3,33 +3,34 @@ defineOptions({
   name: 'BasePagination'
 })
 
-withDefaults(defineProps<{
-  page: number
-  pageSize: number
-  total: number
-  pageSizeOptions?: string[] | number[]
-  hideOnSinglePage?: boolean
-  showQuickJumper?: boolean
-  showSizeChanger?: boolean
-  showTotal?: (total: number, range: [number, number]) => string
-}>(), {
-  pageSizeOptions: () => ['10', '20', '30', '40', '50'],
-  hideOnSinglePage: false,
-  showQuickJumper: true,
-  showSizeChanger: true,
-  showTotal: (total: number) => `总计 ${total} 条`
-})
+withDefaults(
+  defineProps<{
+    total: number
+    pageSizeOptions?: string[] | number[]
+    hideOnSinglePage?: boolean
+    showQuickJumper?: boolean
+    showSizeChanger?: boolean
+    showTotal?: (total: number, range: [number, number]) => string
+  }>(),
+  {
+    pageSizeOptions: () => ['10', '20', '30', '40', '50'],
+    hideOnSinglePage: false,
+    showQuickJumper: true,
+    showSizeChanger: true,
+    showTotal: (total: number) => `总计 ${total} 条`
+  }
+)
 
 const $emits = defineEmits<{
   onChange: [page: number, pageSize: number]
-  'update:page': [page: number]
-  'update:pageSize': [pageSize: number]
 }>()
 
-const onChange = (page: number, pageSize: number) => {
-  $emits('update:page', page)
-  $emits('update:pageSize', pageSize)
-  $emits('onChange', page, pageSize)
+const page = defineModel<number>('page', { default: 1 })
+const pageSize = defineModel<number>('pageSize', { default: 10 })
+const onChange = (newPage: number, newPageSize: number) => {
+  page.value = newPage
+  pageSize.value = newPageSize
+  $emits('onChange', newPage, newPageSize)
 }
 </script>
 
