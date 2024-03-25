@@ -1,6 +1,6 @@
 <script lang="ts" generic="T extends Record<string, any>, K = TableColumnProps<T>" setup>
 import type { TableProps, TableColumnProps } from 'ant-design-vue'
-import type { ColumnFilterItem, Key, SorterResult } from 'ant-design-vue/es/table/interface'
+import type { Key, SorterResult } from 'ant-design-vue/es/table/interface'
 
 defineOptions({
   name: 'BaseTable'
@@ -9,18 +9,6 @@ defineSlots<{
   default(props: { column: K; record: T; index: number; text: any }): any
   headerCell(props: { column: K; title: any }): any
   emptyText(): any
-  customFilterDropdown(props: {
-    prefixCls: string
-    setSelectedKeys: (selectedKeys: Key[]) => void
-    selectedKeys: Key[]
-    confirm: (param?: { closeDropdown: boolean }) => void
-    clearFilters?: (param?: { confirm?: boolean; closeDropdown?: boolean }) => void
-    filters?: ColumnFilterItem[]
-    visible: boolean
-    column: K
-  }): any
-  customFilterIcon(props: { filtered: any; column: K }): any
-  summary(): any
 }>()
 
 const $emits = defineEmits<{
@@ -29,7 +17,7 @@ const $emits = defineEmits<{
 const $props = withDefaults(
   defineProps<{
     rowKey?: string
-    columns: K[] 
+    columns: K[]
     list?: T[]
     loading?: boolean
     scroll?: { scrollToFirstRowOnChange?: boolean; x?: string | number | true; y?: string }
@@ -131,7 +119,7 @@ const handleSort = (_p: any, _f: any, sorter: SorterResult | SorterResult[]) => 
       v-bind="$attrs"
       class="ant-table-striped"
       :row-key="rowKey"
-      :columns="columns as TableColumnProps[]"
+      :columns="(columns as TableColumnProps[])"
       :data-source="list"
       v-model:expanded-row-keys="expandedRowKeys"
       :loading="loading"
@@ -143,47 +131,17 @@ const handleSort = (_p: any, _f: any, sorter: SorterResult | SorterResult[]) => 
       @change="handleSort"
     >
       <template #bodyCell="{ column, record, index, text }">
-        <slot :column="column as K" :record="record as T" :index="index" :text="text" />
+        <slot :column="(column as K)" :record="(record as T)" :index="index" :text="text" />
       </template>
 
       <template #headerCell="{ column, title }">
-        <slot name="headerCell" :column="column as K" :title="title" />
+        <slot name="headerCell" :column="(column as K)" :title="title" />
       </template>
 
       <template #emptyText>
         <slot name="emptyText">
           <a-empty />
         </slot>
-      </template>
-      <template
-        #customFilterDropdown="{
-          prefixCls,
-          setSelectedKeys,
-          selectedKeys,
-          confirm,
-          clearFilters,
-          filters,
-          visible,
-          column
-        }"
-      >
-        <slot
-          name="customFilterDropdown"
-          :prefixCls="prefixCls"
-          :setSelectedKeys="setSelectedKeys"
-          :selectedKeys="selectedKeys"
-          :confirm="confirm"
-          :clearFilters="clearFilters"
-          :filters="filters"
-          :visible="visible"
-          :column="column"
-        />
-      </template>
-      <template #customFilterIcon="{ filtered, column }">
-        <slot name="customFilterIcon" :filtered="filtered" :column="column" />
-      </template>
-      <template #summary>
-        <slot name="summary" />
       </template>
     </a-table>
   </div>
