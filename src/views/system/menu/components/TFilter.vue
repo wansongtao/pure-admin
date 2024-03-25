@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { STATUS, MENU_TYPES } from '@/config/index'
-import { objectToArray } from '@/utils/index'
+import { convertObjectToArray } from '@/utils/index'
 
 import type { IBaseQuery } from '@/types/index'
 import type { IMenuQuery } from '@/types/api/menu'
@@ -13,7 +13,7 @@ const $emits = defineEmits<{
   handleReset: []
 }>()
 
-const menuTypes = objectToArray(MENU_TYPES)
+const menuTypes = convertObjectToArray(MENU_TYPES)
 
 const disabled = ref<IMenuQuery['disabled']>(undefined)
 const type = ref<IMenuQuery['type']>(undefined)

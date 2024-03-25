@@ -3,7 +3,7 @@ import SelectIcon from './SelectIcon.vue'
 
 import { useMenuTree } from '@/hooks/useMenuTree'
 import { MENU_TYPES } from '@/config/index'
-import { objectToArray } from '@/utils/index'
+import { convertObjectToArray } from '@/utils/index'
 import {
   validateMenuTitle,
   validateMenuPath,
@@ -27,7 +27,7 @@ const $props = withDefaults(
 )
 const loading = defineModel<boolean>('loading', { default: false })
 
-const menuTypes = objectToArray(MENU_TYPES)
+const menuTypes = convertObjectToArray(MENU_TYPES)
 const { menuTree, fetchMenuTree } = useMenuTree((data) => {
   return {
     label: data.name,

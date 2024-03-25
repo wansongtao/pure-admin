@@ -1,5 +1,5 @@
 /**
- * @description 获取传入数据的类型，返回类型小写字符串
+ * @description 获取数据类型，返回小写的类型字符串
  * @param obj
  * @returns
  */
@@ -36,7 +36,7 @@ export const compose = (...funcs: Function[]) => {
  * @param delay 间隔时间，默认1s，单位ms
  * @returns
  */
-export const throttle = (fn: Function, delay: number = 1000) => {
+export const throttle = (fn: Function, delay = 1000) => {
   let lastTime = 0
   return function <T>(this: any, ...args: T[]) {
     const nowTime = Date.now()
@@ -51,7 +51,7 @@ export const throttle = (fn: Function, delay: number = 1000) => {
 }
 
 /**
- * @description 防抖函数，一定时间内多次触发，只执行最后触发的一次，可能永远不会执行
+ * @description 防抖函数，一定时间内多次触发，只执行最后触发的一次(可能永远不会执行)
  * @param fn 需要防抖的函数
  * @param delay 间隔时间，默认200ms，单位ms
  * @param immediate 第一次是否立即执行，默认false
@@ -59,8 +59,8 @@ export const throttle = (fn: Function, delay: number = 1000) => {
  */
 export const debounce = <T = unknown>(
   fn: Function,
-  delay: number = 200,
-  immediate: boolean = false
+  delay = 200,
+  immediate = false
 ) => {
   let timer: NodeJS.Timeout | null = null
   let isFirst = true
@@ -133,13 +133,13 @@ export const getSystemTheme = (autoFollow?: (mode: 'dark' | 'light') => void) =>
 }
 
 /**
- * 递归查找
+ * 深度查找
  * @param data
  * @param compare
  * @param childrenKey
  * @returns
  */
-export const recursionFindItem = <T extends Record<string, any>>(
+export const findDepth = <T extends Record<string, any>>(
   data: T[],
   compare: (value: T) => boolean,
   childrenKey = 'children'
@@ -157,7 +157,7 @@ export const recursionFindItem = <T extends Record<string, any>>(
       continue
     }
 
-    item = recursionFindItem(value[childrenKey], compare, childrenKey)
+    item = findDepth(value[childrenKey], compare, childrenKey)
     if (item !== undefined) {
       break
     }
@@ -171,7 +171,7 @@ export const recursionFindItem = <T extends Record<string, any>>(
  * @param data
  * @returns
  */
-export const objectToArray = <T extends Record<any, unknown>>(data: T) => {
+export const convertObjectToArray = <T extends Record<any, unknown>>(data: T) => {
   const keys: (keyof T)[] = Object.keys(data)
 
   return keys.map((k) => {
@@ -187,7 +187,7 @@ export const objectToArray = <T extends Record<any, unknown>>(data: T) => {
  * @param data
  * @returns
  */
-export const getTrulyObject = <T extends Record<any, any>>(data: T) => {
+export const getTrulyValue = <T extends Record<any, any>>(data: T) => {
   const trulyObject = {} as T
 
   const keys: (keyof T)[] = Object.keys(data)
@@ -202,11 +202,7 @@ export const getTrulyObject = <T extends Record<any, any>>(data: T) => {
     }
 
     if (value instanceof Object) {
-      if (value.length === 0) {
-        return
-      }
-
-      trulyObject[k] = getTrulyObject(value)
+      trulyObject[k] = getTrulyValue(value)
       return
     }
 
@@ -242,35 +238,31 @@ export const getChangedData = <T extends Record<any, any>, K extends Record<any,
   return changedData
 }
 
-export const getBase64 = (img: Blob, callback: (base64Url: string) => void) => {
+export const getBase64 = (file: Blob, callback: (base64Url: string) => void) => {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result as string))
-  reader.readAsDataURL(img)
+  reader.readAsDataURL(file)
 }
 
 /**
- * 页面失活(无操作)
- * @param callback 页面一定时长无操作时触发
+ * 监听页面失活
+ * @param callback
  * @param timeout 时长，默认15s，单位：秒
  * @param immediate 是否立即开始，默认 false
  * @returns
  */
-export function pageDeactivated(
+export function onPageDeactivated(
   callback: () => void,
   timeout = 15,
   immediate = false
 ) {
-  let pageTimer: NodeJS.Timeout | undefined = undefined;
+  let pageTimer: NodeJS.Timeout | undefined;
   let beginTime = 0;
 
-  /**
-   * 清除当前开始的失活计时器
-   */
   const onClearTimer = () => {
     pageTimer && clearTimeout(pageTimer);
     pageTimer = undefined;
   };
-
   const onStartTimer = () => {
     const currentTime = Date.now();
     // 避免频繁触发
@@ -301,33 +293,32 @@ export function pageDeactivated(
     }
   };
 
-  /**
-   * 开始监听失活
-   */
-  const onStartDeactivated = () => {
+  const startDeactivated = () => {
     onStartTimer();
     document.addEventListener('mousedown', onStartTimer);
     document.addEventListener('mousemove', onStartTimer);
     document.addEventListener('visibilitychange', onPageVisibility);
   };
 
-  /**
-   * 停止监听失活
-   */
-  const onStopDeactivated = () => {
+  const stopDeactivated = () => {
     onClearTimer();
     document.removeEventListener('mousedown', onStartTimer);
     document.removeEventListener('mousemove', onStartTimer);
     document.removeEventListener('visibilitychange', onPageVisibility);
   };
 
+  const restartDeactivated = () => {
+    stopDeactivated();
+    startDeactivated();
+  }
+
   if (immediate) {
-    onStartDeactivated()
+    startDeactivated()
   }
 
   return {
-    onStartDeactivated,
-    onStopDeactivated,
-    onClearTimer
-  };
+    startDeactivated,
+    stopDeactivated,
+    restartDeactivated
+  }
 }

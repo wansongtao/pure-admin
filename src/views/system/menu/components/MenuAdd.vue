@@ -3,7 +3,7 @@ import MenuModal from './MenuModal.vue'
 
 import { addMenu } from '@/api/menu'
 import { message } from 'ant-design-vue'
-import { getTrulyObject } from '@/utils/index'
+import { getTrulyValue } from '@/utils/index'
 
 import type { IMenuParam } from '@/types/api/menu'
 
@@ -19,7 +19,7 @@ const handleOpen = () => {
 const loading = ref(false)
 const modalRef = ref<InstanceType<typeof MenuModal>>()
 const handleAdd = async (param: IMenuParam) => {
-  const data = getTrulyObject(param)
+  const data = getTrulyValue(param)
 
   loading.value = true
   const { result } = await addMenu(data)
