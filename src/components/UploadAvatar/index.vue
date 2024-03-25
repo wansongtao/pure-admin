@@ -12,8 +12,6 @@ defineOptions({
   name: 'UploadAvatar'
 })
 
-const imgUrl = defineModel<string>('imgUrl', { default: '' })
-
 const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
   const isLt2M = file.size < maxSize
   if (!isLt2M) {
@@ -26,6 +24,8 @@ const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
 const $emits = defineEmits<{
   selectFile: [file: FileType]
 }>()
+const imgUrl = defineModel<string>('imgUrl', { default: '' })
+
 let imgFile: FileType | null = null
 const beforeUpload: UploadProps['beforeUpload'] = (file) => {
   const result = verifyFileSize(file)
