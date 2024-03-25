@@ -57,11 +57,7 @@ export const throttle = (fn: Function, delay = 1000) => {
  * @param immediate 第一次是否立即执行，默认false
  * @returns
  */
-export const debounce = <T = unknown>(
-  fn: Function,
-  delay = 200,
-  immediate = false
-) => {
+export const debounce = <T = unknown>(fn: Function, delay = 200, immediate = false) => {
   let timer: NodeJS.Timeout | null = null
   let isFirst = true
 
@@ -251,65 +247,64 @@ export const getBase64 = (file: Blob, callback: (base64Url: string) => void) => 
  * @param immediate 是否立即开始，默认 false
  * @returns
  */
-export function onPageDeactivated(
-  callback: () => void,
-  timeout = 15,
-  immediate = false
-) {
-  let pageTimer: NodeJS.Timeout | undefined;
-  let beginTime = 0;
+export function onPageDeactivated(callback: () => void, timeout = 15, immediate = false) {
+  let pageTimer: NodeJS.Timeout | undefined
+  let beginTime = 0
 
   const onClearTimer = () => {
-    pageTimer && clearTimeout(pageTimer);
-    pageTimer = undefined;
-  };
+    pageTimer && clearTimeout(pageTimer)
+    pageTimer = undefined
+  }
   const onStartTimer = () => {
-    const currentTime = Date.now();
+    const currentTime = Date.now()
     // 避免频繁触发
     if (pageTimer && currentTime - beginTime < 100) {
-      return;
+      return
     }
 
-    onClearTimer();
-    beginTime = currentTime;
+    onClearTimer()
+    beginTime = currentTime
     pageTimer = setTimeout(() => {
-      callback();
-    }, timeout * 1000);
-  };
+      callback()
+    }, timeout * 1000)
+  }
   // 处理标签页隐藏后再显示引起的精度问题
   const onPageVisibility = () => {
-    onClearTimer();
+    onClearTimer()
 
     if (document.visibilityState === 'visible') {
-      const currentTime = Date.now();
+      const currentTime = Date.now()
       if (currentTime - beginTime >= timeout * 1000) {
-        callback();
-        return;
+        callback()
+        return
       }
 
-      pageTimer = setTimeout(() => {
-        callback();
-      }, timeout * 1000 - (currentTime - beginTime));
+      pageTimer = setTimeout(
+        () => {
+          callback()
+        },
+        timeout * 1000 - (currentTime - beginTime)
+      )
     }
-  };
+  }
 
   const startDeactivated = () => {
-    onStartTimer();
-    document.addEventListener('mousedown', onStartTimer);
-    document.addEventListener('mousemove', onStartTimer);
-    document.addEventListener('visibilitychange', onPageVisibility);
-  };
+    onStartTimer()
+    document.addEventListener('mousedown', onStartTimer)
+    document.addEventListener('mousemove', onStartTimer)
+    document.addEventListener('visibilitychange', onPageVisibility)
+  }
 
   const stopDeactivated = () => {
-    onClearTimer();
-    document.removeEventListener('mousedown', onStartTimer);
-    document.removeEventListener('mousemove', onStartTimer);
-    document.removeEventListener('visibilitychange', onPageVisibility);
-  };
+    onClearTimer()
+    document.removeEventListener('mousedown', onStartTimer)
+    document.removeEventListener('mousemove', onStartTimer)
+    document.removeEventListener('visibilitychange', onPageVisibility)
+  }
 
   const restartDeactivated = () => {
-    stopDeactivated();
-    startDeactivated();
+    onClearTimer()
+    onStartTimer()
   }
 
   if (immediate) {
