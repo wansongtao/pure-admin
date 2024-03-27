@@ -1,4 +1,4 @@
-import { ALL_PERMISSION } from '@/config/index'
+import { ALL_PERMISSION } from '@/constants/index'
 
 /**
  * 权限校验

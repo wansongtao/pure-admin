@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { STATUS } from '@/config/index'
+import { STATUS } from '@/constants/index'
 
 import type { IBaseQuery } from '@/types/index'
 import type { IRoleQuery } from '@/types/api/role'

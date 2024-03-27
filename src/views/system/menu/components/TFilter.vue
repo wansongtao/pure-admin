@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { STATUS, MENU_TYPES } from '@/config/index'
+import { STATUS, MENU_TYPES } from '@/constants/index'
 import { convertObjectToArray } from '@/utils/index'
 
 import type { IBaseQuery } from '@/types/index'
@@ -92,3 +92,4 @@ watch(
 </template>
 
 <style lang="scss" scoped></style>
+@/constants/index

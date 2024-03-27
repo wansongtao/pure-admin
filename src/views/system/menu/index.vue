@@ -8,7 +8,7 @@ import MenuStateEdit from './components/MenuStateEdit.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { getMenuList } from '@/api/menu'
-import { MENU_TYPES } from '@/config/index'
+import { MENU_TYPES } from '@/constants/index'
 import { useObjectQuery } from '@/hooks/useQuery'
 import { useAuthority } from '@/hooks/useAuthority'
 

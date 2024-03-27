@@ -2,7 +2,7 @@
 import SelectIcon from './SelectIcon.vue'
 
 import { useMenuTree } from '@/hooks/useMenuTree'
-import { MENU_TYPES } from '@/config/index'
+import { MENU_TYPES } from '@/constants/index'
 import { convertObjectToArray } from '@/utils/index'
 import {
   validateMenuTitle,
