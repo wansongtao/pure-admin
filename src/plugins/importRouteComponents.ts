@@ -1,5 +1,5 @@
 /**
- * @description: Automatically import page components
+ * @description: Automatically import route components
  */
 const COMPONENT_MAP = import.meta.glob(['@/views/**/*.vue', '!@/views/**/components/*.vue'])
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import MENU_ICON_MAP from '@/config/menuIcons'
+import MENU_ICON_MAP from '@/plugins/importMenuIcons'
 
 const name = defineModel<string>()
 const handleCheck = (key: string) => {

@@ -1,8 +1,8 @@
 import ParentView from '@/components/ParentView/index.vue'
 
 import { h } from 'vue'
-import MENU_ICON_MAP from '@/config/menuIcons'
-import COMPONENT_MAP from '@/config/routeComponents'
+import MENU_ICON_MAP from '@/plugins/importMenuIcons'
+import COMPONENT_MAP from '@/plugins/importRouteComponents'
 import adminRoute from '@/router/adminRoute'
 
 import type { IMenuData } from '@/types/api/common'

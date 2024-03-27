@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TFilter from './components/TFilter.vue'
-import MENU_ICON_MAP from '@/config/menuIcons'
+import MENU_ICON_MAP from '@/plugins/importMenuIcons'
 import MenuAdd from './components/MenuAdd.vue'
 import MenuEdit from './components/MenuEdit.vue'
 import MenuDelete from './components/MenuDelete.vue'
