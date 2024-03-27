@@ -1,36 +1,36 @@
 import { onScopeDispose, onDeactivated } from 'vue'
-import { onPageDeactivated } from '@/utils/index'
+import { onIdleDetection } from '@/utils/index'
 
 /**
- * 页面失活(无操作)
+ * 页面空闲检测
  * @param callback 页面一定时长无操作时触发
  * @param timeout 时长，默认15s，单位：秒
  * @param immediate 是否立即开始，默认 false
  * @param isLeaveDestroy 离开当前组件是否停止，默认 true
  * @returns
  */
-export default function usePageDeactivated(
+export default function useIdleDetection(
   callback: () => void,
   timeout = 15,
   immediate = false,
   isLeaveDestroy = true
 ) {
-  const { startDeactivated, stopDeactivated, restartDeactivated } = onPageDeactivated(
+  const { startDetection, stopDetection, restartDetection } = onIdleDetection(
     callback,
     timeout,
     immediate
   )
 
   onScopeDispose(() => {
-    if (isLeaveDestroy) stopDeactivated()
+    if (isLeaveDestroy) stopDetection()
   })
   onDeactivated(() => {
-    if (isLeaveDestroy) stopDeactivated()
+    if (isLeaveDestroy) stopDetection()
   })
 
   return {
-    startDeactivated,
-    stopDeactivated,
-    restartDeactivated
+    startDetection,
+    stopDetection,
+    restartDetection
   }
 }

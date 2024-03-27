@@ -241,13 +241,13 @@ export const getBase64 = (file: Blob, callback: (base64Url: string) => void) => 
 }
 
 /**
- * 监听页面失活
+ * 页面空闲检测
  * @param callback
  * @param timeout 时长，默认15s，单位：秒
  * @param immediate 是否立即开始，默认 false
  * @returns
  */
-export function onPageDeactivated(callback: () => void, timeout = 15, immediate = false) {
+export function onIdleDetection(callback: () => void, timeout = 15, immediate = false) {
   let pageTimer: NodeJS.Timeout | undefined
   let beginTime = 0
 
@@ -288,32 +288,32 @@ export function onPageDeactivated(callback: () => void, timeout = 15, immediate 
     }
   }
 
-  const startDeactivated = () => {
+  const startDetection = () => {
     onStartTimer()
     document.addEventListener('mousedown', onStartTimer)
     document.addEventListener('mousemove', onStartTimer)
     document.addEventListener('visibilitychange', onPageVisibility)
   }
 
-  const stopDeactivated = () => {
+  const stopDetection = () => {
     onClearTimer()
     document.removeEventListener('mousedown', onStartTimer)
     document.removeEventListener('mousemove', onStartTimer)
     document.removeEventListener('visibilitychange', onPageVisibility)
   }
 
-  const restartDeactivated = () => {
+  const restartDetection = () => {
     onClearTimer()
     onStartTimer()
   }
 
   if (immediate) {
-    startDeactivated()
+    startDetection()
   }
 
   return {
-    startDeactivated,
-    stopDeactivated,
-    restartDeactivated
+    startDetection,
+    stopDetection,
+    restartDetection
   }
 }
