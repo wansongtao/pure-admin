@@ -10,6 +10,7 @@ withDefaults(
     hideOnSinglePage?: boolean
     showQuickJumper?: boolean
     showSizeChanger?: boolean
+    disable?: boolean
     showTotal?: (total: number, range: [number, number]) => string
   }>(),
   {
@@ -17,6 +18,7 @@ withDefaults(
     hideOnSinglePage: false,
     showQuickJumper: true,
     showSizeChanger: true,
+    disable: false,
     showTotal: (total: number) => `总计 ${total} 条`
   }
 )
@@ -46,6 +48,7 @@ const onChange = (newPage: number, newPageSize: number) => {
       :show-quick-jumper="showQuickJumper"
       :show-size-changer="showSizeChanger"
       :show-total="showTotal"
+      :disabled="disable"
       @change="onChange"
     />
   </div>
