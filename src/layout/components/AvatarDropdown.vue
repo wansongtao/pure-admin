@@ -55,6 +55,7 @@ const handlePersonalPage = () => {
   display: flex;
   align-items: center;
   padding: 0 20px;
+  cursor: pointer;
 }
 
 .avatar {
