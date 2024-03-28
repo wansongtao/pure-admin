@@ -4,7 +4,7 @@ import { CloseOutlined } from '@ant-design/icons-vue'
 import { throttle } from '@/utils/index'
 import { useSettingStore } from '@/stores/setting'
 
-import type { ITagLinkItem } from '@/types/index'
+import type { ILinkTab } from '@/types/index'
 
 const scrollElement = ref<HTMLElement | null>(null)
 const onWheel = throttle((e: WheelEvent) => {
@@ -24,29 +24,29 @@ const isEqual = (a: Item, b: Item) => {
   return false
 }
 
-const tags = ref<ITagLinkItem[]>([])
-const tagLinks = localStorage.getItem('tagLinks')
-if (tagLinks) {
-  tags.value = JSON.parse(tagLinks)
+const linkTabs = ref<ILinkTab[]>([])
+const historyLinkTabs = localStorage.getItem('historyLinkTabs')
+if (historyLinkTabs) {
+  linkTabs.value = JSON.parse(historyLinkTabs)
 }
 window.onbeforeunload = () => {
-  localStorage.setItem('tagLinks', JSON.stringify(tags.value))
+  localStorage.setItem('historyLinkTabs', JSON.stringify(linkTabs.value))
 }
 
 const setStore = useSettingStore()
 watch(
-  () => setStore.defaultTagLinks,
-  (defaultTagLinks) => {
-    if (!tags.value.length) {
-      tags.value = defaultTagLinks
+  () => setStore.defaultLinkTabs,
+  (defaultLinkTabs) => {
+    if (!linkTabs.value.length) {
+      linkTabs.value = defaultLinkTabs
       return
     }
 
-    tags.value = tags.value.filter((item) => {
-      return !defaultTagLinks.some((defaultItem) => isEqual(item, defaultItem))
+    linkTabs.value = linkTabs.value.filter((item) => {
+      return !defaultLinkTabs.some((defaultItem) => isEqual(item, defaultItem))
     })
 
-    tags.value.unshift(...defaultTagLinks)
+    linkTabs.value.unshift(...defaultLinkTabs)
   },
   {
     immediate: true
@@ -62,21 +62,21 @@ watch(
       return
     }
 
-    tags.value.forEach((item) => {
+    linkTabs.value.forEach((item) => {
       if (item.checked) {
         item.checked = false
       }
     })
 
     const path = route.path
-    const tag = tags.value.find((item) => isEqual(item, { path, title }))
+    const tag = linkTabs.value.find((item) => isEqual(item, { path, title }))
     if (tag) {
       tag.path = fullPath
       tag.checked = true
       return
     }
 
-    tags.value.push({
+    linkTabs.value.push({
       title,
       path: route.fullPath,
       checked: true
@@ -89,10 +89,10 @@ watch(
 
 const router = useRouter()
 const onClose = (index: number) => {
-  const tag = tags.value.splice(index, 1)
+  const tag = linkTabs.value.splice(index, 1)
 
   if (tag[0].checked) {
-    const lastTag = tags.value[index - 1]
+    const lastTag = linkTabs.value[index - 1]
     if (lastTag) {
       lastTag.checked = true
       router.push(lastTag.path)
@@ -106,7 +106,7 @@ const onClose = (index: number) => {
     <div class="scrollbar">
       <transition-group name="tags">
         <tag-link
-          v-for="(item, idx) in tags"
+          v-for="(item, idx) in linkTabs"
           :key="item.title"
           :title="item.title"
           :checked="item.checked"

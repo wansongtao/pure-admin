@@ -5,7 +5,7 @@ import { getSystemTheme } from '@/utils/index'
 import { getMenus } from '@/api/common'
 import { generateMenus, generateCacheRoutes, generateRoutes } from '@/utils/menu'
 
-import type { IMenuItem, ITagLinkItem } from '@/types'
+import type { IMenuItem, ILinkTab } from '@/types'
 
 export const useSettingStore = defineStore('setting', () => {
   const theme = ref(getTheme())
@@ -26,15 +26,15 @@ export const useSettingStore = defineStore('setting', () => {
     collapsed.value = !collapsed.value
   }
 
-  const defaultTagLinks = ref<ITagLinkItem[]>([
+  const defaultLinkTabs = ref<ILinkTab[]>([
     {
       title: '首页',
       path: '/',
       hiddenCloseIcon: true
     }
   ])
-  function setDefaultTagLink(...tagLinks: ITagLinkItem[]) {
-    defaultTagLinks.value = tagLinks
+  function setDefaultLinkTabs(...tagLinks: ILinkTab[]) {
+    defaultLinkTabs.value = tagLinks
   }
 
   const cacheRoutes = ref<string[]>([])
@@ -54,8 +54,8 @@ export const useSettingStore = defineStore('setting', () => {
     toggleTheme,
     collapsed,
     toggleCollapsed,
-    defaultTagLinks,
-    setDefaultTagLink,
+    defaultLinkTabs,
+    setDefaultLinkTabs,
     cacheRoutes,
     menus,
     getRoutesAction

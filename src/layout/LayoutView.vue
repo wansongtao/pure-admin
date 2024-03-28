@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AsideView from './components/AsideView.vue'
 import HeaderView from './components/HeaderView.vue'
-import LinkHistory from './components/LinkHistory.vue'
+import LinkTabs from './components/LinkTabs.vue'
 
 import { useSettingStore } from '@/stores/setting'
 
@@ -17,7 +17,7 @@ const style = computed(() => {
     <aside-view />
     <div class="layout_container" :style="style">
       <header-view />
-      <link-history />
+      <link-tabs />
       <div class="layout-main st-transition-bg">
         <parent-view />
       </div>

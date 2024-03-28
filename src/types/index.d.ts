@@ -37,7 +37,7 @@ export interface IMenuItem {
   children?: IMenuItem[]
 }
 
-export interface ITagLinkItem {
+export interface ILinkTab {
   title: string
   path: string
   checked?: boolean
