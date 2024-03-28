@@ -25,14 +25,6 @@ const isEqual = (a: Item, b: Item) => {
 }
 
 const linkTabs = ref<ILinkTab[]>([])
-const historyLinkTabs = localStorage.getItem('historyLinkTabs')
-if (historyLinkTabs) {
-  linkTabs.value = JSON.parse(historyLinkTabs)
-}
-window.onbeforeunload = () => {
-  localStorage.setItem('historyLinkTabs', JSON.stringify(linkTabs.value))
-}
-
 const setStore = useSettingStore()
 watch(
   () => setStore.defaultLinkTabs,
@@ -69,10 +61,10 @@ watch(
     })
 
     const path = route.path
-    const tag = linkTabs.value.find((item) => isEqual(item, { path, title }))
-    if (tag) {
-      tag.path = fullPath
-      tag.checked = true
+    const tab = linkTabs.value.find((item) => isEqual(item, { path, title }))
+    if (tab) {
+      tab.path = fullPath
+      tab.checked = true
       return
     }
 
@@ -89,16 +81,36 @@ watch(
 
 const router = useRouter()
 const onClose = (index: number) => {
-  const tag = linkTabs.value.splice(index, 1)
+  const tab = linkTabs.value.splice(index, 1)
 
-  if (tag[0].checked) {
-    const lastTag = linkTabs.value[index - 1]
-    if (lastTag) {
-      lastTag.checked = true
-      router.push(lastTag.path)
+  if (tab[0].checked) {
+    const prevTab = linkTabs.value[index - 1]
+    if (prevTab) {
+      prevTab.checked = true
+      router.push(prevTab.path)
     }
   }
 }
+
+const initLinkTabs = () => {
+  const key = 'link-tabs'
+  const tabs = localStorage.getItem(key)
+  if (tabs) {
+    try {
+      linkTabs.value = JSON.parse(tabs)
+    } catch (e) {
+      localStorage.removeItem(key)
+    }
+  }
+  
+  window.onbeforeunload = () => {
+    try {
+      localStorage.setItem(key, JSON.stringify(linkTabs.value))
+    } catch (e) { /* empty */ }
+  }
+}
+initLinkTabs()
+
 </script>
 
 <template>
