@@ -187,7 +187,12 @@ const deleteSuccess = () => {
       </template>
     </base-table>
 
-    <base-pagination v-model:page="page" v-model:page-size="pageSize" :total="total" />
+    <base-pagination
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :total="total"
+      :disable="loading"
+    />
   </div>
 </template>
 
