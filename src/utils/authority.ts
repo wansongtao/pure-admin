@@ -6,7 +6,7 @@ import { ALL_PERMISSION } from '@/constants/index'
  * @param needPerm 是否有的权限
  * @returns
  */
-export const checkAuth = (permissions: string[], needPerm: string) => {
+export const checkPermission = (permissions: string[], needPerm: string) => {
   return permissions.some((v) => {
     if (v === ALL_PERMISSION || v === needPerm) {
       return true
@@ -29,17 +29,17 @@ export const hasPermissions = (
   or = false
 ) => {
   if (typeof needPermissions === 'string') {
-    return checkAuth(permissions, needPermissions)
+    return checkPermission(permissions, needPermissions)
   }
 
   if (or) {
     return needPermissions.some((v) => {
-      return checkAuth(permissions, v)
+      return checkPermission(permissions, v)
     })
   }
 
   return needPermissions.every((v) => {
-    return checkAuth(permissions, v)
+    return checkPermission(permissions, v)
   })
 }
 
