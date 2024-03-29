@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { message } from 'ant-design-vue'
-import { createExcelFile, type IConfig } from '@/utils/excel'
-import { downloadFile } from '@/utils/download'
+import { createExcelFile, type IConfig } from '@/plugins/excel'
+import { downloadFile } from '@/plugins/download'
 import { exportUserInfo } from '@/api/user'
 
 const createConfig = <T = any,>(data: T[]) => {
@@ -137,3 +137,4 @@ const handleExport = async () => {
 </template>
 
 <style lang="scss" scoped></style>
+@/plugins/excel@/plugins/download
