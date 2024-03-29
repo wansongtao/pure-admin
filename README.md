@@ -5,11 +5,11 @@
 ## 技术栈
 
 - [Vue3](https://v3.cn.vuejs.org/)
-- [Vue Router4](https://router.vuejs.org/zh/)
 - [Vite5](https://vitejs.dev/)
-- [Pinia](https://pinia.esm.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Ant Design Vue4](https://next.antdv.com/components/overview-cn/)
+- [Vue Router4](https://router.vuejs.org/zh/)
+- [Pinia](https://pinia.esm.dev/)
 - [Axios](https://axios-http.com/)
 - [vueuse](https://vueuse.org/)
 - [echarts](https://echarts.apache.org/zh/index.html)
