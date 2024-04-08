@@ -290,14 +290,14 @@ export function onIdleDetection(callback: () => void, timeout = 15, immediate = 
 
   const startDetection = () => {
     onStartTimer()
-    document.addEventListener('mousedown', onStartTimer)
+    document.addEventListener('keydown', onStartTimer)
     document.addEventListener('mousemove', onStartTimer)
     document.addEventListener('visibilitychange', onPageVisibility)
   }
 
   const stopDetection = () => {
     onClearTimer()
-    document.removeEventListener('mousedown', onStartTimer)
+    document.removeEventListener('keydown', onStartTimer)
     document.removeEventListener('mousemove', onStartTimer)
     document.removeEventListener('visibilitychange', onPageVisibility)
   }
