@@ -36,7 +36,7 @@ const handleUpdateAvatar = async () => {
     return
   }
 
-  const { error } = await updateProfile({ avatar: result })
+  const [error] = await updateProfile({ avatar: result })
   if (error) {
     return
   }

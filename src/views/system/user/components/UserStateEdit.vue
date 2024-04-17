@@ -20,7 +20,7 @@ watch(disabled, async (val) => {
   }
 
   loading.value = true
-  const { result, error } = await updateUser($props.id, { disabled: val })
+  const [error, result] = await updateUser($props.id, { disabled: val })
 
   loading.value = false
   if (result) {

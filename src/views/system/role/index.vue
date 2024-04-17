@@ -34,7 +34,7 @@ const tableScroll = computed(() => {
 })
 
 const requestData = async (params: IRoleQuery) => {
-  const { result } = await getRoleList(params)
+  const [, result]= await getRoleList(params)
 
   return {
     data: result?.data.list ?? [],

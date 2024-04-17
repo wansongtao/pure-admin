@@ -22,7 +22,7 @@ const handleAdd = async (param: IMenuParam) => {
   const data = getTrulyValue(param)
 
   loading.value = true
-  const { result } = await addMenu(data)
+  const [, result] = await addMenu(data)
   loading.value = false
   if (result) {
     open.value = false

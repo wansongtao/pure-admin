@@ -36,7 +36,7 @@ const tableScroll = computed(() => {
 })
 
 const requestData = async (params: IMenuQuery) => {
-  const { result } = await getMenuList(params)
+  const [, result] = await getMenuList(params)
 
   return {
     data: result?.data.list ?? [],

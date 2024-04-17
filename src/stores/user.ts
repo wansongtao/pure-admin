@@ -25,11 +25,12 @@ export const useUserStore = defineStore('user', () => {
   async function login(data: ILoginParams) {
     return new Promise<void>((resolve, reject) => {
       setLogin(data).then((res) => {
-        if (res.result) {
-          setToken(res.result.data)
+        const [err, result] = res
+        if (result) {
+          setToken(result.data)
           resolve()
         } else {
-          reject(res.error)
+          reject(err)
         }
       })
     })
@@ -52,12 +53,12 @@ export const useUserStore = defineStore('user', () => {
   function getUserInfoAction() {
     return new Promise<IUserInfo>((resolve, reject) => {
       getUserInfo().then((res) => {
-        const { result, error } = res
+        const [err, result] = res
         if (result) {
           userInfo.value = result.data
           resolve(result.data)
         } else {
-          reject(error)
+          reject(err)
         }
       })
     })

@@ -22,7 +22,7 @@ const handleAdd = async (param: IRoleEditParam) => {
   const data = getTrulyValue(param)
 
   loading.value = true
-  const { result } = await addRole(data)
+  const [, result] = await addRole(data)
   loading.value = false
   if (!result) {
     return

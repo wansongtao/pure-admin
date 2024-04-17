@@ -34,14 +34,14 @@ const handleDelete = async () => {
 
   const id = $props.id
   if (typeof id === 'number') {
-    const { result } = await deleteRole(id)
+    const [, result] = await deleteRole(id)
     if (result) {
       success()
     }
     return
   }
 
-  const { result } = await deleteRoles(id)
+  const [, result] = await deleteRoles(id)
   if (result) {
     success('批量删除角色成功')
   }

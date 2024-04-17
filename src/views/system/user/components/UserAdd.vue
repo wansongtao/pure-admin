@@ -22,7 +22,7 @@ const handleAdd = async (param: IUserEdit) => {
   const data = getTrulyValue(param)
 
   loading.value = true
-  const { result } = await addUser(data)
+  const [, result]= await addUser(data)
   loading.value = false
   if (!result) {
     return

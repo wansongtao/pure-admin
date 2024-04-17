@@ -23,7 +23,7 @@ const handleChangeProfile = (data: IProfileParam) => {
 }
 
 const requestProfile = async () => {
-  const { result } = await getProfile()
+  const [, result] = await getProfile()
   if (!result) {
     return
   }

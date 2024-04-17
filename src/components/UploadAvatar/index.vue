@@ -61,7 +61,7 @@ const handleUpload = () => {
     }
 
     uploadFile(imgFile).then((data) => {
-      const { result, error } = data
+      const [error, result] = data
       if (error) {
         reject(error)
         return

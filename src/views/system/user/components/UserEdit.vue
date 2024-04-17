@@ -21,7 +21,7 @@ const detail = ref<IUserDetail>()
 const handleOpen = async () => {
   open.value = true
   loading.value = true
-  const { result } = await getUserDetail($props.id)
+  const [, result] = await getUserDetail($props.id)
   loading.value = false
   if (!result) {
     return
@@ -38,7 +38,7 @@ const handleEdit = async (data: IUserEdit) => {
   }
 
   loading.value = true
-  const { result } = await updateUser($props.id, data)
+  const [, result] = await updateUser($props.id, data)
   loading.value = false
   if (result) {
     open.value = false

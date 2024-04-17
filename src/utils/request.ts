@@ -42,7 +42,7 @@ const getKey = (config: AxiosRequestConfig) => {
   return key
 }
 
-const instance = axios.create({
+export const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API,
   timeout: 5000,
   withCredentials: true,
@@ -165,19 +165,19 @@ instance.interceptors.response.use(
   }
 )
 
-export const request = <T extends IBaseResponse | Blob, C = any>(
+const request = <T extends IBaseResponse | Blob, C = any>(
   config: AxiosRequestConfig<C> & IConfigHeader
 ) => {
-  return new Promise<{ result?: T; error?: AxiosError }>((resolve) => {
+  return new Promise<[AxiosError | undefined, T | undefined]>((resolve) => {
     instance
       .request<IBaseResponse | Blob>(config)
       .then((res) => {
-        resolve({ result: res.data as T })
+        resolve([undefined, res.data as T])
       })
       .catch((error: AxiosError) => {
-        resolve({ error })
+        resolve([error, undefined])
       })
   })
 }
 
-export default instance
+export default request

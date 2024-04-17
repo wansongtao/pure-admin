@@ -22,7 +22,7 @@ const handleOpen = async () => {
   open.value = true
   loading.value = true
 
-  const { result } = await getMenuDetail($props.id)
+  const [, result] = await getMenuDetail($props.id)
   loading.value = false
   detail.value = result?.data
 }
@@ -35,7 +35,7 @@ const handleEdit = async (data: IMenuParam) => {
   }
 
   loading.value = true
-  const { result } = await updateMenu($props.id, data)
+  const [, result] = await updateMenu($props.id, data)
   loading.value = false
   if (result) {
     open.value = false

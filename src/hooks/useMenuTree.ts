@@ -36,7 +36,7 @@ export const useMenuTree = (
       })
     }
 
-    const { result } = await getMenuTree()
+    const [, result] = await getMenuTree()
     menuTree.value = transformData(result?.data ?? [])
     return menuTree.value
   }

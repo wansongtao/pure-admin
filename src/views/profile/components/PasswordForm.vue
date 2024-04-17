@@ -65,7 +65,7 @@ const handleUpdate = () => {
       newPassword: formState.value.newPassword
     }
 
-    const { error } = await updatePassword(data)
+    const [error] = await updatePassword(data)
     loading.value = false
     if (error) {
       return

@@ -34,14 +34,14 @@ const handleDelete = async () => {
 
   const id = $props.id
   if (typeof id === 'number') {
-    const { result } = await deleteMenu(id)
+    const [, result] = await deleteMenu(id)
     if (result) {
       success()
     }
     return
   }
 
-  const { result } = await deleteMenus(id)
+  const [, result] = await deleteMenus(id)
   if (result) {
     success('批量删除菜单成功')
   }

@@ -1,4 +1,4 @@
-import { request } from '@/utils/request'
+import request from '@/utils/request'
 
 import type { IBaseList, IBaseResponse } from '@/types'
 import type { IUserQuery, IUserList, IUserEdit, IUserDetail } from '@/types/api/user'

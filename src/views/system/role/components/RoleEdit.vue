@@ -21,7 +21,7 @@ const detail = ref<IRoleDetail>()
 const handleOpen = async () => {
   open.value = true
   loading.value = true
-  const { result } = await getRoleDetail($props.id)
+  const [, result] = await getRoleDetail($props.id)
   loading.value = false
   if (!result) {
     return
@@ -38,7 +38,7 @@ const handleEdit = async (data: IRoleEditParam) => {
   }
 
   loading.value = true
-  const { result } = await updateRole($props.id, data)
+  const [, result] = await updateRole($props.id, data)
   loading.value = false
   if (result) {
     open.value = false

@@ -105,7 +105,7 @@ const handleExport = async () => {
     return
   }
   loading.value = true
-  const { result } = await exportUserInfo(ids.value)
+  const [, result] = await exportUserInfo(ids.value)
   if (!result) {
     loading.value = false
     return
@@ -137,4 +137,3 @@ const handleExport = async () => {
 </template>
 
 <style lang="scss" scoped></style>
-@/plugins/excel@/plugins/download

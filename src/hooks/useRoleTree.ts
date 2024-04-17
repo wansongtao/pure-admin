@@ -7,7 +7,7 @@ export const useRoleTree = (immediate = true) => {
   const roleTree = ref<IRoleTree[]>([])
 
   const fetchRoleTree = async () => {
-    const { result } = await getRoleTree()
+    const [, result] = await getRoleTree()
     if (result) {
       roleTree.value = result?.data
     }

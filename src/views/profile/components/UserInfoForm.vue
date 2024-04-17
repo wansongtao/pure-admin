@@ -93,7 +93,7 @@ const handleSave = () => {
     const data: IProfileParam = getChangedData(formState.value, $props.details)
 
     loading.value = true
-    const { error } = await updateProfile(data)
+    const [error] = await updateProfile(data)
     loading.value = false
     if (error) {
       return

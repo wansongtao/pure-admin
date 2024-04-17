@@ -35,7 +35,7 @@ const tableScroll = computed(() => {
 })
 
 const requestData = async (params: IUserQuery) => {
-  const { result } = await getUserList(params)
+  const [, result] = await getUserList(params)
 
   return {
     data: result?.data.list ?? [],
