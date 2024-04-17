@@ -23,17 +23,12 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function login(data: ILoginParams) {
-    return new Promise<void>((resolve, reject) => {
-      setLogin(data).then((res) => {
-        const [err, result] = res
-        if (result) {
-          setToken(result.data)
-          resolve()
-        } else {
-          reject(err)
-        }
-      })
-    })
+    const [err, result] = await setLogin(data)
+    if (result) {
+      setToken(result.data)
+    } else {
+      throw err
+    }
   }
   async function logout() {
     await setLogout()
