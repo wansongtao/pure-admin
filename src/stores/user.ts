@@ -41,18 +41,11 @@ export const useUserStore = defineStore('user', () => {
     permissions: [],
     roles: []
   })
-  function getUserInfoAction() {
-    return new Promise<IUserInfo>((resolve, reject) => {
-      getUserInfo().then((res) => {
-        const [err, result] = res
-        if (result) {
-          userInfo.value = result.data
-          resolve(result.data)
-        } else {
-          reject(err)
-        }
-      })
-    })
+  async function getUserInfoAction() {
+    const [, result] = await getUserInfo()
+    if (result) {
+      userInfo.value = result.data
+    }
   }
 
   return {
