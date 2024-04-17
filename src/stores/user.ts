@@ -35,13 +35,9 @@ export const useUserStore = defineStore('user', () => {
       })
     })
   }
-  function logout() {
-    return new Promise<void>((resolve) => {
-      setLogout().then(() => {
-        removeToken()
-        resolve()
-      })
-    })
+  async function logout() {
+    await setLogout()
+    removeToken()
   }
 
   const userInfo = ref<IUserInfo>({
