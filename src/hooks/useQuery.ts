@@ -2,7 +2,7 @@
  * @question 为什么不使用vueuse的useRouteQuery
  * @answer 因为vueuse的useRouteQuery会在修改值时，自动修改所有的query，而不是仅修改当前页面组件的query
  */
-import { nextTick, watch, ref, type Ref } from 'vue'
+import { nextTick, watch, ref, computed, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 type IQuery = string | number | string[] | null | undefined
