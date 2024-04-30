@@ -135,7 +135,7 @@ export const getSystemTheme = (autoFollow?: (mode: 'dark' | 'light') => void) =>
  * @param childrenKey
  * @returns
  */
-export const findDepth = <T extends Record<string, any>>(
+export const deepFind = <T extends Record<string, any>>(
   data: T[],
   compare: (value: T) => boolean,
   childrenKey = 'children'
@@ -153,7 +153,7 @@ export const findDepth = <T extends Record<string, any>>(
       continue
     }
 
-    item = findDepth(value[childrenKey], compare, childrenKey)
+    item = deepFind(value[childrenKey], compare, childrenKey)
     if (item !== undefined) {
       break
     }

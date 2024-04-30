@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { findDepth } from '@/utils/index'
+import { deepFind } from '@/utils/index'
 
 interface ITree {
   label: string
@@ -31,7 +31,7 @@ const list = computed({
 
     const arr: ITree[] = []
     checkedList.forEach((v) => {
-      const item = findDepth(tree, (res) => res.value === v)
+      const item = deepFind(tree, (res) => res.value === v)
       if (!item) {
         return
       }
