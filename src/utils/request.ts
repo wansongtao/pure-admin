@@ -130,16 +130,6 @@ instance.interceptors.response.use(
           eventBus.$off(key, callback)
         }
         eventBus.$on(key, callback)
-
-        const timeout = config.timeout || 5000
-        const requestTime = config.headers.requestTime as number
-        const now = Date.now()
-        if (now - requestTime > timeout) {
-          historyRequests.delete(key)
-          const error = new AxiosError(`timeout of ${timeout}ms exceeded`, 'ECONNABORTED', config)
-          error.name = 'AxiosError'
-          eventBus.$emit(key, undefined, error)
-        }
       })
     }
 
@@ -168,14 +158,14 @@ instance.interceptors.response.use(
 const request = <T extends IBaseResponse | Blob, C = any>(
   config: AxiosRequestConfig<C> & IConfigHeader
 ) => {
-  return new Promise<[AxiosError | undefined, T | undefined]>((resolve) => {
+  return new Promise<[err?: AxiosError, data?: T]>((resolve) => {
     instance
       .request<IBaseResponse | Blob>(config)
       .then((res) => {
         resolve([undefined, res.data as T])
       })
       .catch((error: AxiosError) => {
-        resolve([error, undefined])
+        resolve([error])
       })
   })
 }
