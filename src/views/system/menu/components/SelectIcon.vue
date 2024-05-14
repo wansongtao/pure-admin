@@ -11,15 +11,13 @@ const handleOpen = () => {
   open.value = true
 }
 const handleClose = () => {
-  setTimeout(() => {
-    open.value = false
-  }, 300)
+  open.value = false
 }
 </script>
 
 <template>
-  <div class="select">
-    <a-input v-model:value="name" allow-clear @focus="handleOpen" @blur="handleClose" >
+  <div class="select" v-click-outside="handleClose">
+    <a-input v-model:value="name" allow-clear @focus="handleOpen" >
       <template #prefix v-if="name">
         <component :is="MENU_ICON_MAP[name]" />
       </template>
