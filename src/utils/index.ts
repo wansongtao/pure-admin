@@ -76,57 +76,56 @@ export const debounce = <T = unknown>(fn: Function, delay = 200, immediate = fal
   }
 }
 
-/**
- * 获取系统明暗模式
- * @param autoFollow 自动跟随系统明暗模式回调
- * @returns
- */
-export const getSystemTheme = (autoFollow?: (mode: 'dark' | 'light') => void) => {
+export const getSystemTheme = () => {
   if (!window.matchMedia) {
-    const date = new Date()
-    const hours = date.getHours()
+    const date = new Date();
+    const hours = date.getHours();
 
-    if (autoFollow) {
-      const time = date.getTime()
-      let delay = 0
-      let mode: 'light' | 'dark' = 'light'
-
-      if (hours >= 0 && hours < 6) {
-        const lastTime = date.setHours(6)
-        delay = lastTime - time
-      } else if (hours >= 6 && hours < 19) {
-        const lastTime = date.setHours(19)
-        delay = lastTime - time
-        mode = 'dark'
-      } else {
-        const lastTime = date.setHours(23, 59, 59, 999) + 6 * 60 * 60 * 1000
-        delay = lastTime - time
-      }
-
-      setTimeout(() => {
-        autoFollow(mode)
-        getSystemTheme(autoFollow)
-      }, delay)
+    if (hours >= 7 && hours < 19) {
+      return 'light';
     }
-
-    if (hours >= 6 && hours < 19) {
-      return 'light'
-    }
-
-    return 'dark'
+    return 'dark';
   }
 
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-  const theme = systemTheme.matches ? 'dark' : 'light'
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const theme = systemTheme.matches ? 'dark' : 'light';
+  return theme;
+};
 
-  if (autoFollow) {
-    systemTheme.addEventListener('change', (e) => {
-      const theme = e.matches ? 'dark' : 'light'
-      autoFollow(theme)
-    })
+export const followSystemTheme = (
+  callback: (theme: 'dark' | 'light') => void
+) => {
+  if (!window.matchMedia) {
+    const date = new Date();
+    const hours = date.getHours();
+    const time = date.getTime();
+    let delay = 0;
+    let mode: 'light' | 'dark' = 'light';
+
+    if (hours >= 0 && hours < 7) {
+      const nextTime = date.setHours(7);
+      delay = nextTime - time;
+    } else if (hours >= 7 && hours < 19) {
+      const nextTime = date.setHours(19);
+      delay = nextTime - time;
+      mode = 'dark';
+    } else {
+      const nextTime = date.setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000;
+      delay = nextTime - time;
+    }
+
+    setTimeout(() => {
+      callback(mode);
+    }, delay);
+    return;
   }
-  return theme
-}
+
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  systemTheme.addEventListener('change', (e) => {
+    const theme = e.matches ? 'dark' : 'light';
+    callback(theme);
+  });
+};
 
 /**
  * 深度查找
