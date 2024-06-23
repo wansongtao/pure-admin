@@ -32,7 +32,7 @@ export default defineConfig({
   },
   base: '/admin/',
   define: {
-    __APP_VERSION__: JSON.stringify(version)
+    __APP_VERSION__: `'${version}'`
   },
   server: {
     open: true,
@@ -40,7 +40,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/dev': {
-        target: 'https://mock.apifox.com/m1/3925622-0-default',
+        target: 'https://mock.apipark.cn/m1/3925622-3560511-default',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/dev/, '')
