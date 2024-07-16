@@ -18,6 +18,7 @@ export interface IUserInfo {
    */
   permissions: string[]
   roles: string[]
+  menus?: IMenuData[]
 }
 
 export interface IMenuData {
@@ -28,7 +29,7 @@ export interface IMenuData {
   /**
    * 菜单名称
    */
-  title: string
+  name: string
   /**
    * 组件路径
    */
