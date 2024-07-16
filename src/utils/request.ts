@@ -47,7 +47,7 @@ export const instance = axios.create({
   timeout: 5000,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json;'
+    'Content-Type': 'application/json'
   }
 })
 
@@ -72,7 +72,7 @@ instance.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`
       }
     }
-
+    
     return config
   },
   (error: AxiosError) => {
@@ -87,16 +87,16 @@ const responseInterceptor = (res: AxiosResponse<IBaseResponse | Blob>) => {
     undefined
   ]
 
-  if (data instanceof Blob || data.code === 200) {
+  if (data instanceof Blob || data.statusCode === 200 || data.statusCode === 201) {
     result[0] = res
   } else {
-    if (data.code === 300 || data.code === 401) {
-      message.error(data.msg, 2)
+    if (data.statusCode === 401) {
+      message.error(data.message, 2)
       goToLogin()
     } else {
-      message.error(data.msg)
+      message.error(data.message)
     }
-    result[1] = new AxiosError(data.msg)
+    result[1] = new AxiosError(data.message)
   }
 
   return result
