@@ -6,7 +6,7 @@ const isRefresh = defineModel<boolean>()
 const img = ref<string>('')
 const onGetCaptchaImg = debounce(async () => {
   const [, result] = await getCaptcha()
-  img.value = result?.data ?? ''
+  img.value = result?.data?.captcha ?? ''
   isRefresh.value = false
 }, 400)
 
