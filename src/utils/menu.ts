@@ -88,8 +88,8 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
           .join('')
       }
 
-      if (item.title) {
-        route.meta!.title = item.title
+      if (item.name) {
+        route.meta!.title = item.name
       }
       if (item.icon) {
         route.meta!.icon = item.icon
@@ -109,7 +109,7 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
         // 通过在父路由的children中添加一个相同path的子路由，实现路由跳转父级菜单时，重定向到相应子菜单
         const redirectRoute = {
           path: route.path,
-          title: item.title,
+          title: item.name,
           redirect: item.redirect,
           meta: {
             hidden: true

@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getUserInfo, setLogin, setLogout } from '@/api/common'
+import { generateMenus, generateCacheRoutes, generateRoutes } from '@/utils/menu'
 
+import type { IMenuItem } from '@/types'
 import type { ILoginParams, IUserInfo } from '@/types/api/common'
 
 export const useUserStore = defineStore('user', () => {
@@ -25,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
   async function login(data: ILoginParams) {
     const [err, result] = await setLogin(data)
     if (result) {
-      setToken(result.data)
+      setToken(result.data.token)
     } else {
       throw err
     }
@@ -41,11 +43,25 @@ export const useUserStore = defineStore('user', () => {
     permissions: [],
     roles: []
   })
+  const cacheRoutes = ref<string[]>([])
+  const menus = ref<IMenuItem[]>([])
   async function getUserInfoAction() {
     const [, result] = await getUserInfo()
-    if (result) {
-      userInfo.value = result.data
+    if (!result) {
+      return
     }
+
+    userInfo.value = {
+      nickName: result.data.nickName,
+      avatar: result.data.avatar,
+      permissions: result.data.permissions,
+      roles: result.data.roles
+    }
+
+    const route = generateRoutes(result.data.menus ?? [])
+    cacheRoutes.value = generateCacheRoutes(route.children ?? [])
+    menus.value = generateMenus(route.children ?? [])
+    return route
   }
 
   return {
@@ -56,6 +72,8 @@ export const useUserStore = defineStore('user', () => {
     login,
     logout,
     userInfo,
+    cacheRoutes,
+    menus,
     getUserInfoAction
   }
 })

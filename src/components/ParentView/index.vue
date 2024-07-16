@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { useSettingStore } from '@/stores/setting'
+import { useUserStore } from '@/stores/user';
 
 defineOptions({
   name: 'ParentView'
 })
 
-const setStore = useSettingStore()
+const userStore = useUserStore()
 </script>
 
 <template>
   <router-view v-slot="{ Component }">
     <transition name="slide-fade">
-      <keep-alive :include="setStore.cacheRoutes">
+      <keep-alive :include="userStore.cacheRoutes">
         <component :is="Component" />
       </keep-alive>
     </transition>

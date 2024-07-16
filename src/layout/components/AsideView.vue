@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { useSettingStore } from '@/stores/setting'
+import { useUserStore } from '@/stores/user';
 
 import type { MenuInfo } from 'ant-design-vue/es/menu/src/interface'
 
 const setStore = useSettingStore()
-const { collapsed, menus } = storeToRefs(setStore)
+const { collapsed } = storeToRefs(setStore)
 const state = reactive<{ selectedKeys: string[]; openKeys: string[]; preOpenKeys: string[] }>({
   selectedKeys: [],
   openKeys: [],
@@ -46,6 +47,9 @@ watch(
   },
   { immediate: true }
 )
+
+const userStore = useUserStore()
+const menus = computed(() => userStore.menus)
 
 const version = __APP_VERSION__;
 </script>

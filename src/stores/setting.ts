@@ -2,10 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { getTheme, setTheme } from '@/utils/theme'
 import { getSystemTheme, followSystemTheme as followTheme } from '@/utils/index'
-import { getMenus } from '@/api/common'
-import { generateMenus, generateCacheRoutes, generateRoutes } from '@/utils/menu'
 
-import type { IMenuItem, ILinkTab } from '@/types'
+import type { ILinkTab } from '@/types'
 
 export const useSettingStore = defineStore('setting', () => {
   const theme = ref(getTheme())
@@ -39,17 +37,6 @@ export const useSettingStore = defineStore('setting', () => {
     defaultLinkTabs.value = tagLinks
   }
 
-  const cacheRoutes = ref<string[]>([])
-  const menus = ref<IMenuItem[]>([])
-  async function getRoutesAction() {
-    const [, result] = await getMenus()
-    const route = generateRoutes(result?.data ?? [])
-    cacheRoutes.value = generateCacheRoutes(route.children ?? [])
-    menus.value = generateMenus(route.children ?? [])
-
-    return route
-  }
-
   return {
     theme,
     followSystemTheme,
@@ -58,8 +45,5 @@ export const useSettingStore = defineStore('setting', () => {
     toggleCollapsed,
     defaultLinkTabs,
     setDefaultLinkTabs,
-    cacheRoutes,
-    menus,
-    getRoutesAction
   }
 })

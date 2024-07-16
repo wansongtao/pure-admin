@@ -2,15 +2,14 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import router from './index'
 import { useUserStore } from '@/stores/user'
-import { useSettingStore } from '@/stores/setting'
 
 NProgress.configure({ showSpinner: false })
 
 router.beforeEach(async (to) => {
   NProgress.start()
 
-  const useStore = useUserStore()
-  const token = useStore.getToken()
+  const userStore = useUserStore()
+  const token = userStore.getToken()
   if (!token && to.name !== 'Login') {
     NProgress.done()
     return `/login?redirect=${to.path}`
@@ -22,17 +21,14 @@ router.beforeEach(async (to) => {
       return (to.query?.redirect as string) || '/'
     }
 
-    const setStore = useSettingStore()
-    if (!setStore.menus?.length) {
-      const route = await setStore.getRoutesAction()
+    if (!userStore.menus?.length) {
+      const route = await userStore.getUserInfoAction()
       
-      router.addRoute(route)
-      NProgress.done()
-      return to.fullPath
-    }
-
-    if (!useStore.userInfo.roles.length) {
-      await useStore.getUserInfoAction()
+      if (route) {
+        router.addRoute(route)
+        NProgress.done()
+        return to.fullPath
+      }
     }
   }
 })
