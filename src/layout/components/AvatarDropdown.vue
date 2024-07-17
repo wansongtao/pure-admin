@@ -31,7 +31,7 @@ const handlePersonalPage = () => {
       <div>
         <img :src="userInfo.avatar" alt="" class="avatar" />
       </div>
-      <div class="name">{{ userInfo.nickName }}</div>
+      <div class="name">{{ userInfo.name }}</div>
       <down-outlined :style="{ fontSize: '14px', color: 'var(--st-c-icon)' }" />
     </div>
     <template #overlay>

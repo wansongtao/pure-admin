@@ -12,7 +12,7 @@ export interface IUserInfo {
   /**
    * 用户昵称
    */
-  nickName: string
+  name: string
   /**
    * 权限组
    */

@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const userInfo = ref<IUserInfo>({
-    nickName: '',
+    name: '',
     avatar: '',
     permissions: [],
     roles: []
@@ -52,7 +52,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     userInfo.value = {
-      nickName: result.data.nickName,
+      name: result.data.name,
       avatar: result.data.avatar,
       permissions: result.data.permissions,
       roles: result.data.roles
