@@ -3,6 +3,7 @@ import { message } from 'ant-design-vue'
 import { useUserStore } from '@/stores/user'
 import { getDataType } from '@/utils/index'
 import EventBus from '@/event/eventBus'
+import router from '@/router/index'
 
 import type { IBaseResponse, IConfigHeader } from '@/types/index'
 
@@ -11,8 +12,12 @@ const goToLogin = (seconds = 2) => {
     const store = useUserStore()
     store.removeToken()
 
-    const loginPath = `/login?redirect=${encodeURIComponent(location.pathname + location.search)}`
-    location.href = location.origin + loginPath
+    router.push({
+      name: 'Login',
+      query: {
+        redirect: router.currentRoute.value.fullPath
+      }
+    })
   }, seconds * 1000)
 }
 
@@ -87,17 +92,18 @@ const responseInterceptor = (res: AxiosResponse<IBaseResponse | Blob>) => {
     undefined
   ]
 
-  if (data instanceof Blob || data.statusCode === 200 || data.statusCode === 201) {
+  if (data instanceof Blob || data.statusCode === 200) {
     result[0] = res
-  } else {
-    if (data.statusCode === 401) {
-      message.error(data.message, 2)
-      goToLogin()
-    } else {
-      message.error(data.message)
-    }
-    result[1] = new AxiosError(data.message)
+    return result
   }
+
+  if (data.statusCode === 401) {
+    message.error(data.message, 2)
+    goToLogin()
+  } else {
+    message.error(data.message)
+  }
+  result[1] = new AxiosError(data.message)
 
   return result
 }
