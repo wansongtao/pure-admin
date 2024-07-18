@@ -40,6 +40,8 @@ const getKey = (config: AxiosRequestConfig) => {
     if (params && getDataType(params) === 'object') {
       key += `-${JSON.stringify(params)}`
     }
+
+    key = encodeURIComponent(key)
   } catch (e) {
     console.error(e)
   }
