@@ -104,6 +104,10 @@ export interface IMenuParam {
    * 菜单类型
    */
   type?: IMenuType
+  /**
+   * 菜单排序，目录、菜单选填
+   */
+  sort?: number
 }
 
 export interface IMenuTree {

@@ -91,7 +91,8 @@ const createState = (): IMenuParam => {
     path: '',
     component: '',
     redirect: '',
-    icon: ''
+    icon: '',
+    sort: 0
   }
 }
 
@@ -225,6 +226,14 @@ defineExpose({
           </a-form-item>
           <a-form-item label="重定向地址：" name="redirect">
             <a-input v-model:value="formState.redirect" />
+          </a-form-item>
+          <a-form-item label="排序：" name="sort">
+            <a-input-number
+              v-model:value="formState.sort"
+              :min="0"
+              :max="255"
+              style="width: 100%"
+            />
           </a-form-item>
         </template>
         <a-row :gutter="20">
