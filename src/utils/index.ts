@@ -78,54 +78,52 @@ export const debounce = <T = unknown>(fn: Function, delay = 200, immediate = fal
 
 export const getSystemTheme = () => {
   if (!window.matchMedia) {
-    const date = new Date();
-    const hours = date.getHours();
+    const date = new Date()
+    const hours = date.getHours()
 
     if (hours >= 7 && hours < 19) {
-      return 'light';
+      return 'light'
     }
-    return 'dark';
+    return 'dark'
   }
 
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-  const theme = systemTheme.matches ? 'dark' : 'light';
-  return theme;
-};
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+  const theme = systemTheme.matches ? 'dark' : 'light'
+  return theme
+}
 
-export const followSystemTheme = (
-  callback: (theme: 'dark' | 'light') => void
-) => {
+export const followSystemTheme = (callback: (theme: 'dark' | 'light') => void) => {
   if (!window.matchMedia) {
-    const date = new Date();
-    const hours = date.getHours();
-    const time = date.getTime();
-    let delay = 0;
-    let mode: 'light' | 'dark' = 'light';
+    const date = new Date()
+    const hours = date.getHours()
+    const time = date.getTime()
+    let delay = 0
+    let mode: 'light' | 'dark' = 'light'
 
     if (hours >= 0 && hours < 7) {
-      const nextTime = date.setHours(7);
-      delay = nextTime - time;
+      const nextTime = date.setHours(7)
+      delay = nextTime - time
     } else if (hours >= 7 && hours < 19) {
-      const nextTime = date.setHours(19);
-      delay = nextTime - time;
-      mode = 'dark';
+      const nextTime = date.setHours(19)
+      delay = nextTime - time
+      mode = 'dark'
     } else {
-      const nextTime = date.setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000;
-      delay = nextTime - time;
+      const nextTime = date.setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000
+      delay = nextTime - time
     }
 
     setTimeout(() => {
-      callback(mode);
-    }, delay);
-    return;
+      callback(mode)
+    }, delay)
+    return
   }
 
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
   systemTheme.addEventListener('change', (e) => {
-    const theme = e.matches ? 'dark' : 'light';
-    callback(theme);
-  });
-};
+    const theme = e.matches ? 'dark' : 'light'
+    callback(theme)
+  })
+}
 
 /**
  * 深度查找
@@ -315,4 +313,21 @@ export function onIdleDetection(callback: () => void, timeout = 15, immediate = 
     stopDetection,
     restartDetection
   }
+}
+
+export function deepMap<T extends Record<string, any>>(
+  data: T[],
+  callback: (value: T) => T,
+  childrenKey = 'children'
+) {
+  return data.map((item) => {
+    const value = callback(item)
+
+    if (value[childrenKey]) {
+      // @ts-ignore
+      value[childrenKey] = deepMap(value[childrenKey], callback, childrenKey)
+    }
+
+    return value
+  })
 }
