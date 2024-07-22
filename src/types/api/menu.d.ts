@@ -99,7 +99,7 @@ export interface IMenuParam {
   /**
    * 菜单名称，2-16个字符。
    */
-  title?: string
+  name?: string
   /**
    * 菜单类型
    */

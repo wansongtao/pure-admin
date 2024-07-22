@@ -46,9 +46,13 @@ export const validateMenuPath = async (rule: Rule, value: string) => {
     return Promise.resolve()
   }
 
-  const regexp = /^[a-z/:]{2,30}$/
+  if (value.length > 50 || value.length < 2) {
+    return Promise.reject('请输入2至50位由字母、‘/’、‘:’组成的菜单路径')
+  }
+
+  const regexp = /^\/?([a-zA-Z]+)(\/[a-zA-Z]+|\/:[a-zA-Z]+)*$/
   if (!regexp.test(value)) {
-    return Promise.reject('请输入2至30位由小写字母、‘/’、‘:’组成的菜单路径')
+    return Promise.reject('格式错误，请输入由字母、‘/’、‘:’组成的路径')
   }
 
   return Promise.resolve()
@@ -59,11 +63,13 @@ export const validateMenuComponent = async (rule: Rule, value: string) => {
     return Promise.resolve()
   }
 
-  const regexp = /^\/[a-zA-Z/.]{6,100}$/
+  if (value.length > 100 || value.length < 6) {
+    return Promise.reject('请输入6至100位由字母、‘/’、‘-’、‘_’、‘.’组成的组件路径')
+  }
+
+  const regexp = /^(\/[a-zA-Z]+[-_]?[a-zA-Z]+)+(.vue|.tsx|.jsx)$/
   if (!regexp.test(value)) {
-    return Promise.reject(
-      '请输入6至100位由字母、‘/’、‘.’组成的组件路径，必须以’/‘开头(views文件夹下路径)'
-    )
+    return Promise.reject('格式错误，请输入由字母、‘/’、‘-’、‘_’、‘.’组成的组件路径')
   }
 
   return Promise.resolve()
@@ -87,7 +93,11 @@ export const validateMenuRedirect = async (rule: Rule, value: string) => {
     return Promise.resolve()
   }
 
-  const regexp = /^[a-z/0-9]{2,50}$/
+  if (value.length > 50 || value.length < 2) {
+    return Promise.reject('请输入2至50位由小写字母、数字、‘/’组成的重定向地址')
+  }
+
+  const regexp = /^(\/?[a-zA-Z0-9]+)+$/
   if (!regexp.test(value)) {
     return Promise.reject('请输入2至50位由小写字母、数字、‘/’组成的重定向地址')
   }

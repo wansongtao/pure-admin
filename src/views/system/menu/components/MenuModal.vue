@@ -44,7 +44,7 @@ watch(open, (val) => {
 })
 
 const rules: { [key in keyof IMenuParam]: Rule[] } = {
-  title: [
+  name: [
     {
       required: true,
       validator: validateMenuTitle
@@ -82,7 +82,7 @@ const createState = (): IMenuParam => {
   return {
     pid: undefined,
     type: 'DIRECTORY',
-    title: '',
+    name: '',
     permission: '',
     disabled: false,
     hidden: false,
@@ -131,7 +131,7 @@ const handleOk = async () => {
   if (formState.value.type === 'MENU' || formState.value.component) {
     nameList.push('component')
   }
-  if (formState.value.permission) {
+  if (formState.value.permission || formState.value.type === 'BUTTON') {
     nameList.push('permission')
   }
   if (formState.value.redirect) {
@@ -139,24 +139,26 @@ const handleOk = async () => {
   }
 
   formRef.value?.validate(nameList).then(() => {
-    const data: IMenuParam = { }
-    if (formState.value.type === 'BUTTON') {
-      data.pid = formState.value.pid
-      data.type = formState.value.type
-      data.title = formState.value.title
-      data.disabled = formState.value.disabled
-      data.permission = formState.value.permission
-    } else if (formState.value.type === 'DIRECTORY') {
-      data.pid = formState.value.pid
-      data.type = formState.value.type
-      data.title = formState.value.title
-      data.permission = formState.value.permission
-      data.disabled = formState.value.disabled
-      data.hidden = formState.value.hidden
-      data.path = formState.value.path
-      data.component = formState.value.component
-      data.redirect = formState.value.redirect
-      data.icon = formState.value.icon
+    let data: IMenuParam = {}
+    switch (formState.value.type) {
+      case 'BUTTON':
+        data = {
+          pid: formState.value.pid,
+          type: formState.value.type,
+          name: formState.value.name,
+          disabled: formState.value.disabled,
+          permission: formState.value.permission
+        }
+        break
+      case 'DIRECTORY':
+        data = {
+          ...formState.value
+        }
+        delete data.props
+        delete data.cache
+        break
+      default:
+        data = { ...formState.value }
     }
 
     $emits('verifySuccess', data)
@@ -204,10 +206,10 @@ defineExpose({
             </a-radio>
           </a-radio-group>
         </a-form-item>
-        <a-form-item label="菜单名称：" name="title">
-          <a-input v-model:value="formState.title" />
+        <a-form-item label="菜单名称：" name="name">
+          <a-input v-model:value="formState.name" />
         </a-form-item>
-        <a-form-item label="菜单权限：" name="permission">
+        <a-form-item label="菜单权限：" name="permission" :required="formState.type === 'BUTTON'">
           <a-input v-model:value="formState.permission" />
         </a-form-item>
 
@@ -218,11 +220,7 @@ defineExpose({
           <a-form-item label="菜单路径：" name="path">
             <a-input v-model:value="formState.path" />
           </a-form-item>
-          <a-form-item
-            label="组件路径："
-            name="component"
-            :required="formState.type === 'MENU'"
-          >
+          <a-form-item label="组件路径：" name="component" :required="formState.type === 'MENU'">
             <a-input v-model:value="formState.component" />
           </a-form-item>
           <a-form-item label="重定向地址：" name="redirect">

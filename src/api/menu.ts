@@ -26,7 +26,7 @@ export const getMenuTree = () => {
 
 export const addMenu = (data: IMenuParam) => {
   return request<IBaseResponse>({
-    url: '/admin/menu',
+    url: '/permissions',
     method: 'post',
     data
   })
