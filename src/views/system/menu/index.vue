@@ -125,7 +125,15 @@ const { page, pageSize, total, loading, list, getList } = usePageRequest(request
 watch(
   [search, page, pageSize],
   () => {
-    getList(search.value)
+    const data = { ...search.value, page: page.value, pageSize: pageSize.value }
+    if (data.beginTime) {
+      data.beginTime = dayjs(data.beginTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+    }
+    if (data.endTime) {
+      data.endTime = dayjs(data.endTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+    }
+    
+    getList(data)
   },
   {
     immediate: true
