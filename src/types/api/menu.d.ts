@@ -1,14 +1,14 @@
-export type IMenuType = 'directory' | 'menu' | 'button'
+export type IMenuType = 'DIRECTORY' | 'MENU' | 'BUTTON'
 
 export interface IMenuQuery {
-  title?: string
-  startTime?: string
+  keyword?: string
+  beginTime?: string
   endTime?: string
   type?: IMenuType
   disabled?: 0 | 1
   page?: number
   pageSize?: number
-  timeSort?: 'ascend' | 'descend'
+  sort?: 'asc' | 'desc'
 }
 
 export interface IMenuListItem {
@@ -27,7 +27,7 @@ export interface IMenuListItem {
   /**
    * 菜单名称
    */
-  title: string
+  name: string
   /**
    * 菜单类型
    */
@@ -44,10 +44,11 @@ export interface IMenuListItem {
    * 是否禁用
    */
   disabled: boolean
+  sort: number
   /**
    * 添加时间
    */
-  createTime: string
+  createdAt: string
   children?: IMenuTreeItem[]
 }
 

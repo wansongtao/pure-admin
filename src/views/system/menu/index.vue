@@ -11,6 +11,8 @@ import { getMenuList } from '@/api/menu'
 import { MENU_TYPES } from '@/constants/index'
 import { useObjectQuery } from '@/hooks/useQuery'
 import { useAuthority } from '@/hooks/useAuthority'
+import dayjs from 'dayjs'
+import { deepMap } from '@/utils'
 
 import type { IMenuQuery, IMenuListItem } from '@/types/api/menu'
 import type { IBaseColumn } from '@/types/ant-design'
@@ -37,62 +39,73 @@ const tableScroll = computed(() => {
 
 const requestData = async (params: IMenuQuery) => {
   const [, result] = await getMenuList(params)
+  const list = result?.data.list ?? []
+  const total = result?.data.total ?? 0
 
   return {
-    data: result?.data.list ?? [],
-    total: result?.data.total ?? 0
+    data: deepMap(list, (item) => {
+      item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+      return item
+    }),
+    total
   }
 }
 
 const search = useObjectQuery<IMenuQuery>('search')
 
+const staticColumns: IBaseColumn<IMenuListItem>[] = [
+  {
+    align: 'center',
+    title: '菜单名称',
+    dataIndex: 'name',
+    ellipsis: true
+  },
+  {
+    align: 'center',
+    title: '菜单路径',
+    dataIndex: 'path',
+    ellipsis: true
+  },
+  {
+    align: 'center',
+    title: '菜单权限',
+    dataIndex: 'permission',
+    ellipsis: true
+  },
+  {
+    align: 'center',
+    title: '菜单类型',
+    dataIndex: 'type',
+    width: 100
+  },
+  {
+    align: 'center',
+    title: '菜单图标',
+    dataIndex: 'icon',
+    width: 100
+  },
+  {
+    align: 'center',
+    title: '是否禁用',
+    dataIndex: 'disabled',
+    width: 100
+  },
+  {
+    align: 'center',
+    title: '排序',
+    dataIndex: 'sort'
+  }
+]
 const columns = computed(() => {
-  const list: IBaseColumn<IMenuListItem>[] = [
-    {
-      align: 'center',
-      title: '菜单名称',
-      dataIndex: 'title',
-      ellipsis: true
-    },
-    {
-      align: 'center',
-      title: '菜单路径',
-      dataIndex: 'path',
-      ellipsis: true
-    },
-    {
-      align: 'center',
-      title: '菜单权限',
-      dataIndex: 'permission',
-      ellipsis: true
-    },
-    {
-      align: 'center',
-      title: '菜单类型',
-      dataIndex: 'type',
-      width: 100
-    },
-    {
-      align: 'center',
-      title: '菜单图标',
-      dataIndex: 'icon',
-      width: 100
-    },
-    {
-      align: 'center',
-      title: '是否禁用',
-      dataIndex: 'disabled',
-      width: 100
-    },
-    {
-      align: 'center',
-      title: '添加时间',
-      dataIndex: 'createTime',
-      sorter: true,
-      sortOrder: search.value.timeSort,
-      width: 180
-    }
-  ]
+  const list = [...staticColumns]
+  list.push({
+    align: 'center',
+    title: '添加时间',
+    dataIndex: 'createdAt',
+    sorter: true,
+    defaultSortOrder: search.value.sort === 'asc' ? 'ascend' : 'descend',
+    width: 180
+  })
 
   if (hasPermission(['system:menu:edit', 'system:menu:del'], true)) {
     list.push({
@@ -120,20 +133,15 @@ watch(
 )
 
 const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend' | null) => {
-  columns.value.forEach((item) => {
-    if (item.dataIndex === fieldName) {
-      item.sortOrder = order
-    }
-  })
-
-  if (fieldName === 'createTime') {
-    search.value.timeSort = order as IMenuQuery['timeSort']
+  if (fieldName === 'createdAt') {
+    const sort = order === 'ascend' ? 'asc' : 'desc'
+    search.value = { ...search.value, sort }
     return
   }
 }
 
 const handleQuery = (data?: IMenuQuery) => {
-  search.value = data!
+  search.value = data ? { ...search.value, ...data } : {}
 }
 
 const checkedIds = ref<number[]>([])
@@ -185,11 +193,11 @@ const deleteSuccess = () => {
     >
       <template #default="{ column, record }">
         <template v-if="column.dataIndex === 'type'">
-          <a-tag color="success" v-if="record.type === 'menu'">{{ MENU_TYPES[record.type] }}</a-tag>
-          <a-tag color="processing" v-if="record.type === 'button'">{{
+          <a-tag color="success" v-if="record.type === 'MENU'">{{ MENU_TYPES[record.type] }}</a-tag>
+          <a-tag color="processing" v-if="record.type === 'BUTTON'">{{
             MENU_TYPES[record.type]
           }}</a-tag>
-          <a-tag color="default" v-if="record.type !== 'menu' && record.type !== 'button'">
+          <a-tag color="default" v-if="record.type !== 'MENU' && record.type !== 'BUTTON'">
             {{ MENU_TYPES[record.type] }}
           </a-tag>
         </template>

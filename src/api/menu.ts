@@ -11,7 +11,7 @@ import type {
 
 export const getMenuList = (params: IMenuQuery) => {
   return request<IBaseResponse<IBaseList<IMenuListItem>>>({
-    url: '/admin/menu',
+    url: '/permissions',
     method: 'GET',
     params
   })
@@ -19,7 +19,7 @@ export const getMenuList = (params: IMenuQuery) => {
 
 export const getMenuTree = () => {
   return request<IBaseResponse<IMenuTree[]>>({
-    url: '/admin/menu/tree',
+    url: '/permissions/tree',
     method: 'GET'
   })
 }

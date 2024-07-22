@@ -17,7 +17,7 @@ export const STATUS: {
 ]
 
 export const MENU_TYPES: { [key in IMenuType]: string } = {
-  directory: '目录',
-  menu: '菜单',
-  button: '按钮'
+  'DIRECTORY': '目录',
+  'MENU': '菜单',
+  'BUTTON': '按钮'
 }

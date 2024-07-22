@@ -32,7 +32,7 @@ const { menuTree, fetchMenuTree } = useMenuTree((data) => {
   return {
     label: data.name,
     value: data.id,
-    disabled: data.type === 'button'
+    disabled: data.type === 'BUTTON'
   }
 }, false)
 
@@ -81,7 +81,7 @@ const rules: { [key in keyof IMenuParam]: Rule[] } = {
 const createState = (): IMenuParam => {
   return {
     pid: undefined,
-    type: 'directory',
+    type: 'DIRECTORY',
     title: '',
     permission: '',
     disabled: false,
@@ -125,10 +125,10 @@ const handleCancel = () => {
 }
 const handleOk = async () => {
   const nameList = ['title']
-  if (formState.value.type !== 'button') {
+  if (formState.value.type !== 'BUTTON') {
     nameList.push('path')
   }
-  if (formState.value.type === 'menu' || formState.value.component) {
+  if (formState.value.type === 'MENU' || formState.value.component) {
     nameList.push('component')
   }
   if (formState.value.permission) {
@@ -140,13 +140,13 @@ const handleOk = async () => {
 
   formRef.value?.validate(nameList).then(() => {
     const data: IMenuParam = { }
-    if (formState.value.type === 'button') {
+    if (formState.value.type === 'BUTTON') {
       data.pid = formState.value.pid
       data.type = formState.value.type
       data.title = formState.value.title
       data.disabled = formState.value.disabled
       data.permission = formState.value.permission
-    } else if (formState.value.type === 'directory') {
+    } else if (formState.value.type === 'DIRECTORY') {
       data.pid = formState.value.pid
       data.type = formState.value.type
       data.title = formState.value.title
@@ -211,7 +211,7 @@ defineExpose({
           <a-input v-model:value="formState.permission" />
         </a-form-item>
 
-        <template v-if="formState.type !== 'button'">
+        <template v-if="formState.type !== 'BUTTON'">
           <a-form-item label="菜单图标：" name="icon">
             <select-icon v-model="formState.icon" />
           </a-form-item>
@@ -221,7 +221,7 @@ defineExpose({
           <a-form-item
             label="组件路径："
             name="component"
-            :required="formState.type === 'menu'"
+            :required="formState.type === 'MENU'"
           >
             <a-input v-model:value="formState.component" />
           </a-form-item>
@@ -235,14 +235,14 @@ defineExpose({
               <a-switch v-model:checked="formState.disabled" />
             </a-form-item>
           </a-col>
-          <a-col :span="12" v-if="formState.type !== 'button'">
+          <a-col :span="12" v-if="formState.type !== 'BUTTON'">
             <a-form-item :label-col="{ span: 10 }" label="是否隐藏：" name="hidden">
               <a-switch v-model:checked="formState.hidden" />
             </a-form-item>
           </a-col>
         </a-row>
 
-        <a-row v-if="formState.type === 'menu'" :gutter="20">
+        <a-row v-if="formState.type === 'MENU'" :gutter="20">
           <a-col :span="12">
             <a-form-item :label-col="{ span: 10 }" label="是否缓存：" name="cache">
               <a-switch v-model:checked="formState.cache" />
