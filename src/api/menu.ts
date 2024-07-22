@@ -34,7 +34,7 @@ export const addMenu = (data: IMenuParam) => {
 
 export const getMenuDetail = (id: number) => {
   return request<IBaseResponse<IMenuDetail>>({
-    url: `/admin/menu/${id}`,
+    url: `/permissions/${id}`,
     method: 'get'
   })
 }
