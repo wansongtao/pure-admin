@@ -6,7 +6,7 @@ const $props = defineProps<{
   id: number | number[]
 }>()
 const $emits = defineEmits<{
-  handleSuccess: []
+  handleSuccess: [isSingle: boolean]
 }>()
 
 const isSingle = computed(() => {
@@ -27,9 +27,9 @@ const beforeOpenConfirm = () => {
 }
 
 const handleDelete = async () => {
-  const success = (text = '删除菜单成功') => {
-    message.success(text)
-    $emits('handleSuccess')
+  const success = (isSingle = true) => {
+    message.success(isSingle ? '删除菜单成功' : '批量删除菜单成功')
+    $emits('handleSuccess', isSingle)
   }
 
   const id = $props.id
@@ -43,7 +43,7 @@ const handleDelete = async () => {
 
   const [, result] = await deleteMenus(id)
   if (result) {
-    success('批量删除菜单成功')
+    success(false)
   }
 }
 </script>

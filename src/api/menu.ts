@@ -49,17 +49,17 @@ export const updateMenu = (id: number, data: IMenuParam) => {
 
 export const deleteMenu = (id: number) => {
   return request<IBaseResponse>({
-    url: `/admin/menu/${id}`,
+    url: `/permissions/${id}`,
     method: 'delete'
   })
 }
 
-export const deleteMenus = (id: number[]) => {
+export const deleteMenus = (ids: number[]) => {
   return request<IBaseResponse>({
-    url: '/admin/menu',
-    method: 'delete',
+    url: '/permissions/batch-delete',
+    method: 'post',
     data: {
-      id
+      ids
     }
   })
 }
