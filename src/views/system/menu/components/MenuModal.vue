@@ -18,6 +18,7 @@ import type { FormInstance } from 'ant-design-vue'
 
 const $props = withDefaults(
   defineProps<{
+    id?: number
     title?: string
     details?: IMenuParam
   }>(),
@@ -32,7 +33,7 @@ const { menuTree, fetchMenuTree } = useMenuTree((data) => {
   return {
     label: data.name,
     value: data.id,
-    disabled: data.type === 'BUTTON'
+    disabled: data.type === 'BUTTON' || data.id === $props.id
   }
 }, false)
 
@@ -201,7 +202,7 @@ defineExpose({
           />
         </a-form-item>
         <a-form-item label="菜单类型：" name="typeId">
-          <a-radio-group v-model:value="formState.type">
+          <a-radio-group v-model:value="formState.type" :disabled="details !== undefined">
             <a-radio v-for="item in menuTypes" :value="item.value" :key="item.value">
               {{ item.label }}
             </a-radio>
