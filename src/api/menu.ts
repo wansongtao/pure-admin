@@ -17,10 +17,13 @@ export const getMenuList = (params: IMenuQuery) => {
   })
 }
 
-export const getMenuTree = () => {
+export const getMenuTree = (containButton: boolean = false) => {
   return request<IBaseResponse<IMenuTree[]>>({
     url: '/permissions/tree',
-    method: 'GET'
+    method: 'GET',
+    params: {
+      containButton
+    }
   })
 }
 
