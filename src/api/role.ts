@@ -35,7 +35,7 @@ export const addRole = (data: IRoleEditParam) => {
 
 export const getRoleDetail = (id: number) => {
   return request<IBaseResponse<IRoleDetail>>({
-    url: `/admin/role/${id}`,
+    url: `/roles/${id}`,
     method: 'get'
   })
 }
