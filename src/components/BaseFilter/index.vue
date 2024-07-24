@@ -26,6 +26,7 @@ const $props = withDefaults(
      * @param current
      */
     disabledDate?: (current: Dayjs) => boolean
+    format?: string
     dateFormat?: string
     showTime?: boolean
     /**
@@ -70,12 +71,13 @@ const $props = withDefaults(
       // Can not select days before today and today
       return current && current > dayjs().endOf('day')
     },
+    format: 'YYYY-MM-DD HH:mm:ss',
     dateFormat: 'YYYY-MM-DD HH:mm:ss',
     showTime: true,
     allowEmpty: () => [true, true],
     placeholder: '请输入关键字',
     gutter: 20,
-    span: 12,
+    span: 8,
     disabledEmptySearch: true,
     loading: false
   }
@@ -138,7 +140,7 @@ const handleReset = () => {
         <a-col :span="span">
           <a-input v-model:value="query.keyword" allow-clear :placeholder="placeholder" />
         </a-col>
-        <a-col :span="span">
+        <a-col span="10">
           <a-range-picker
             style="width: 100%"
             v-model:value="query.dateRange"
@@ -146,7 +148,7 @@ const handleReset = () => {
             :presets="rangePresets"
             :show-time="showTime"
             :disabled-date="disabledDate"
-            :format="dateFormat"
+            :format="format"
             :value-format="dateFormat"
           />
         </a-col>
