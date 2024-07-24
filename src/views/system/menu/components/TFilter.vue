@@ -60,7 +60,7 @@ watch(
 
 <template>
   <base-filter
-    :span="8"
+    :span="6"
     :disabled-empty-search="disabled === undefined && type === undefined"
     :keyword="query?.keyword"
     :default-start-time="query?.beginTime"

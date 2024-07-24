@@ -38,6 +38,13 @@ const tableScroll = computed(() => {
 })
 
 const requestData = async (params: IMenuQuery) => {
+  if (params.beginTime) {
+    params.beginTime = dayjs(params.beginTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+  }
+  if (params.endTime) {
+    params.endTime = dayjs(params.endTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+  }
+
   const [, result] = await getMenuList(params)
   const list = result?.data.list ?? []
   const total = result?.data.total ?? 0
@@ -125,15 +132,7 @@ const { page, pageSize, total, loading, list, getList } = usePageRequest(request
 watch(
   [search, page, pageSize],
   () => {
-    const data = { ...search.value, page: page.value, pageSize: pageSize.value }
-    if (data.beginTime) {
-      data.beginTime = dayjs(data.beginTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
-    }
-    if (data.endTime) {
-      data.endTime = dayjs(data.endTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
-    }
-    
-    getList(data)
+    getList(search.value)
   },
   {
     immediate: true
