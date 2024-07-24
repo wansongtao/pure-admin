@@ -19,8 +19,8 @@ export const getRoleList = (params: IRoleQuery) => {
 
 export const updateRole = (id: number, data: IRoleEditParam) => {
   return request<IBaseResponse>({
-    url: `/admin/role/${id}`,
-    method: 'put',
+    url: `/roles/${id}`,
+    method: 'patch',
     data
   })
 }
