@@ -2,7 +2,8 @@
 import PermissionSelect from './PermissionSelect.vue'
 
 import { useMenuTree } from '@/hooks/useMenuTree'
-import { validateRoleDescription, validateRoleName, validateRoleNickName } from '@/utils/validate'
+import { validateRoleName } from '@/utils/validate'
+import { filterEmoji } from '@/utils'
 
 import type { IRoleEditParam } from '@/types/api/role'
 import type { Rule } from 'ant-design-vue/es/form'
@@ -25,7 +26,7 @@ const { menuTree, fetchMenuTree } = useMenuTree(undefined, false)
 const open = defineModel<boolean>()
 watch(open, (val) => {
   if (val) {
-    fetchMenuTree()
+    fetchMenuTree(true)
   }
 })
 
@@ -36,24 +37,17 @@ const rules: { [key in keyof IRoleEditParam]: Rule[] } = {
       validator: validateRoleName
     }
   ],
-  nickName: [
-    {
-      required: false,
-      validator: validateRoleNickName
-    }
-  ],
   description: [
     {
       required: false,
-      validator: validateRoleDescription
+      max: 150,
     }
   ]
 }
 const createState = (): IRoleEditParam => {
   return {
     name: '',
-    nickName: '',
-    menuIds: [],
+    permissions: [],
     disabled: false,
     description: ''
   }
@@ -89,10 +83,8 @@ const handleCancel = () => {
 }
 const handleOk = async () => {
   const nameList = ['name']
-  if (formState.value.nickName) {
-    nameList.push('nickName')
-  }
   if (formState.value.description) {
+    formState.value.description = filterEmoji(formState.value.description)
     nameList.push('description')
   }
 
@@ -124,16 +116,13 @@ defineExpose({
       :wrapper-col="{ span: 19 }"
       :rules="rules"
     >
-      <a-form-item label="角色标识：" name="name">
+      <a-form-item label="角色名称：" name="name">
         <a-input v-model:value="formState.name" />
       </a-form-item>
-      <a-form-item label="角色权限：" name="menuIds">
-        <permission-select v-model:value="formState.menuIds" :tree-data="menuTree" />
+      <a-form-item label="角色权限：" name="permissions">
+        <permission-select v-model:value="formState.permissions" :tree-data="menuTree" />
       </a-form-item>
-      <a-form-item label="角色昵称：" name="nickName">
-        <a-input v-model:value="formState.nickName" />
-      </a-form-item>
-      <a-form-item label="是否禁用：" required name="disabled">
+      <a-form-item label="是否禁用：" name="disabled">
         <a-switch v-model:checked="formState.disabled" />
       </a-form-item>
       <a-form-item label="角色描述：" name="description">

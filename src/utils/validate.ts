@@ -110,35 +110,9 @@ export const validateRoleName = async (rule: Rule, value: string) => {
     return Promise.resolve()
   }
 
-  const regexp = /^[a-zA-Z0-9_-]{1,50}$/
+  const regexp = /^[a-zA-Z0-9._-]{1,50}$/
   if (!regexp.test(value)) {
-    return Promise.reject('请输入1至50位由字母、数字、‘_-’组成的角色标识')
-  }
-
-  return Promise.resolve()
-}
-
-export const validateRoleNickName = async (rule: Rule, value: string) => {
-  if (!rule.required && value === '') {
-    return Promise.resolve()
-  }
-
-  const regexp = /^[a-zA-Z\u4e00-\u9fa5']{1,50}$/
-  if (!regexp.test(value)) {
-    return Promise.reject('请输入1至50位由中英文组成的角色昵称')
-  }
-
-  return Promise.resolve()
-}
-
-export const validateRoleDescription = async (rule: Rule, value: string) => {
-  if (!rule.required && value === '') {
-    return Promise.resolve()
-  }
-
-  const regexp = /^[a-zA-Z\u4e00-\u9fa5'-]{1,150}$/
-  if (!regexp.test(value)) {
-    return Promise.reject('请输入1至150位由中英文组成的角色描述')
+    return Promise.reject('请输入1至50位由字母、数字、‘._-’组成的角色名称')
   }
 
   return Promise.resolve()

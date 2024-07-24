@@ -20,9 +20,8 @@ export interface IRoleList {
 export interface IRoleEditParam {
   description?: string
   disabled?: boolean
-  menuIds?: number[]
+  permissions?: number[]
   name?: string
-  nickName?: string
 }
 
 export interface IRoleDetail {
