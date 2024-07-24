@@ -17,10 +17,10 @@ const disabled = ref<IRoleQuery['disabled']>(undefined)
 const handleSearch = (data: IBaseQuery) => {
   const params: IRoleQuery = {}
   if (data?.keyword) {
-    params.name = data.keyword
+    params.keyword = data.keyword
   }
   if (data?.startTime) {
-    params.startTime = data.startTime
+    params.beginTime = data.startTime
   }
   if (data?.endTime) {
     params.endTime = data.endTime
@@ -55,17 +55,17 @@ watch(
     使用computed返回该数组再传给组件即可解决。 -->
   <!-- :date-range="[query?.startTime ?? '', query?.endTime ?? '']" -->
   <base-filter
-    :span="8"
+    :span="7"
     :disabled-empty-search="disabled === undefined"
-    :keyword="query?.name"
-    :default-start-time="query?.startTime"
+    :keyword="query?.keyword"
+    :default-start-time="query?.beginTime"
     :default-end-time="query?.endTime"
     placeholder="请输入角色名称"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
   >
     <template #default>
-      <a-col :span="8">
+      <a-col :span="7">
         <a-select
           v-model:value="disabled"
           style="width: 100%"

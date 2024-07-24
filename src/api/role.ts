@@ -11,7 +11,7 @@ import type {
 
 export const getRoleList = (params: IRoleQuery) => {
   return request<IBaseResponse<IBaseList<IRoleList>>>({
-    url: '/admin/role',
+    url: '/roles',
     method: 'GET',
     params
   })

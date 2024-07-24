@@ -12,6 +12,7 @@ import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IRoleQuery, IRoleList } from '@/types/api/role'
 import type { IBaseColumn } from '@/types/ant-design'
+import dayjs from 'dayjs'
 
 defineOptions({
   name: 'SystemRoleIndex'
@@ -34,7 +35,19 @@ const tableScroll = computed(() => {
 })
 
 const requestData = async (params: IRoleQuery) => {
-  const [, result]= await getRoleList(params)
+  if (params.beginTime) {
+    params.beginTime = dayjs(params.beginTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+  }
+  if (params.endTime) {
+    params.endTime = dayjs(params.endTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+  }
+
+  const [, result] = await getRoleList(params)
+
+  result?.data.list?.forEach((item: IRoleList) => {
+    item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+    item.updatedAt = dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')
+  })
 
   return {
     data: result?.data.list ?? [],
@@ -54,13 +67,8 @@ const columns = computed(() => {
     },
     {
       align: 'center',
-      title: '角色标识',
+      title: '角色名称',
       dataIndex: 'name'
-    },
-    {
-      align: 'center',
-      title: '角色昵称',
-      dataIndex: 'nickName'
     },
     {
       align: 'center',
@@ -76,9 +84,15 @@ const columns = computed(() => {
     {
       align: 'center',
       title: '添加时间',
-      dataIndex: 'createTime',
+      dataIndex: 'createdAt',
       sorter: true,
-      sortOrder: search.value.timeSort,
+      defaultSortOrder: search.value.sort === 'asc' ? 'ascend' : 'descend',
+      width: 180
+    },
+    {
+      align: 'center',
+      title: '更新时间',
+      dataIndex: 'updatedAt',
       width: 180
     }
   ]
@@ -96,19 +110,6 @@ const columns = computed(() => {
   return list
 })
 
-const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
-  columns.value.forEach((item) => {
-    if (item.dataIndex === fieldName) {
-      item.sortOrder = order
-    }
-  })
-
-  if (fieldName === 'createTime') {
-    search.value.timeSort = order as IRoleQuery['timeSort']
-    return
-  }
-}
-
 const { page, pageSize, total, loading, list, getList } = usePageRequest(requestData)
 
 watch(
@@ -122,7 +123,15 @@ watch(
 )
 
 const handleQuery = (data?: IRoleQuery) => {
-  search.value = data!
+  search.value = data ? { ...search.value, ...data } : {}
+}
+
+const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | null) => {
+  if (fieldName === 'createdAt') {
+    const sort = order === 'ascend' ? 'asc' : 'desc'
+    search.value = { ...search.value, sort }
+    return
+  }
 }
 
 const checkedIds = ref<number[]>([])

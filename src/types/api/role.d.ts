@@ -1,35 +1,20 @@
 export interface IRoleQuery {
-  /**
-   * 0=false，1=true
-   */
   disabled?: 0 | 1
   endTime?: string
-  timeSort?: 'ascend' | 'descend'
-  /**
-   * 依据name模糊查询
-   */
-  name?: string
+  sort?: 'asc' | 'desc'
+  keyword?: string
   page?: number
   pageSize?: number
-  startTime?: string
+  beginTime?: string
 }
 
 export interface IRoleList {
-  createTime: string
-  /**
-   * 角色描述
-   */
+  id: number
+  name: string
   description?: string
   disabled: boolean
-  id: number
-  /**
-   * 角色标识
-   */
-  name: string
-  /**
-   * 角色昵称
-   */
-  nickName?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface IRoleEditParam {
