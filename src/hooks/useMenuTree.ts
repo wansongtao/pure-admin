@@ -17,7 +17,7 @@ export const useMenuTree = (
 ) => {
   const menuTree = ref<ITree[]>([])
 
-  const fetchMenuTree = async () => {
+  const fetchMenuTree = async (containButton?: boolean) => {
     const transformData = (tree: IMenuTree[]) => {
       return tree.map((v) => {
         const item: ITree = { label: v.name, value: v.id, type: v.type }
@@ -36,7 +36,7 @@ export const useMenuTree = (
       })
     }
 
-    const [, result] = await getMenuTree()
+    const [, result] = await getMenuTree(containButton)
     menuTree.value = transformData(result?.data ?? [])
     return menuTree.value
   }
