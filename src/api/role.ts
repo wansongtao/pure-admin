@@ -42,17 +42,17 @@ export const getRoleDetail = (id: number) => {
 
 export const deleteRole = (id: number) => {
   return request<IBaseResponse>({
-    url: `/admin/role/${id}`,
+    url: `/roles/${id}`,
     method: 'delete'
   })
 }
 
 export const deleteRoles = (id: number[]) => {
   return request<IBaseResponse>({
-    url: '/admin/role',
-    method: 'delete',
+    url: '/roles/batch-delete',
+    method: 'post',
     data: {
-      id
+      ids: id
     }
   })
 }
