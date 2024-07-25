@@ -163,6 +163,11 @@ const handleOk = async () => {
         data = { ...formState.value }
     }
 
+    if (formState.value.pid === undefined && $props.details?.pid) {
+      // @ts-ignore
+      data.pid = null
+    }
+
     $emits('verifySuccess', data)
   })
 }

@@ -33,10 +33,6 @@ const handleEdit = async (data: IMenuParam) => {
     message.warn('您没有修改任何信息！')
     return
   }
-  if (data.pid === undefined) {
-    // @ts-ignore
-    data.pid = null
-  }
 
   loading.value = true
   const [, result] = await updateMenu($props.id, data)

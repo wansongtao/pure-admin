@@ -167,6 +167,11 @@ const deleteSuccess = (isSingle: boolean) => {
 
   getList(search.value)
 }
+
+const editSuccess = () => {
+  page.value = 1
+  getList(search.value)
+}
 </script>
 
 <template>
@@ -220,7 +225,7 @@ const deleteSuccess = (isSingle: boolean) => {
         <template v-if="column.key === 'operation'">
           <a-space>
             <check-permission permissions="system:menu:edit">
-              <menu-edit :id="record.id" @handle-success="getList(search)" />
+              <menu-edit :id="record.id" @handle-success="editSuccess" />
             </check-permission>
             <check-permission permissions="system:menu:del">
               <menu-delete :id="record.id" @handle-success="deleteSuccess" />
