@@ -1,14 +1,10 @@
 <script lang="ts" setup>
-import UploadAvatar from '@/components/UploadAvatar/index.vue'
-
 import { useRoleTree } from '@/hooks/useRoleTree'
 import { validateUsername, validateNickName } from '@/utils/validate'
 
 import type { IUserEdit } from '@/types/api/user'
 import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
-
-type IUserInfo = IUserEdit & { userName?: string }
 
 const $props = withDefaults(
   defineProps<{
@@ -21,7 +17,7 @@ const $props = withDefaults(
 )
 const $emits = defineEmits<{
   onCancel: []
-  onOk: [data: IUserInfo]
+  onOk: [data: IUserEdit]
 }>()
 
 const loading = defineModel<boolean>('loading', { default: false })
@@ -36,7 +32,7 @@ watch(open, (val) => {
   fetchRoleTree()
 })
 
-const rules: {[key in keyof IUserInfo]: Rule[]}= {
+const rules: {[key in keyof IUserEdit]: Rule[]}= {
   userName: [
     {
       required: true,
@@ -50,17 +46,16 @@ const rules: {[key in keyof IUserInfo]: Rule[]}= {
     }
   ]
 }
-const createState = (): IUserInfo => {
+const createState = (): IUserEdit => {
   return {
     userName: '',
     nickName: '',
     roles: [],
     disabled: false,
-    avatar: ''
   }
 }
 
-const formState = ref<IUserInfo>(createState())
+const formState = ref<IUserEdit>(createState())
 watch(
   () => $props.details,
   (data) => {
@@ -79,8 +74,6 @@ const resetForm = () => {
   formState.value = createState()
 }
 
-const uploadRef = ref<InstanceType<typeof UploadAvatar>>()
-
 const handleCancel = () => {
   resetForm()
   open.value = false
@@ -96,10 +89,6 @@ const handleOk = async () => {
   }
 
   formRef.value?.validate(nameList).then(async () => {
-    if (formState.value.avatar && formState.value.avatar !== $props.details?.avatar) {
-      await uploadRef.value?.handleUpload()
-    }
-
     const data = { ...formState.value }
     $emits('onOk', data)
   })
@@ -126,9 +115,6 @@ defineExpose({
       :wrapper-col="{ span: 19 }"
       :rules="rules"
     >
-      <a-form-item label="用户头像：" name="avatar">
-        <upload-avatar ref="uploadRef" v-model:img-url="formState.avatar" />
-      </a-form-item>
       <a-form-item label="用户名：" name="userName">
         <a-input v-model:value="formState.userName" :disabled="!!details" />
       </a-form-item>

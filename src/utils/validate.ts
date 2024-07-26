@@ -5,9 +5,9 @@ export const validateUsername = async (_rule: Rule, value: string) => {
     return Promise.reject('请输入用户名')
   }
 
-  const regexp = /^[a-zA-Z][a-zA-Z0-9]{4,10}$/
+  const regexp = /^[a-zA-Z][a-zA-Z0-9]{2,10}$/
   if (!regexp.test(value)) {
-    return Promise.reject('请输入5至11位由字母、数字组成的用户名（字母开头）！')
+    return Promise.reject('请输入3至11位由字母、数字组成的用户名（字母开头）！')
   }
 
   return Promise.resolve()

@@ -26,7 +26,7 @@ export interface IUserList {
 }
 
 export interface IUserEdit {
-  avatar?: string
+  userName?: string
   disabled?: boolean
   nickName?: string
   roles?: number[]
