@@ -2,6 +2,7 @@
 import { useAuthority } from '@/hooks/useAuthority'
 import { message } from 'ant-design-vue'
 import { updateUser } from '@/api/user'
+import { throttle } from '@/utils';
 
 const $props = defineProps<{
   id: string
@@ -12,25 +13,13 @@ const { hasPermission } = useAuthority()
 const disabled = defineModel<boolean>()
 const loading = ref(false)
 
-let isSkipOnce = false
-watch(disabled, async (val) => {
-  if (isSkipOnce) {
-    isSkipOnce = false
-    return
-  }
-
+const handleEdit = throttle(async () => {
   loading.value = true
-  const [error, result] = await updateUser($props.id, { disabled: val })
-
+  const [, result] = await updateUser($props.id, { disabled: !disabled.value })
   loading.value = false
   if (result) {
-    message.success('用户状态修改成功')
-    return
-  }
-  if (error) {
-    isSkipOnce = true
     disabled.value = !disabled.value
-    return
+    message.success('修改状态成功')
   }
 })
 </script>
@@ -38,10 +27,11 @@ watch(disabled, async (val) => {
 <template>
   <a-switch
     v-if="hasPermission('system:user:edit')"
-    v-model:checked="disabled"
+    :checked="disabled"
     checked-children="是"
     un-checked-children="否"
     :loading="loading"
+    @click="handleEdit"
   />
   <span v-else>{{ disabled ? '是' : '否' }}</span>
 </template>

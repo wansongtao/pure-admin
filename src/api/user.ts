@@ -28,17 +28,17 @@ export const deleteUsers = (id: number[]) => {
   })
 }
 
-export const updateUser = (id: number, data: IUserEdit) => {
+export const updateUser = (id: string, data: IUserEdit) => {
   return request<IBaseResponse>({
-    url: `/admin/user/${id}`,
-    method: 'put',
+    url: `/users/${id}`,
+    method: 'patch',
     data
   })
 }
 
-export const getUserDetail = (id: number) => {
+export const getUserDetail = (id: string) => {
   return request<IBaseResponse<IUserDetail>>({
-    url: `/admin/user/${id}`,
+    url: `/users/${id}`,
     method: 'get'
   })
 }
