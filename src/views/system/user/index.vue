@@ -13,6 +13,7 @@ import { useAuthority } from '@/hooks/useAuthority'
 
 import type { IUserQuery, IUserList } from '@/types/api/user'
 import type { IBaseColumn } from '@/types/ant-design'
+import dayjs from 'dayjs'
 
 defineOptions({
   name: 'SystemUserIndex'
@@ -35,7 +36,18 @@ const tableScroll = computed(() => {
 })
 
 const requestData = async (params: IUserQuery) => {
+  if (params.beginTime) {
+    params.beginTime = dayjs(params.beginTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+  }
+  if (params.endTime) {
+    params.endTime = dayjs(params.endTime).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+  }
+
   const [, result] = await getUserList(params)
+  result?.data.list?.forEach((item: IUserList) => {
+    item.createdAt = dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+    item.updatedAt = dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')
+  })
 
   return {
     data: result?.data.list ?? [],
@@ -49,18 +61,12 @@ const columns = computed(() => {
   const list: IBaseColumn<IUserList>[] = [
     {
       align: 'center',
-      title: '用户ID',
-      dataIndex: 'id',
-      width: 100
-    },
-    {
-      align: 'center',
       title: '用户名',
       dataIndex: 'userName'
     },
     {
       align: 'center',
-      title: '角色头像',
+      title: '用户头像',
       dataIndex: 'avatar'
     },
     {
@@ -70,15 +76,26 @@ const columns = computed(() => {
     },
     {
       align: 'center',
+      title: '用户角色',
+      dataIndex: 'roleNames'
+    },
+    {
+      align: 'center',
       title: '是否禁用',
       dataIndex: 'disabled'
     },
     {
       align: 'center',
       title: '添加时间',
-      dataIndex: 'createTime',
+      dataIndex: 'createdAt',
       sorter: true,
-      sortOrder: search.value.timeSort,
+      defaultSortOrder: search.value.sort === 'asc' ? 'ascend' : 'descend',
+      width: 180
+    },
+    {
+      align: 'center',
+      title: '更新时间',
+      dataIndex: 'updatedAt',
       width: 180
     }
   ]
@@ -97,14 +114,9 @@ const columns = computed(() => {
 })
 
 const handleSort = (fieldName: keyof IUserList, order?: 'descend' | 'ascend' | null) => {
-  columns.value.forEach((item) => {
-    if (item.dataIndex === fieldName) {
-      item.sortOrder = order
-    }
-  })
-
-  if (fieldName === 'createTime') {
-    search.value.timeSort = order as IUserQuery['timeSort']
+  if (fieldName === 'createdAt') {
+    const sort = order === 'ascend' ? 'asc' : 'desc'
+    search.value = { ...search.value, sort }
     return
   }
 }
@@ -122,10 +134,10 @@ watch(
 )
 
 const handleQuery = (data?: IUserQuery) => {
-  search.value = data!
+  search.value = data ? { ...search.value, ...data } : {}
 }
 
-const checkedIds = ref<number[]>([])
+const checkedIds = ref<string[]>([])
 const deleteSuccess = () => {
   const deleteCount = checkedIds.value.length
   checkedIds.value = []
@@ -177,6 +189,16 @@ const deleteSuccess = () => {
           <div class="avatar">
             <img class="avatar_img" :src="record.avatar" alt="" />
           </div>
+        </template>
+        <template v-if="column.dataIndex === 'roleNames'">
+          <a-tag
+            v-for="role in record.roleNames"
+            :key="role"
+            color="blue"
+            style="margin-bottom: 5px"
+          >
+            {{ role }}
+          </a-tag>
         </template>
         <template v-if="column.dataIndex === 'disabled'">
           <user-state-edit v-model="record.disabled" :id="record.id" />

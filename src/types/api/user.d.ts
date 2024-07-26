@@ -1,6 +1,6 @@
 export interface IUserQuery {
   endTime?: string
-  timeSort?: 'ascend' | 'descend'
+  sort?: 'asc' | 'desc'
   /**
    * 0=false，1=true
    */
@@ -11,34 +11,18 @@ export interface IUserQuery {
   keyword?: string
   page?: number
   pageSize?: number
-  startTime?: string
+  beginTime?: string
 }
 
 export interface IUserList {
-  /**
-   * 用户头像
-   */
   avatar?: string
-  /**
-   * 创建时间
-   */
-  createTime: string
-  /**
-   * 是否禁用
-   */
   disabled: boolean
-  /**
-   * 用户id
-   */
-  id: number
-  /**
-   * 昵称
-   */
+  id: string
   nickName?: string
-  /**
-   * 用户名
-   */
   userName: string
+  createdAt: string
+  updatedAt: string
+  roleNames?: string[]
 }
 
 export interface IUserEdit {

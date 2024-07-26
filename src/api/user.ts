@@ -5,7 +5,7 @@ import type { IUserQuery, IUserList, IUserEdit, IUserDetail } from '@/types/api/
 
 export const getUserList = (params: IUserQuery) => {
   return request<IBaseResponse<IBaseList<IUserList>>>({
-    url: '/admin/user',
+    url: '/users',
     method: 'get',
     params
   })

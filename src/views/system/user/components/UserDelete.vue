@@ -3,18 +3,18 @@ import { message } from 'ant-design-vue'
 import { deleteUser, deleteUsers } from '@/api/user'
 
 const $props = defineProps<{
-  id: number | number[]
+  id: string | string[]
 }>()
 const $emits = defineEmits<{
   handleSuccess: []
 }>()
 
 const isSingle = computed(() => {
-  return typeof $props.id === 'number' ? true : false
+  return typeof $props.id === 'string' ? true : false
 })
 
 const beforeOpenConfirm = () => {
-  if (typeof $props.id === 'number') {
+  if (typeof $props.id === 'string') {
     return true
   }
 

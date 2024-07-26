@@ -97,7 +97,7 @@ const createConfig = <T = any,>(data: T[]) => {
   return config
 }
 
-const ids = defineModel<number[]>('ids', { default: [] })
+const ids = defineModel<string[]>('ids', { default: [] })
 const loading = ref(false)
 const handleExport = async () => {
   if (!ids.value.length) {

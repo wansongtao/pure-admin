@@ -4,7 +4,7 @@ import { message } from 'ant-design-vue'
 import { updateUser } from '@/api/user'
 
 const $props = defineProps<{
-  id: number
+  id: string
 }>()
 
 const { hasPermission } = useAuthority()

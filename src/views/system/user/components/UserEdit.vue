@@ -8,7 +8,7 @@ import { getChangedData } from '@/utils'
 import type { IUserDetail, IUserEdit } from '@/types/api/user'
 
 const $props = defineProps<{
-  id: number
+  id: string
 }>()
 const $emits = defineEmits<{
   handleSuccess: []

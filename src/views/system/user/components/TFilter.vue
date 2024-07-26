@@ -20,7 +20,7 @@ const handleSearch = (data: IBaseQuery) => {
     params.keyword = data.keyword
   }
   if (data?.startTime) {
-    params.startTime = data.startTime
+    params.beginTime = data.startTime
   }
   if (data?.endTime) {
     params.endTime = data.endTime
@@ -56,13 +56,13 @@ watch(
     placeholder="请输入用户名、昵称关键字"
     :disabled-empty-search="disabled === undefined"
     :keyword="query?.keyword"
-    :default-start-time="query?.startTime"
+    :default-start-time="query?.beginTime"
     :default-end-time="query?.endTime"
     @handle-search="handleSearch"
     @handle-reset="handleReset"
   >
     <template #default>
-      <a-col :span="8">
+      <a-col :span="6">
         <a-select
           v-model:value="disabled"
           style="width: 100%"
