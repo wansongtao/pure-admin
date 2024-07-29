@@ -138,9 +138,12 @@ const handleQuery = (data?: IUserQuery) => {
 }
 
 const checkedIds = ref<string[]>([])
-const deleteSuccess = () => {
-  const deleteCount = checkedIds.value.length
-  checkedIds.value = []
+const deleteSuccess = (isSingle: boolean) => {
+  let deleteCount = 1
+  if (!isSingle) {
+    deleteCount = checkedIds.value.length
+    checkedIds.value = []
+  }
 
   const lastPageSize = total.value % pageSize.value || pageSize.value
   if (deleteCount >= lastPageSize && page.value > 1) {

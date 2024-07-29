@@ -11,19 +11,19 @@ export const getUserList = (params: IUserQuery) => {
   })
 }
 
-export const deleteUser = (id: number) => {
+export const deleteUser = (id: string) => {
   return request<IBaseResponse>({
-    url: `/admin/user/${id}`,
+    url: `/users/${id}`,
     method: 'delete'
   })
 }
 
-export const deleteUsers = (id: number[]) => {
+export const deleteUsers = (ids: string[]) => {
   return request<IBaseResponse>({
-    url: '/admin/user',
-    method: 'delete',
+    url: '/users/batch-delete',
+    method: 'post',
     data: {
-      id
+      ids
     }
   })
 }

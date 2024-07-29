@@ -6,7 +6,7 @@ const $props = defineProps<{
   id: string | string[]
 }>()
 const $emits = defineEmits<{
-  handleSuccess: []
+  handleSuccess: [isSingle: boolean]
 }>()
 
 const isSingle = computed(() => {
@@ -27,23 +27,23 @@ const beforeOpenConfirm = () => {
 }
 
 const handleDelete = async () => {
-  const success = (text = '删除用户成功') => {
-    message.success(text)
-    $emits('handleSuccess')
+  const success = () => {
+    message.success(isSingle.value ? '删除角色成功' : '批量删除角色成功')
+    $emits('handleSuccess', isSingle.value)
   }
 
   const id = $props.id
-  if (typeof id === 'number') {
-    const [, result] = await deleteUser(id)
+  if (isSingle.value) {
+    const [, result] = await deleteUser(id as string)
     if (result) {
       success()
     }
     return
   }
 
-  const [, result] = await deleteUsers(id)
+  const [, result] = await deleteUsers(id as string[])
   if (result) {
-    success('批量删除用户成功')
+    success()
   }
 }
 </script>
