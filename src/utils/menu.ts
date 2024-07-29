@@ -72,20 +72,17 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
   const recursionGenerateRoutes = (tree: IMenuData[], parentPath = ''): RouteRecordRaw[] => {
     return tree.map((item) => {
       const path = getFullPath(item.path, parentPath)
+      const name = path.replace(/\//g, '') + '-' + Math.random().toString(36).slice(2)
 
       const route: RouteRecordRaw = {
         path,
         component: ParentView,
+        name,
         meta: {}
       }
 
       if (item.component && COMPONENT_MAP[item.component]) {
         route.component = COMPONENT_MAP[item.component]
-        route.name = item.component
-          .replace(/.vue/g, '')
-          .split('/')
-          .map((item) => item.replace(/^\S/, (s) => s.toUpperCase()))
-          .join('')
       }
 
       if (item.name) {
