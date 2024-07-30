@@ -3,7 +3,6 @@ import ParentView from '@/components/ParentView/index.vue'
 import { h } from 'vue'
 import MENU_ICON_MAP from '@/plugins/importMenuIcons'
 import COMPONENT_MAP from '@/plugins/importRouteComponents'
-import adminRoute from '@/router/adminRoute'
 
 import type { IMenuData } from '@/types/api/common'
 import type { RouteRecordRaw } from 'vue-router'
@@ -68,7 +67,7 @@ export const generateCacheRoutes = (routes: RouteRecordRaw[]): string[] => {
   return cacheRouteNames
 }
 
-export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
+export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw[] => {
   const recursionGenerateRoutes = (tree: IMenuData[], parentPath = ''): RouteRecordRaw[] => {
     return tree.map((item) => {
       const path = getFullPath(item.path, parentPath)
@@ -127,7 +126,5 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw => {
   }
 
   const routes = recursionGenerateRoutes(menuTree)
-  adminRoute.children!.push(...routes)
-
-  return adminRoute
+  return routes
 }

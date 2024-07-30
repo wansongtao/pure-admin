@@ -12,8 +12,14 @@ router.beforeEach(async (to) => {
   const token = userStore.getToken()
   if (!token && to.name !== 'Login') {
     NProgress.done()
-    location.reload()
     return `/login?redirect=${to.path}`
+  }
+  if (!token && to.name === 'Login') {
+    if (router.hasRoute(userStore.addRouteName)) {
+      router.removeRoute(userStore.addRouteName)
+      NProgress.done()
+      return to.fullPath
+    }
   }
 
   if (token) {
@@ -24,7 +30,6 @@ router.beforeEach(async (to) => {
 
     if (!userStore.menus?.length) {
       const route = await userStore.getUserInfoAction()
-      
       if (route) {
         router.addRoute(route)
         NProgress.done()
