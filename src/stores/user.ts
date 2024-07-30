@@ -24,19 +24,6 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('token')
   }
 
-  async function login(data: ILoginParams) {
-    const [err, result] = await setLogin(data)
-    if (result) {
-      setToken(result.data.token)
-    } else {
-      throw err
-    }
-  }
-  async function logout() {
-    await setLogout()
-    removeToken()
-  }
-
   const userInfo = ref<IUserInfo>({
     name: '',
     avatar: '',
@@ -62,6 +49,23 @@ export const useUserStore = defineStore('user', () => {
     cacheRoutes.value = generateCacheRoutes(route.children ?? [])
     menus.value = generateMenus(route.children ?? [])
     return route
+  }
+
+  async function login(data: ILoginParams) {
+    const [err, result] = await setLogin(data)
+    if (result) {
+      setToken(result.data.token)
+    } else {
+      throw err
+    }
+  }
+  async function logout() {
+    await setLogout()
+    userInfo.value.permissions = []
+    userInfo.value.roles = []
+    menus.value = []
+    cacheRoutes.value = []
+    removeToken()
   }
 
   return {
