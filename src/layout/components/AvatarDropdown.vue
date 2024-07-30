@@ -9,19 +9,12 @@ const { userInfo } = storeToRefs(userStore)
 const router = useRouter()
 const logout = () => {
   userStore.logout().then(() => {
-    router.push({
-      path: '/login',
-      query: {
-        redirect: router.currentRoute.value.fullPath
-      }
-    })
+    router.push('/login')
   })
 }
 
 const handlePersonalPage = () => {
-  router.push({
-    path: '/profile'
-  })
+  router.push('/profile')
 }
 </script>
 
