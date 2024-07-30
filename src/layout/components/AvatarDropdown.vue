@@ -21,7 +21,7 @@ const handlePersonalPage = () => {
 <template>
   <a-dropdown placement="bottom" arrow>
     <div class="dropdown">
-      <div>
+      <div v-if="userInfo.avatar">
         <img :src="userInfo.avatar" alt="" class="avatar" />
       </div>
       <div class="name">{{ userInfo.name }}</div>
