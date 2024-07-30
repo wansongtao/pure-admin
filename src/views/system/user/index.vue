@@ -23,6 +23,9 @@ const { hasPermission } = useAuthority()
 const isShowTool = computed(() => {
   return hasPermission(['system:user:add', 'system:user:del', 'system:user:export'], true)
 })
+const isShowSelection = computed(() => {
+  return hasPermission(['system:menu:del'])
+})
 const tableScroll = computed(() => {
   return isShowTool.value
     ? {
@@ -180,7 +183,7 @@ const deleteSuccess = (isSingle: boolean) => {
 
     <base-table
       v-model:checked="checkedIds"
-      default-row-selection
+      :default-row-selection="isShowSelection"
       :columns="columns"
       :scroll="tableScroll"
       :loading="loading"

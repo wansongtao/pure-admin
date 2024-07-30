@@ -25,6 +25,9 @@ const { hasPermission } = useAuthority()
 const isShowTool = computed(() => {
   return hasPermission(['system:menu:add', 'system:menu:del'], true)
 })
+const isShowSelection = computed(() => {
+  return hasPermission(['system:menu:del'])
+})
 const tableScroll = computed(() => {
   return isShowTool.value
     ? {
@@ -201,7 +204,7 @@ const editSuccess = () => {
       :loading="loading"
       bordered
       default-expand-first-rows
-      default-row-selection
+      :default-row-selection="isShowSelection"
       v-model:checked="checkedIds"
       :scroll="tableScroll"
       @handle-sort="handleSort"
