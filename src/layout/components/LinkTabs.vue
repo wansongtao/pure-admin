@@ -2,9 +2,25 @@
 import { CloseOutlined } from '@ant-design/icons-vue'
 
 import { throttle } from '@/utils/index'
-import { useSettingStore } from '@/stores/setting'
 
 import type { ILinkTab } from '@/types/index'
+
+const key = 'link-tabs'
+const getHistoryTabs = () => {
+  const tabs = localStorage.getItem(key)
+  if (!tabs) {
+    return []
+  }
+
+  try {
+    return JSON.parse(tabs) as ILinkTab[]
+  } catch (e) {
+    return []
+  }
+}
+const setHistoryTabs = (tabs: ILinkTab[]) => {
+  localStorage.setItem(key, JSON.stringify(tabs))
+}
 
 const scrollElement = ref<HTMLElement | null>(null)
 const onWheel = throttle((e: WheelEvent) => {
@@ -24,26 +40,18 @@ const isEqual = (a: Item, b: Item) => {
   return false
 }
 
+const defaultLinkTabs = {
+  title: '首页',
+  path: '/',
+  hiddenCloseIcon: true,
+  checked: true
+}
+
 const linkTabs = ref<ILinkTab[]>([])
-const setStore = useSettingStore()
-watch(
-  () => setStore.defaultLinkTabs,
-  (defaultLinkTabs) => {
-    if (!linkTabs.value.length) {
-      linkTabs.value = defaultLinkTabs
-      return
-    }
-
-    linkTabs.value = linkTabs.value.filter((item) => {
-      return !defaultLinkTabs.some((defaultItem) => isEqual(item, defaultItem))
-    })
-
-    linkTabs.value.unshift(...defaultLinkTabs)
-  },
-  {
-    immediate: true
-  }
-)
+linkTabs.value = getHistoryTabs()
+if (!linkTabs.value.length) {
+  linkTabs.value.push({ ...defaultLinkTabs })
+}
 
 const route = useRoute()
 watch(
@@ -65,14 +73,15 @@ watch(
     if (tab) {
       tab.path = fullPath
       tab.checked = true
-      return
+    } else {
+      linkTabs.value.push({
+        title,
+        path: route.fullPath,
+        checked: true
+      })
     }
 
-    linkTabs.value.push({
-      title,
-      path: route.fullPath,
-      checked: true
-    })
+    setHistoryTabs(linkTabs.value)
   },
   {
     immediate: true
@@ -92,25 +101,11 @@ const onClose = (index: number) => {
   }
 }
 
-const initLinkTabs = () => {
-  const key = 'link-tabs'
-  const tabs = localStorage.getItem(key)
-  if (tabs) {
-    try {
-      linkTabs.value = JSON.parse(tabs)
-    } catch (e) {
-      localStorage.removeItem(key)
-    }
+router.afterEach((to) => {
+  if (to.name === 'Login') {
+    setHistoryTabs([defaultLinkTabs])
   }
-  
-  window.onbeforeunload = () => {
-    try {
-      localStorage.setItem(key, JSON.stringify(linkTabs.value))
-    } catch (e) { /* empty */ }
-  }
-}
-initLinkTabs()
-
+})
 </script>
 
 <template>
