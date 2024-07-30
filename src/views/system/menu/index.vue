@@ -151,7 +151,16 @@ const handleSort = (fieldName: keyof IMenuListItem, order?: 'descend' | 'ascend'
 }
 
 const handleQuery = (data?: IMenuQuery) => {
-  search.value = data ? { ...search.value, ...data } : {}
+  if (data) {
+    search.value = { ...search.value, ...data }
+    return;
+  }
+
+  if (Object.keys(search.value).length > 0) {
+    search.value = {}
+  } else {
+    getList(search.value)
+  }
 }
 
 const checkedIds = ref<number[]>([])
