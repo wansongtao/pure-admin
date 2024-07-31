@@ -82,6 +82,11 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw[] => {
 
       if (item.component && COMPONENT_MAP[item.component]) {
         route.component = COMPONENT_MAP[item.component]
+        route.name = item.component
+          .replace(/.vue|.jsx|.tsx/g, '')
+          .split('/')
+          .map((item) => item.replace(/^\S/, (s) => s.toUpperCase()))
+          .join('')
       }
 
       if (item.name) {
