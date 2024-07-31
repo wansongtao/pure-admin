@@ -75,7 +75,7 @@ export const updateProfile = (data: IProfileParam) => {
 export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
   return request<IBaseResponse>({
     url: '/auth/password',
-    method: 'put',
+    method: 'post',
     data
   })
 }

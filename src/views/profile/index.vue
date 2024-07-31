@@ -56,7 +56,7 @@ const onTabChange = (value: string) => {
           :active-tab-key="key"
           @tabChange="onTabChange"
         >
-          <div class="h-animate" :style="key === 'pwd' ? 'height: 200px;' : 'height: 434px;'">
+          <div class="h-animate" :style="key === 'pwd' ? 'height: 240px;' : 'height: 434px;'">
             <user-info-form
               v-show="key === 'info'"
               :details="profile"
