@@ -15,7 +15,7 @@ defineOptions({
 const profile = ref<IProfile>({
   userName: '',
   roles: [],
-  sex: 2
+  gender: 'OT'
 })
 
 const handleChangeProfile = (data: IProfileParam) => {

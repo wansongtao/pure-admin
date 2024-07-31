@@ -55,11 +55,13 @@ const handleUpdateAvatar = async () => {
     <div class="profile_main">
       <div class="main_item text">
         <div class="item_label">
-          <sex-icon v-if="user.sex !== 0 && user.sex !== 1" />
-          <sexw-icon v-if="user.sex === 0" />
-          <sexm-icon v-if="user.sex === 1" />
+          <sex-icon v-if="user.gender === 'OT'" />
+          <sexw-icon v-if="user.gender === 'MA'" />
+          <sexm-icon v-if="user.gender === 'FE'" />
         </div>
-        <div class="item_text">{{ user.sex === 0 ? '女' : user.sex === 1 ? '男' : '--' }}</div>
+        <div class="item_text">
+          {{ user.gender === 'FE' ? '女' : user.gender === 'MA' ? '男' : '--' }}
+        </div>
       </div>
       <div class="main_item text">
         <div class="item_label"><user-icon /></div>

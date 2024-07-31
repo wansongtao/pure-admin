@@ -44,7 +44,7 @@ const createState = (): IProfileParam => {
     phone: '',
     email: '',
     birthday: '',
-    sex: undefined,
+    gender: 'OT',
     description: ''
   }
 }
@@ -135,11 +135,11 @@ const disabledDate = (current: Dayjs) => {
         valueFormat="YYYY-MM-DD"
       />
     </a-form-item>
-    <a-form-item label="用户性别：" name="sex">
-      <a-radio-group v-model:value="formState.sex">
-        <a-radio :value="0">女</a-radio>
-        <a-radio :value="1">男</a-radio>
-        <a-radio :value="2">其他</a-radio>
+    <a-form-item label="用户性别：" name="gender">
+      <a-radio-group v-model:value="formState.gender">
+        <a-radio value="FE">女</a-radio>
+        <a-radio value="MA">男</a-radio>
+        <a-radio value="OT">其他</a-radio>
       </a-radio-group>
     </a-form-item>
     <a-form-item label="自我介绍：" name="description">

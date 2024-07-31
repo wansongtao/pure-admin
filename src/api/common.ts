@@ -59,7 +59,7 @@ export const uploadFile = (file: File) => {
 
 export const getProfile = () => {
   return request<IBaseResponse<IProfile>>({
-    url: '/profile',
+    url: '/users/profile',
     method: 'get'
   })
 }

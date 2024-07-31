@@ -71,16 +71,13 @@ export interface IProfileParam {
   nickName?: string
   phone?: string
   /**
-   * 0 女，1 男，2 其他
+   * 性别 MA 男，FE 女，OT 其他
    */
-  sex?: 0 | 1 | 2
+  gender?: 'MA' | 'FE' | 'OT'
 }
 
 export interface IProfile extends IProfileParam {
   roles: string[]
-  /**
-   * 0 女，1 男，2 其他
-   */
-  sex: 0 | 1 | 2
+  gender?: 'MA' | 'FE' | 'OT'
   userName: string
 }
