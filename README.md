@@ -65,6 +65,10 @@ pnpm dev
 pnpm build
 ```
 
+## 注意事项
+
+菜单对应的组件的`name`属性命名规则：views文件夹下的文件路径+首字母大写。例如：`views/system/user/index.vue`的`name`属性为`SystemUserIndex`。
+
 ## 许可协议
 
 基于 [MIT](./LICENSE) 许可协议进行开源。
