@@ -28,15 +28,13 @@ watch(
 
 const avatarRef = ref<InstanceType<typeof UploadAvatar>>()
 const handleUpdateAvatar = async () => {
-  const result = await avatarRef.value?.handleUpload().catch(() => {
-    message.error('头像上传失败')
-    return
-  })
-  if (!result) {
+  const [err, avatar] = await avatarRef.value!.handleUpload()
+  if (err) {
+    message.error(err?.message || '头像上传失败')
     return
   }
 
-  const [error] = await updateProfile({ avatar: result })
+  const [error] = await updateProfile({ avatar })
   if (error) {
     return
   }

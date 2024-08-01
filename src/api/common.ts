@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import axios from 'axios'
 
 import type { IBaseResponse } from '@/types/index'
 import type {
@@ -7,6 +8,24 @@ import type {
   IProfile,
   IProfileParam
 } from '@/types/api/common'
+
+export const uploadFile = (url: string, file: File) => {
+  return axios.put(url, file, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+export const getPresignedUrl = (filename: string) => {
+  return request<IBaseResponse<string>>({
+    url: '/upload/presigned',
+    method: 'get',
+    params: {
+      filename: filename
+    }
+  })
+}
 
 export const getCaptcha = () => {
   return request<IBaseResponse<{ captcha: string }>>({
@@ -43,20 +62,6 @@ export const getUserInfo = () => {
   })
 }
 
-export const uploadFile = (file: File) => {
-  const data = new FormData()
-  data.append('file', file)
-
-  return request<IBaseResponse<string>>({
-    url: '/upload',
-    method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
-    data
-  })
-}
-
 export const getProfile = () => {
   return request<IBaseResponse<IProfile>>({
     url: '/users/profile',
@@ -66,8 +71,8 @@ export const getProfile = () => {
 
 export const updateProfile = (data: IProfileParam) => {
   return request<IBaseResponse>({
-    url: '/profile',
-    method: 'put',
+    url: '/users/profile',
+    method: 'patch',
     data
   })
 }

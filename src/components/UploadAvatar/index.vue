@@ -3,16 +3,15 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 
 import { getBase64 } from '@/utils/index'
-import { uploadFile } from '@/api/common'
+import { uploadFile, getPresignedUrl } from '@/api/common'
 
 import type { UploadProps } from 'ant-design-vue'
-import type { FileType } from 'ant-design-vue/es/upload/interface'
 
 defineOptions({
   name: 'UploadAvatar'
 })
 
-const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
+const verifyFileSize = (file: File, maxSize = 2 * 1024 * 1024) => {
   const isLt2M = file.size < maxSize
   if (!isLt2M) {
     return false
@@ -22,11 +21,11 @@ const verifyFileSize = (file: FileType, maxSize = 2 * 1024 * 1024) => {
 }
 
 const $emits = defineEmits<{
-  selectFile: [file: FileType]
+  selectFile: [file: File]
 }>()
 const imgUrl = defineModel<string>('imgUrl', { default: '' })
 
-let imgFile: FileType | null = null
+let imgFile: File | null = null
 const beforeUpload: UploadProps['beforeUpload'] = (file) => {
   const result = verifyFileSize(file)
   if (!result) {
@@ -48,30 +47,37 @@ const handleRemove = () => {
   imgUrl.value = ''
 }
 
-const handleUpload = () => {
-  return new Promise<string>((resolve, reject) => {
-    if (!imgFile) {
-      reject('file undefined')
-      return
-    }
-    const isLt2M = verifyFileSize(imgFile)
-    if (!isLt2M) {
-      reject('Image must smaller than 2MB!')
-      return
-    }
+const handleUpload = async () => {
+  const data: [err?:Error, url?:string] = []
 
-    uploadFile(imgFile).then((data) => {
-      const [error, result] = data
-      if (error) {
-        reject(error)
-        return
-      }
+  if (!imgFile) {
+    data[0] = new Error('No file selected!')
+    return data;
+  }
+  const isLt2M = verifyFileSize(imgFile)
+  if (!isLt2M) {
+    data[0] = new Error('File size exceeds 2MB!')
+    return data;
+  }
 
-      imgUrl.value = result!.data
-      imgFile = null
-      resolve(result!.data)
-    })
+  const [, result] = await getPresignedUrl(imgFile.name)
+  if (!result) {
+    data[0] = new Error('Failed to get presigned URL!')
+    return data;
+  }
+
+  const url = result.data;
+  const uploadRes = await uploadFile(url, imgFile).catch((err) => {
+    return new Error(err)
   })
+
+  if (uploadRes instanceof Error) {
+    data[0] = uploadRes
+    return data
+  }
+
+  data[1] = url.replace(/\?.*/, '')
+  return data
 }
 
 defineExpose({
