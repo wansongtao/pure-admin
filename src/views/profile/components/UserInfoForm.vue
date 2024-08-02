@@ -53,6 +53,10 @@ const formState = ref<IProfileParam>(createState())
 watch(
   () => $props.details,
   (data) => {
+    if (data.birthday) {
+      data.birthday = dayjs(data.birthday).format('YYYY-MM-DD')
+    }
+
     formState.value = { ...createState(), ...data }
   }
 )
@@ -91,8 +95,11 @@ const handleSave = () => {
 
   formRef.value?.validate(nameList).then(async () => {
     const data: IProfileParam = getChangedData(formState.value, $props.details)
-
     loading.value = true
+    if (data.birthday) {
+      data.birthday = dayjs(data.birthday).add(-480, 'm').format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+    }
+
     const [error] = await updateProfile(data)
     loading.value = false
     if (error) {
