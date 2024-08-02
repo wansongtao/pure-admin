@@ -56,6 +56,10 @@ const handleUpdate = () => {
     errorInfo.value = '新密码与确认密码不一致'
     return
   }
+  if (formState.value.oldPassword === formState.value.newPassword) {
+    errorInfo.value = '新密码不能与旧密码相同'
+    return
+  }
   errorInfo.value = ''
 
   formRef.value?.validate().then(async () => {
