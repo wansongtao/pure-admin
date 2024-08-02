@@ -179,7 +179,7 @@ const deleteSuccess = (isSingle: boolean) => {
     <div class="mt-20" v-if="isShowTool">
       <a-space>
         <check-permission permissions="system:user:export">
-          <user-export v-model:ids="checkedIds" />
+          <user-export />
         </check-permission>
         <check-permission permissions="system:user:add">
           <user-add @handle-success="getList(search)" />

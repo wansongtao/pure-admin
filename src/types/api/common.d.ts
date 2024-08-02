@@ -78,6 +78,7 @@ export interface IProfileParam {
 
 export interface IProfile extends IProfileParam {
   roles: string[]
-  gender?: 'MA' | 'FE' | 'OT'
   userName: string
 }
+
+export type IExportProfile = Omit<IProfile, 'roles' | 'avatar' | 'description'>

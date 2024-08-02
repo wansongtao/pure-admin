@@ -2,6 +2,7 @@ import request from '@/utils/request'
 
 import type { IBaseList, IBaseResponse } from '@/types'
 import type { IUserQuery, IUserList, IUserEdit, IUserDetail } from '@/types/api/user'
+import type { IExportProfile } from '@/types/api/common'
 
 export const getUserList = (params: IUserQuery) => {
   return request<IBaseResponse<IBaseList<IUserList>>>({
@@ -51,12 +52,9 @@ export const addUser = (data: IUserEdit) => {
   })
 }
 
-export const exportUserInfo = (ids: number[]) => {
-  return request<IBaseResponse<IUserList[]>>({
-    url: '/admin/user/export',
-    method: 'post',
-    data: {
-      ids
-    }
+export const exportUserInfo = () => {
+  return request<IBaseResponse<IExportProfile[]>>({
+    url: '/users/export',
+    method: 'get'
   })
 }
