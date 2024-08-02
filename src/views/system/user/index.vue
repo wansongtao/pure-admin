@@ -5,6 +5,7 @@ import UserStateEdit from './components/UserStateEdit.vue'
 import UserEdit from './components/UserEdit.vue'
 import UserAdd from './components/UserAdd.vue'
 import UserExport from './components/UserExport.vue'
+import PasswordReset from './components/PasswordReset.vue'
 
 import { usePageRequest } from '@/hooks/usePageRequest'
 import { useObjectQuery } from '@/hooks/useQuery'
@@ -103,13 +104,13 @@ const columns = computed(() => {
     }
   ]
 
-  if (hasPermission(['system:user:edit', 'system:user:del'], true)) {
+  if (hasPermission(['system:user:edit', 'system:user:del', 'system:user:reset'], true)) {
     list.push({
       align: 'center',
       title: '操作',
       key: 'operation',
       fixed: 'right',
-      width: 160
+      width: 220
     })
   }
 
@@ -225,6 +226,9 @@ const deleteSuccess = (isSingle: boolean) => {
             </check-permission>
             <check-permission permissions="system:user:del">
               <user-delete :id="record.id" @handle-success="deleteSuccess" />
+            </check-permission>
+            <check-permission permissions="system:user:reset">
+              <password-reset :id="record.id" />
             </check-permission>
           </a-space>
         </template>

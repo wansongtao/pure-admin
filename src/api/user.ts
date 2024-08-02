@@ -58,3 +58,13 @@ export const exportUserInfo = () => {
     method: 'get'
   })
 }
+
+export const resetUserPassword = (id: string) => {
+  return request<IBaseResponse>({
+    url: `/users/reset-password`,
+    method: 'post',
+    data: {
+      id
+    }
+  })
+}
