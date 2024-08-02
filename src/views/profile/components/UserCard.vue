@@ -11,6 +11,7 @@ import UploadAvatar from '@/components/UploadAvatar/index.vue'
 
 import { updateProfile } from '@/api/common'
 import { message } from 'ant-design-vue'
+import { useUserStore } from '@/stores/user'
 
 import type { IProfile } from '@/types/api/common'
 
@@ -26,6 +27,9 @@ watch(
   }
 )
 
+const userStore = useUserStore()
+const { userInfo } = storeToRefs(userStore)
+
 const avatarRef = ref<InstanceType<typeof UploadAvatar>>()
 const handleUpdateAvatar = async () => {
   const [err, avatar] = await avatarRef.value!.handleUpload()
@@ -39,6 +43,7 @@ const handleUpdateAvatar = async () => {
     return
   }
 
+  userInfo.value.avatar = avatar!
   message.success('头像修改成功')
 }
 </script>
@@ -67,7 +72,10 @@ const handleUpdateAvatar = async () => {
       </div>
       <div class="main_item text">
         <div class="item_label"><role-icon /></div>
-        <div class="item_text">{{ user?.roles.join(', ') }}</div>
+        <div class="item_text">
+          <a-tag v-for="role in user.roles" :key="role">{{ role }}</a-tag>
+          <template v-if="!user.roles?.length">--</template>
+        </div>
       </div>
       <div class="main_item text">
         <div class="item_label"><birthday-icon /></div>
