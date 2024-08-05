@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', () => {
     const route = getStaticAdminRoute()
     addRouteName.value = route.name as string
     if (!result) {
-      return route
+      return false
     }
 
     userInfo.value = {
@@ -74,7 +74,10 @@ export const useUserStore = defineStore('user', () => {
   }
   async function logout() {
     await setLogout()
+    reset()
+  }
 
+  function reset() {
     userInfo.value = {
       name: '',
       avatar: '',
@@ -98,6 +101,7 @@ export const useUserStore = defineStore('user', () => {
     cacheRoutes,
     menus,
     addRouteName,
-    getUserInfoAction
+    getUserInfoAction,
+    reset
   }
 })

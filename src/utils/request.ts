@@ -10,7 +10,7 @@ import type { IBaseResponse, IConfigHeader } from '@/types/index'
 const goToLogin = (seconds = 2) => {
   setTimeout(() => {
     const store = useUserStore()
-    store.removeToken()
+    store.reset()
 
     router.push({
       name: 'Login',
