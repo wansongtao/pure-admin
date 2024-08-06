@@ -20,7 +20,7 @@ export const useMenuTree = (
   const fetchMenuTree = async (containButton?: boolean) => {
     const transformData = (tree: IMenuTree[]) => {
       return tree.map((v) => {
-        const item: ITree = { label: v.name, value: v.id, type: v.type }
+        const item: ITree = { label: v.name, value: v.id, type: v.type, disabled: v.disabled }
         if (callback) {
           const res = callback(v)
           item.label = res.label

@@ -123,6 +123,7 @@ export interface IMenuTree {
    * 菜单类型
    */
   type: IMenuType
+  disabled: boolean
   children?: IMenuTree[]
 }
 

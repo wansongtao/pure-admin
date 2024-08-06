@@ -33,7 +33,7 @@ const { menuTree, fetchMenuTree } = useMenuTree((data) => {
   return {
     label: data.name,
     value: data.id,
-    disabled: data.type === 'BUTTON' || data.id === $props.id
+    disabled: data.id === $props.id || data.disabled,
   }
 }, false)
 
