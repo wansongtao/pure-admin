@@ -164,9 +164,9 @@ const handleQuery = (data?: IMenuQuery) => {
 }
 
 const checkedIds = ref<number[]>([])
-const deleteSuccess = (isSingle: boolean) => {
+const deleteSuccess = (isMulti = false) => {
   let deleteCount = 1
-  if (!isSingle) {
+  if (isMulti) {
     deleteCount = checkedIds.value.length
     checkedIds.value = []
   }
@@ -202,7 +202,7 @@ const editSuccess = () => {
         </check-permission>
 
         <check-permission permissions="system:menu:del">
-          <menu-delete :id="checkedIds" @handle-success="deleteSuccess" />
+          <menu-delete :id="checkedIds" @handle-success="deleteSuccess(true)" />
         </check-permission>
       </a-space>
     </div>
