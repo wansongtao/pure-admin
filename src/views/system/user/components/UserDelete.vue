@@ -6,19 +6,15 @@ const $props = defineProps<{
   id: string | string[]
 }>()
 const $emits = defineEmits<{
-  handleSuccess: [isSingle: boolean]
+  handleSuccess: []
 }>()
 
-const isSingle = computed(() => {
-  return typeof $props.id === 'string' ? true : false
+const isMulti = computed(() => {
+  return Array.isArray($props.id)
 })
 
 const beforeOpenConfirm = () => {
-  if (typeof $props.id === 'string') {
-    return true
-  }
-
-  if (!$props.id?.length) {
+  if (isMulti.value && ($props.id as string[]).length === 0) {
     message.warn('请先选中删除项')
     return false
   }
@@ -27,35 +23,32 @@ const beforeOpenConfirm = () => {
 }
 
 const handleDelete = async () => {
-  const success = () => {
-    message.success(isSingle.value ? '删除角色成功' : '批量删除角色成功')
-    $emits('handleSuccess', isSingle.value)
-  }
-
   const id = $props.id
-  if (isSingle.value) {
-    const [, result] = await deleteUser(id as string)
-    if (result) {
-      success()
+  if (!isMulti.value) {
+    const [err] = await deleteUser(id as string)
+    if (err) {
+      return
     }
-    return
+  } else {
+    const [err] = await deleteUsers(id as string[])
+    if (err) {
+      return
+    }
   }
 
-  const [, result] = await deleteUsers(id as string[])
-  if (result) {
-    success()
-  }
+  message.success('删除成功')
+  $emits('handleSuccess')
 }
 </script>
 
 <template>
   <button-delete
-    :size="isSingle ? 'small' : 'middle'"
-    :text="isSingle ? '删除' : '批量删除'"
+    :size="isMulti ? 'middle' : 'small'"
+    :text="isMulti ? '批量删除' : '删除'"
     :confirm-config="{
-      title: isSingle ? '您确定要删除这条数据吗？' : '您确定要删除这些数据吗？'
+      title: isMulti ? '您确定要删除这些用户数据吗？' : '您确定要删除该用户数据吗？'
     }"
-    :ghost="isSingle"
+    :ghost="!isMulti"
     :before-open-confirm="beforeOpenConfirm"
     @handle-ok="handleDelete"
   />

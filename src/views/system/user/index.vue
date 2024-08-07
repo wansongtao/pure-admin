@@ -151,9 +151,9 @@ const handleQuery = (data?: IUserQuery) => {
 }
 
 const checkedIds = ref<string[]>([])
-const deleteSuccess = (isSingle: boolean) => {
+const deleteSuccess = (isMulti = false) => {
   let deleteCount = 1
-  if (!isSingle) {
+  if (isMulti) {
     deleteCount = checkedIds.value.length
     checkedIds.value = []
   }
@@ -186,7 +186,7 @@ const deleteSuccess = (isSingle: boolean) => {
           <user-add @handle-success="getList(search)" />
         </check-permission>
         <check-permission permissions="system:user:del">
-          <user-delete :id="checkedIds" @handle-success="deleteSuccess" />
+          <user-delete :id="checkedIds" @handle-success="deleteSuccess(true)" />
         </check-permission>
       </a-space>
     </div>
