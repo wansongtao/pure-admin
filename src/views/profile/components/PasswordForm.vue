@@ -52,6 +52,10 @@ const handleReset = () => {
 
 const loading = ref(false)
 const handleUpdate = () => {
+  if (!isUpdate.value) {
+    return
+  }
+
   if (formState.value.newPassword !== formState.value.confirmPwd) {
     errorInfo.value = '新密码与确认密码不一致'
     return
@@ -90,11 +94,19 @@ const handleUpdate = () => {
     :label-col="{ span: 3 }"
     :wrapper-col="{ span: 12 }"
   >
-    <a-form-item name="oldPassword" label="旧密码：">
-      <a-input-password v-model:value="formState.oldPassword" placeholder="请输入旧密码" />
+    <a-form-item name="oldPassword" label="原密码：">
+      <a-input-password
+        v-model:value="formState.oldPassword"
+        placeholder="请输入原密码"
+        allow-clear
+      />
     </a-form-item>
     <a-form-item name="newPassword" label="新密码：">
-      <a-input-password v-model:value="formState.newPassword" placeholder="请输入新密码" />
+      <a-input-password
+        v-model:value="formState.newPassword"
+        placeholder="请输入新密码"
+        allow-clear
+      />
     </a-form-item>
     <a-form-item
       name="confirmPwd"
@@ -103,7 +115,12 @@ const handleUpdate = () => {
       :validate-status="errorInfo ? 'error' : ''"
       :help="errorInfo"
     >
-      <a-input-password v-model:value="formState.confirmPwd" placeholder="请确认密码" />
+      <a-input-password
+        v-model:value="formState.confirmPwd"
+        placeholder="请确认密码"
+        allow-clear
+        @press-enter="handleUpdate"
+      />
     </a-form-item>
     <a-form-item :wrapper-col="{ offset: 3 }">
       <a-button type="primary" :disabled="!isUpdate" :loading="loading" @click="handleUpdate"
