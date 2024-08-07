@@ -59,7 +59,7 @@ export const deleteRoles = (id: number[]) => {
 
 export const getRoleTree = () => {
   return request<IBaseResponse<IRoleTree[]>>({
-    url: '/roles/all',
+    url: '/roles/tree',
     method: 'get'
   })
 }
