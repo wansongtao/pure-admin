@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { theme } from 'ant-design-vue'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 import IconWater from '@/assets/svg/water.svg'
 import ImgCaptcha from './components/ImgCaptcha.vue'
@@ -85,41 +86,43 @@ const onLogin = () => {
     <div class="login_right">
       <div class="login_right_wrap">
         <div class="login_right_title">账号登录</div>
-        <a-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-width="0px">
-          <a-form-item name="userName">
-            <a-input v-model:value="loginForm.userName" placeholder="请输入用户名">
-              <template #prefix>
-                <user-outlined class="site-form-item-icon" />
-              </template>
-            </a-input>
-          </a-form-item>
-          <a-form-item name="password">
-            <a-input-password v-model:value="loginForm.password" placeholder="请输入密码">
-              <template #prefix>
-                <lock-outlined class="site-form-item-icon" />
-              </template>
-            </a-input-password>
-          </a-form-item>
-          <a-form-item>
-            <a-row :gutter="20">
-              <a-col :span="16">
-                <a-form-item name="captcha">
-                  <a-input
-                    v-model:value="loginForm.captcha"
-                    placeholder="请输入验证码"
-                    @keyup.enter="onLogin"
-                  ></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <img-captcha v-model="refreshCaptcha" />
-              </a-col>
-            </a-row>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" :loading="loading" block @click="onLogin">登录</a-button>
-          </a-form-item>
-        </a-form>
+        <a-config-provider :theme="{ algorithm: theme.defaultAlgorithm }">
+          <a-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-width="0px">
+            <a-form-item name="userName">
+              <a-input v-model:value="loginForm.userName" placeholder="请输入用户名">
+                <template #prefix>
+                  <user-outlined class="site-form-item-icon" />
+                </template>
+              </a-input>
+            </a-form-item>
+            <a-form-item name="password">
+              <a-input-password v-model:value="loginForm.password" placeholder="请输入密码">
+                <template #prefix>
+                  <lock-outlined class="site-form-item-icon" />
+                </template>
+              </a-input-password>
+            </a-form-item>
+            <a-form-item>
+              <a-row :gutter="20">
+                <a-col :span="16">
+                  <a-form-item name="captcha">
+                    <a-input
+                      v-model:value="loginForm.captcha"
+                      placeholder="请输入验证码"
+                      @keyup.enter="onLogin"
+                    ></a-input>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <img-captcha v-model="refreshCaptcha" />
+                </a-col>
+              </a-row>
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" :loading="loading" block @click="onLogin">登录</a-button>
+            </a-form-item>
+          </a-form>
+        </a-config-provider>
       </div>
     </div>
   </div>
