@@ -126,13 +126,13 @@ const disabledDate = (current: Dayjs) => {
     :wrapper-col="{ span: 12 }"
   >
     <a-form-item label="用户昵称：" name="nickName">
-      <a-input v-model:value="formState.nickName" />
+      <a-input v-model:value="formState.nickName" allow-clear />
     </a-form-item>
     <a-form-item label="联系方式：" name="phone">
-      <a-input v-model:value="formState.phone" />
+      <a-input v-model:value="formState.phone" allow-clear />
     </a-form-item>
     <a-form-item label="用户邮箱：" name="email">
-      <a-input v-model:value="formState.email" />
+      <a-input v-model:value="formState.email" allow-clear />
     </a-form-item>
     <a-form-item label="出生日期：" name="birthday">
       <a-date-picker
@@ -150,7 +150,13 @@ const disabledDate = (current: Dayjs) => {
       </a-radio-group>
     </a-form-item>
     <a-form-item label="自我介绍：" name="description">
-      <a-textarea v-model:value="formState.description" show-count :rows="3" :maxlength="150" />
+      <a-textarea
+        v-model:value="formState.description"
+        show-count
+        :rows="3"
+        :maxlength="150"
+        allow-clear
+      />
     </a-form-item>
     <a-form-item :wrapper-col="{ offset: 3 }">
       <a-button type="primary" :disabled="!isUpdate" :loading="loading" @click="handleSave"
