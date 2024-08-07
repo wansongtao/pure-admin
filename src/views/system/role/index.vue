@@ -147,9 +147,9 @@ const handleSort = (fieldName: keyof IRoleList, order?: 'descend' | 'ascend' | n
 }
 
 const checkedIds = ref<number[]>([])
-const deleteSuccess = (isSingle: boolean) => {
+const deleteSuccess = (isMulti = false) => {
   let deleteCount = 1
-  if (!isSingle) {
+  if (isMulti) {
     deleteCount = checkedIds.value.length
     checkedIds.value = []
   }
@@ -179,7 +179,7 @@ const deleteSuccess = (isSingle: boolean) => {
           <role-add @handle-success="getList(search)" />
         </check-permission>
         <check-permission permissions="system:role:del">
-          <role-delete :id="checkedIds" @handle-success="deleteSuccess" />
+          <role-delete :id="checkedIds" @handle-success="deleteSuccess(true)" />
         </check-permission>
       </a-space>
     </div>

@@ -6,19 +6,15 @@ const $props = defineProps<{
   id: number | number[]
 }>()
 const $emits = defineEmits<{
-  handleSuccess: [isSingle: boolean]
+  handleSuccess: []
 }>()
 
-const isSingle = computed(() => {
-  return typeof $props.id === 'number' ? true : false
+const isMulti = computed(() => {
+  return Array.isArray($props.id)
 })
 
 const beforeOpenConfirm = () => {
-  if (typeof $props.id === 'number') {
-    return true
-  }
-
-  if (!$props.id?.length) {
+  if (isMulti.value && ($props.id as number[]).length === 0) {
     message.warn('请先选中删除项')
     return false
   }
@@ -27,35 +23,32 @@ const beforeOpenConfirm = () => {
 }
 
 const handleDelete = async () => {
-  const success = (isSingle = true) => {
-    message.success(isSingle ? '删除角色成功' : '批量删除角色成功')
-    $emits('handleSuccess', isSingle)
-  }
-
   const id = $props.id
-  if (typeof id === 'number') {
-    const [, result] = await deleteRole(id)
-    if (result) {
-      success()
+  if (!isMulti.value) {
+    const [err] = await deleteRole(id as number)
+    if (err) {
+      return
     }
-    return
+  } else {
+    const [err] = await deleteRoles(id as number[])
+    if (err) {
+      return
+    }
   }
 
-  const [, result] = await deleteRoles(id)
-  if (result) {
-    success(false)
-  }
+  message.success('删除成功')
+  $emits('handleSuccess')
 }
 </script>
 
 <template>
   <button-delete
-    :size="isSingle ? 'small' : 'middle'"
-    :text="isSingle ? '删除' : '批量删除'"
+    :size="isMulti ? 'middle' : 'small'"
+    :text="isMulti ? '批量删除' : '删除'"
     :confirm-config="{
-      title: isSingle ? '您确定要删除这条数据吗？' : '您确定要删除这些数据吗？'
+      title: isMulti ? '您确定要删除这些角色数据吗？' : '您确定要删除该角色数据吗？'
     }"
-    :ghost="isSingle"
+    :ghost="!isMulti"
     :before-open-confirm="beforeOpenConfirm"
     @handle-ok="handleDelete"
   />
