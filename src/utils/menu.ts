@@ -68,6 +68,8 @@ export const generateCacheRoutes = (routes: RouteRecordRaw[]): string[] => {
 }
 
 export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw[] => {
+  const historyRouteNames: string[] = []
+
   const recursionGenerateRoutes = (tree: IMenuData[], parentPath = ''): RouteRecordRaw[] => {
     return tree.map((item) => {
       const path = getFullPath(item.path, parentPath)
@@ -82,11 +84,17 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw[] => {
 
       if (item.component && COMPONENT_MAP[item.component]) {
         route.component = COMPONENT_MAP[item.component]
-        route.name = item.component
+        const name = item.component
           .replace(/.vue|.jsx|.tsx/g, '')
           .split('/')
           .map((item) => item.replace(/^\S/, (s) => s.toUpperCase()))
           .join('')
+        if (!historyRouteNames.includes(name)) {
+          route.name = name
+          historyRouteNames.push(name)
+        } else {
+          console.warn(`多个路由引用了相同的组件：${item.component}`)
+        }
       }
 
       if (item.name) {
