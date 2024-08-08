@@ -13,7 +13,8 @@
 - excel生成与导出方案；
 - ant-design-vue的table组件二次封装，提供更友好的类型提示等；
 - `usePageRequest`hooks，可用于快速简单地发送分页请求等；
-- `useIdleDetection`hooks，可用于检测用户是否处于空闲状态。
+- `useIdleDetection`hooks，可用于检测用户是否处于空闲状态;
+- 提供svg图标转换脚本，自动处理单色图标。
 
 ## 预览
 
@@ -44,7 +45,7 @@
 ### 克隆项目
 
 ```sh
-git clone https://github.com/wansongtao/admin-pure.git
+git clone https://github.com/wansongtao/pure-admin.git
 ```
 
 ### 安装依赖
@@ -71,4 +72,4 @@ pnpm build
 
 ## 许可协议
 
-基于 [MIT](./LICENSE) 许可协议进行开源。
+[MIT](./LICENSE)。
