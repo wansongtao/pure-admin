@@ -37,10 +37,11 @@ export default defineConfig({
   server: {
     open: true,
     host: 'localhost',
-    port: 3000,
+    port: 5000,
     proxy: {
       '/dev': {
-        target: 'https://mock.apipark.cn/m1/3925622-3560511-default',
+        // target: 'http://127.0.0.1:4523/m1/3925622-0-default',
+        target: 'http://127.0.0.1:3001/api/v1',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/dev/, '')

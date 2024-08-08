@@ -2,6 +2,8 @@
 
 使用`vue3`、`vite5`、`ts`、`Ant Design Vue4`开发的极简后台管理系统。仅包含基础功能: 登录、菜单管理、角色管理、用户管理。
 
+后端项目地址：[pure-admin-backend](https://github.com/wansongtao/pure-admin-backend)。
+
 ## 功能亮点
 
 - 动态路由；
@@ -72,4 +74,4 @@ pnpm build
 
 ## 许可协议
 
-[MIT](./LICENSE)。
+[MIT](./LICENSE)
