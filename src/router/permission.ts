@@ -9,7 +9,7 @@ router.beforeEach(async (to) => {
   NProgress.start()
 
   const userStore = useUserStore()
-  const token = userStore.getToken()
+  const token = userStore.token
   if (!token && to.name !== 'Login') {
     NProgress.done()
     return `/login?redirect=${to.path}`

@@ -3,28 +3,12 @@ import { ref } from 'vue'
 import { getUserInfo, setLogin, setLogout } from '@/api/common'
 import { generateMenus, generateCacheRoutes, generateRoutes } from '@/utils/menu'
 import getStaticAdminRoute from '@/router/adminRoute'
+import { getToken, setToken, removeToken, setRefreshToken, removeRefreshToken } from '@/utils/token'
 
 import type { IMenuItem } from '@/types'
 import type { ILoginParams, IUserInfo } from '@/types/api/common'
 
 export const useUserStore = defineStore('user', () => {
-  const token = ref('')
-  function getToken() {
-    if (token.value) {
-      return token.value
-    }
-    token.value = localStorage.getItem('token') || ''
-    return token.value
-  }
-  function setToken(value: string) {
-    token.value = value
-    localStorage.setItem('token', value)
-  }
-  function removeToken() {
-    token.value = ''
-    localStorage.removeItem('token')
-  }
-
   const userInfo = ref<IUserInfo>({
     name: '',
     avatar: '',
@@ -64,20 +48,20 @@ export const useUserStore = defineStore('user', () => {
     return route
   }
 
+  const token = ref(getToken() ?? '')
   async function login(data: ILoginParams) {
     const [err, result] = await setLogin(data)
     if (result) {
+      token.value = result.data.token
       setToken(result.data.token)
+      setRefreshToken(result.data.refreshToken)
     } else {
       throw err
     }
   }
-  async function logout() {
-    await setLogout()
-    reset()
-  }
 
   function reset() {
+    token.value = ''
     userInfo.value = {
       name: '',
       avatar: '',
@@ -87,14 +71,17 @@ export const useUserStore = defineStore('user', () => {
     menus.value = []
     addRouteName.value = ''
     cacheRoutes.value = []
+  }
+
+  async function logout() {
+    await setLogout()
+    reset()
     removeToken()
+    removeRefreshToken()
   }
 
   return {
     token,
-    getToken,
-    setToken,
-    removeToken,
     login,
     logout,
     userInfo,

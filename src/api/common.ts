@@ -38,13 +38,23 @@ export const getCaptcha = () => {
 }
 
 export const setLogin = (data: ILoginParams) => {
-  return request<IBaseResponse<{ token: string }>>({
+  return request<IBaseResponse<{ token: string; refreshToken: string; }>>({
     url: '/auth/login',
     method: 'POST',
     headers: {
       isToken: false
     },
     data
+  })
+}
+
+export const refreshToken = (refreshToken: string) => {
+  return request<IBaseResponse<{ token: string; refreshToken: string }>>({
+    url: '/auth/refresh_token',
+    method: 'get',
+    params: {
+      refreshToken
+    }
   })
 }
 

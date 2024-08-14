@@ -4,6 +4,8 @@ import { useUserStore } from '@/stores/user'
 import { getDataType } from '@/utils/index'
 import EventBus from '@/event/eventBus'
 import router from '@/router/index'
+import { refreshToken } from '@/api/common'
+import { getRefreshToken, setToken, setRefreshToken } from './token'
 
 import type { IBaseResponse, IConfigHeader } from '@/types/index'
 
@@ -59,8 +61,59 @@ export const instance = axios.create({
 })
 
 const historyRequests = new Map<string, number>()
+const eventBus = new EventBus<{
+  [key: string]: (data?: AxiosResponse<IBaseResponse | Blob>, error?: AxiosError) => void
+}>()
+
+let isRefreshing = false
+let isSendedRefreshReq = false
+let waitRefreshQueue: string[] = []
+
+const refreshRequest = async (error: AxiosError) => {
+  const onError = () => {
+    goToLogin()
+    message.error(error.response?.statusText || error.message, 2)
+    return Promise.reject(error)
+  }
+
+  const token = getRefreshToken()
+  if (!token) {
+    return onError()
+  }
+
+  isRefreshing = true
+  const [, result] = await refreshToken(token)
+  isRefreshing = false
+  isSendedRefreshReq = false
+  if (!result) {
+    return onError()
+  }
+
+  const store = useUserStore()
+  store.token = result.data.token
+  setToken(result.data.token)
+  setRefreshToken(result.data.refreshToken)
+
+  waitRefreshQueue.forEach((key) => {
+    eventBus.$emit(key)
+  })
+  waitRefreshQueue = []
+
+  return instance.request(error.config!)
+}
+
 instance.interceptors.request.use(
   (config) => {
+    if (isRefreshing && isSendedRefreshReq) {
+      const key = getKey(config)
+      config.headers.key = key
+      waitRefreshQueue = Array.from(new Set([...waitRefreshQueue, key]))
+      return Promise.reject(new AxiosError('Refreshing token', 'ERR_REFRESH', config))
+    }
+    if (isRefreshing) {
+      isSendedRefreshReq = true
+    }
+
     if (config.headers?.isAllowRepetition !== true) {
       const key = getKey(config)
       config.headers.key = key
@@ -73,13 +126,13 @@ instance.interceptors.request.use(
 
     if (config.headers?.isToken !== false) {
       const store = useUserStore()
-      const token = store.getToken()
+      const token = store.token
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
     }
-    
+
     return config
   },
   (error: AxiosError) => {
@@ -99,26 +152,15 @@ const responseInterceptor = (res: AxiosResponse<IBaseResponse | Blob>) => {
     return result
   }
 
-  if (data.statusCode === 401) {
-    message.error(data.message, 2)
-    goToLogin()
-  } else {
-    message.error(data.message)
-  }
+  message.error(data.message)
   result[1] = new AxiosError(data.message)
-
   return result
 }
-
-const eventBus = new EventBus<{
-  [key: string]: (data?: AxiosResponse<IBaseResponse | Blob>, error?: AxiosError) => void
-}>()
 
 instance.interceptors.response.use(
   (res: AxiosResponse<IBaseResponse | Blob>) => {
     const [data, error] = responseInterceptor(res)
 
-    // 如果存在重复请求，则触发事件，将结果返回给请求
     const key = res.config.headers.key as string
     if (historyRequests.has(key)) {
       historyRequests.delete(key)
@@ -128,7 +170,6 @@ instance.interceptors.response.use(
     return data !== undefined ? data : Promise.reject(error)
   },
   (error: AxiosError) => {
-    // 处理重复请求
     if (error.code === 'ERR_REPEATED') {
       return new Promise((resolve, reject) => {
         const config = error.config!
@@ -141,11 +182,29 @@ instance.interceptors.response.use(
       })
     }
 
-    // 如果存在重复请求，则触发事件，将结果返回给请求
     const key = error?.config?.headers.key as string
     if (historyRequests.has(key)) {
       historyRequests.delete(key)
       eventBus.$emit(key, undefined, error)
+    }
+
+    if (error.code === 'ERR_REFRESH') {
+      return new Promise((resolve, reject) => {
+        const config = error.config!
+        const key = config.headers.key as string
+        const callback = () => {
+          instance
+            .request(config)
+            .then((res) => {
+              resolve(res)
+            })
+            .catch((err) => {
+              reject(err)
+            })
+          eventBus.$off(key, callback)
+        }
+        eventBus.$on(key, callback)
+      })
     }
 
     if (error.code === 'ERR_CANCELED') {
@@ -153,6 +212,10 @@ instance.interceptors.response.use(
     }
 
     if (error.response?.status === 401) {
+      if (isRefreshing === false) {
+        return refreshRequest(error)
+      }
+
       goToLogin()
       message.error(error.response?.statusText || error.message, 2)
       return Promise.reject(error)
