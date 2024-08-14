@@ -1,5 +1,4 @@
 import { ref, shallowRef, computed, watch } from 'vue'
-import { debounce } from '@/utils'
 import { useQuery } from './useQuery'
 
 import type { Ref, ShallowRef } from 'vue'
@@ -7,10 +6,6 @@ import type { Ref, ShallowRef } from 'vue'
 export interface IPageRequestOptions {
   defaultPage?: number
   defaultPageSize?: number
-  /**
-   * 请求防抖时间，单位ms，设置为0则不防抖
-   */
-  delay?: number
   /**
    * 是否自动监听page与pageSize的变化
    */
@@ -46,7 +41,6 @@ export function usePageRequest<T, Q extends Record<string, any> = {}>(
   {
     defaultPage = 1,
     defaultPageSize = 10,
-    delay = 200,
     autoWatchPage = false
   }: IPageRequestOptions = {},
   isShallow = false
@@ -65,7 +59,10 @@ export function usePageRequest<T, Q extends Record<string, any> = {}>(
     return Math.ceil(total.value / pageSize.value)
   })
 
-  const fetchData = (query?: Q) => {
+  /**
+   * 请求列表数据，自动带上page与pageSize，只传入其他query即可
+   */
+  const getList = (query?: Q) => {
     const params = { page: page.value, pageSize: pageSize.value, ...query } as unknown as Q
     loading.value = true
 
@@ -78,10 +75,6 @@ export function usePageRequest<T, Q extends Record<string, any> = {}>(
         loading.value = false
       })
   }
-  /**
-   * 请求列表数据，自动带上page与pageSize，只传入其他query即可
-   */
-  const getList: (query?: Q) => void = delay ? debounce(fetchData, delay) : fetchData
 
   if (autoWatchPage) {
     watch(
