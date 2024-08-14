@@ -14,15 +14,6 @@ import { getRefreshToken, setToken, setRefreshToken } from './token'
 
 import type { IBaseResponse, IConfigHeader } from '@/types/index'
 
-export const instance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API,
-  timeout: 5000,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-
 const goToLogin = (seconds = 2) => {
   setTimeout(() => {
     const store = useUserStore()
@@ -132,46 +123,98 @@ const redundantRequestHandler = {
   }
 }
 
-const eventBus = new EventBus<{
-  [key: string]: (data?: AxiosResponse<IBaseResponse | Blob>, error?: AxiosError) => void
-}>()
+const refreshTokenHandler = {
+  eventBus: new EventBus<{
+    [key: string]: () => void
+  }>(),
+  code: 'ERR_REFRESH',
+  isRefreshing: false,
+  isSendedRefreshReq: false,
+  waitQueue: [] as string[],
+  requestInterceptor(config: AxiosRequestConfig) {
+    if (this.isRefreshing && this.isSendedRefreshReq) {
+      const key = getKey(config)
+      config.headers!.key = key
+      this.waitQueue = Array.from(new Set([...this.waitQueue, key]))
 
-let isRefreshing = false
-let isSendedRefreshReq = false
-let waitRefreshQueue: string[] = []
+      return new AxiosError('Refreshing token', this.code, config as InternalAxiosRequestConfig)
+    }
+    if (this.isRefreshing) {
+      this.isSendedRefreshReq = true
+    }
+  },
+  updateToken(onError: () => Promise<AxiosError>, onSuccess: () => Promise<AxiosResponse>) {
+    if (this.isRefreshing !== false) {
+      return
+    }
+    const token = getRefreshToken()
+    if (!token) {
+      return onError()
+    }
 
-const refreshRequest = async (error: AxiosError) => {
-  const onError = () => {
-    goToLogin()
-    message.error(error.response?.statusText || error.message, 2)
-    return Promise.reject(error)
+    const saveToken = (token: string, refreshToken: string) => {
+      const store = useUserStore()
+      store.token = token
+      setToken(token)
+      setRefreshToken(refreshToken)
+    }
+
+    const fetchData = async () => {
+      const [, result] = await refreshToken(token)
+      this.isRefreshing = false
+      this.isSendedRefreshReq = false
+
+      if (!result) {
+        return onError()
+      }
+
+      saveToken(result.data.token, result.data.refreshToken)
+
+      this.waitQueue.forEach((key) => {
+        this.eventBus.$emit(key)
+        this.eventBus.$off(key)
+      })
+      this.waitQueue = []
+
+      return onSuccess()
+    }
+
+    this.isRefreshing = true
+    return fetchData()
+  },
+  addPendingEvent(
+    code: string,
+    config: AxiosRequestConfig,
+    request: (config: AxiosRequestConfig) => Promise<AxiosResponse>
+  ) {
+    if (code !== this.code) {
+      return
+    }
+
+    return new Promise((resolve, reject) => {
+      const key = config.headers!.key as string
+      const callback = () => {
+        request(config)
+          .then((res) => {
+            resolve(res)
+          })
+          .catch((err) => {
+            reject(err)
+          })
+      }
+      this.eventBus.$on(key, callback)
+    })
   }
-
-  const token = getRefreshToken()
-  if (!token) {
-    return onError()
-  }
-
-  isRefreshing = true
-  const [, result] = await refreshToken(token)
-  isRefreshing = false
-  isSendedRefreshReq = false
-  if (!result) {
-    return onError()
-  }
-
-  const store = useUserStore()
-  store.token = result.data.token
-  setToken(result.data.token)
-  setRefreshToken(result.data.refreshToken)
-
-  waitRefreshQueue.forEach((key) => {
-    eventBus.$emit(key)
-  })
-  waitRefreshQueue = []
-
-  return instance.request(error.config!)
 }
+
+export const instance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_API,
+  timeout: 5000,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
 
 instance.interceptors.request.use(
   (config) => {
@@ -184,14 +227,9 @@ instance.interceptors.request.use(
       }
     }
 
-    if (isRefreshing && isSendedRefreshReq) {
-      const key = getKey(config)
-      config.headers.key = key
-      waitRefreshQueue = Array.from(new Set([...waitRefreshQueue, key]))
-      return Promise.reject(new AxiosError('Refreshing token', 'ERR_REFRESH', config))
-    }
-    if (isRefreshing) {
-      isSendedRefreshReq = true
+    const error = refreshTokenHandler.requestInterceptor(config)
+    if (error) {
+      return Promise.reject(error)
     }
 
     const res = redundantRequestHandler.requestInterceptor(config)
@@ -230,6 +268,15 @@ instance.interceptors.response.use(
     return data !== undefined ? data : Promise.reject(error)
   },
   (error: AxiosError) => {
+    const pendRefreshResult = refreshTokenHandler.addPendingEvent(
+      error.code!,
+      error.config!,
+      instance.request
+    )
+    if (pendRefreshResult) {
+      return pendRefreshResult
+    }
+
     const result = redundantRequestHandler.addPendingEvent(error.code!, error.config!)
     if (result) {
       return result
@@ -237,36 +284,24 @@ instance.interceptors.response.use(
     // 请求错误时，给其他等待相同请求的请求发送错误信息
     redundantRequestHandler.emitResult(error.config!, undefined, error)
 
-    if (error.code === 'ERR_REFRESH') {
-      return new Promise((resolve, reject) => {
-        const config = error.config!
-        const key = config.headers.key as string
-        const callback = () => {
-          instance
-            .request(config)
-            .then((res) => {
-              resolve(res)
-            })
-            .catch((err) => {
-              reject(err)
-            })
-          eventBus.$off(key, callback)
-        }
-        eventBus.$on(key, callback)
+    if (error.response?.status === 401) {
+      const onError = () => {
+        goToLogin()
+        message.error(error.response?.statusText || error.message, 2)
+        return Promise.reject(error)
+      }
+
+      const refreshRes = refreshTokenHandler.updateToken(onError, () => {
+        return instance.request(error.config!)
       })
+      if (refreshRes) {
+        return refreshRes
+      }
+
+      return onError()
     }
 
     if (error.code === 'ERR_CANCELED') {
-      return Promise.reject(error)
-    }
-
-    if (error.response?.status === 401) {
-      if (isRefreshing === false) {
-        return refreshRequest(error)
-      }
-
-      goToLogin()
-      message.error(error.response?.statusText || error.message, 2)
       return Promise.reject(error)
     }
 
