@@ -1,15 +1,11 @@
-import axios, {
-  AxiosError,
-  type AxiosResponse,
-  type AxiosRequestConfig,
-} from 'axios'
+import axios, { AxiosError, type AxiosResponse, type AxiosRequestConfig } from 'axios'
 import { message } from 'ant-design-vue'
 import { useUserStore } from '@/stores/user'
 import router from '@/router/index'
 import { refreshToken } from '@/api/common'
 import { getRefreshToken, setToken, setRefreshToken } from './token'
-import createDuplicationRequestHandler from '@/plugins/duplicationReqInterceptor'
-import createTwinTokenPlugin from '@/plugins/TwinTokenPlugin'
+import createRefreshTokenPlugin from '@/plugins/refreshTokenPlugin'
+import createAxiosDeduplicatorPlugin from '@/plugins/axios-deduplicator-plugin'
 
 import type { IBaseResponse, IConfigHeader } from '@/types/index'
 
@@ -60,34 +56,31 @@ export const instance = axios.create({
   }
 })
 
-const redundantRequestPlugin = createDuplicationRequestHandler(
-  responseInterceptor,
-  (config: AxiosRequestConfig) => {
-    const headers = config.headers as IConfigHeader['headers']
-    return headers?.isAllowRepetition === true
+const deduplicator = createAxiosDeduplicatorPlugin({
+  isAllowRepeat: (config: AxiosRequestConfig & IConfigHeader) => {
+    return config.headers?.isAllowRepetition === true
   },
-  (error: AxiosError) => {
-    return error.response?.status === 401
-  }
-)
-instance.interceptors.request.use(redundantRequestPlugin.requestInterceptor)
+  isSkipHttpStatusError: (error: AxiosError) => error.response?.status === 401
+})
+instance.interceptors.request.use(deduplicator.requestInterceptor)
 instance.interceptors.response.use(
-  redundantRequestPlugin.responseInterceptorFulfilled,
-  redundantRequestPlugin.responseInterceptorRejected
+  deduplicator.responseInterceptorFulfilled,
+  deduplicator.responseInterceptorRejected
 )
 
-const twinTokenPlugin = createTwinTokenPlugin(instance.request, async () => {
+const twinTokenPlugin = createRefreshTokenPlugin(instance.request, async () => {
   const token = getRefreshToken()
   if (!token) {
-    return new AxiosError('No refresh token')
+    return false
   }
 
-  const [err, res] = await refreshToken(token)
+  const [, res] = await refreshToken(token)
   if (!res) {
-    return err
+    return false
   }
 
   saveToken(res.data.token, res.data.refreshToken)
+  return true
 })
 instance.interceptors.request.use(twinTokenPlugin.requestInterceptor)
 instance.interceptors.response.use(undefined, twinTokenPlugin.responseInterceptorRejected)
