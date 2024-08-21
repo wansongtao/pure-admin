@@ -36,9 +36,9 @@ export const compose = (...funcs: Function[]) => {
  * @param delay 间隔时间，默认1s，单位ms
  * @returns
  */
-export const throttle = (fn: Function, delay = 1000) => {
+export const throttle = <T>(fn: (...args: T[]) => void, delay = 1000) => {
   let lastTime = 0
-  return function <T>(this: any, ...args: T[]) {
+  return function (this: any, ...args: T[]) {
     const nowTime = Date.now()
 
     if (nowTime - lastTime < delay) {
@@ -57,7 +57,11 @@ export const throttle = (fn: Function, delay = 1000) => {
  * @param immediate 第一次是否立即执行，默认false
  * @returns
  */
-export const debounce = <T = unknown>(fn: Function, delay = 200, immediate = false) => {
+export const debounce = <T = unknown>(
+  fn: (...args: T[]) => void,
+  delay = 200,
+  immediate = false
+) => {
   let timer: NodeJS.Timeout | null = null
   let isFirst = true
 
