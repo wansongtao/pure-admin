@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/user'
 import router from '@/router/index'
 import { refreshToken } from '@/api/common'
 import { getRefreshToken, setToken, setRefreshToken } from './token'
-import createRefreshTokenPlugin from '@/plugins/refreshTokenPlugin'
+import createRefreshTokenPlugin from '@/plugins/axios-refresh-token-plugin'
 import createAxiosDeduplicatorPlugin from '@/plugins/axios-deduplicator-plugin'
 
 import type { IBaseResponse, IConfigHeader } from '@/types/index'
@@ -68,7 +68,7 @@ instance.interceptors.response.use(
   deduplicator.responseInterceptorRejected
 )
 
-const twinTokenPlugin = createRefreshTokenPlugin(instance.request, async () => {
+const twinTokenPlugin = createRefreshTokenPlugin(async () => {
   const token = getRefreshToken()
   if (!token) {
     return false
@@ -81,7 +81,7 @@ const twinTokenPlugin = createRefreshTokenPlugin(instance.request, async () => {
 
   saveToken(res.data.token, res.data.refreshToken)
   return true
-})
+}, instance.request)
 instance.interceptors.request.use(twinTokenPlugin.requestInterceptor)
 instance.interceptors.response.use(undefined, twinTokenPlugin.responseInterceptorRejected)
 
