@@ -60,7 +60,7 @@ const deduplicator = createAxiosDeduplicatorPlugin({
   isAllowRepeat: (config: AxiosRequestConfig & IConfigHeader) => {
     return config.headers?.isAllowRepetition === true
   },
-  isSkipHttpStatusError: (error: AxiosError) => error.response?.status === 401
+  deleteCurrentHistory: (error?: AxiosError) => error?.response?.status === 401
 })
 instance.interceptors.request.use(deduplicator.requestInterceptor)
 instance.interceptors.response.use(

@@ -1,5 +1,3 @@
-import { getDataType } from '@/utils'
-
 import type {
   AxiosError,
   AxiosRequestConfig,
@@ -11,18 +9,19 @@ export type ICallback = (data?: AxiosResponse, error?: AxiosError) => void
 
 export interface IOptions<
   T extends AxiosRequestConfig = AxiosRequestConfig,
-  U extends AxiosError = AxiosError
+  U extends AxiosError = AxiosError,
+  V extends AxiosResponse = AxiosResponse
 > {
   timeout?: number
   generateRequestKey: (config: T) => string
   isAllowRepeat?: (config: T) => boolean
-  isSkipHttpStatusError?: (error: U) => boolean
+  deleteCurrentHistory?: (error?: U, res?: V) => boolean
 }
 
 export class AxiosDeduplicatorPlugin {
   static CODE = 'ERR_REPEATED'
   histories: Map<string, 1> = new Map()
-  waitQueue: Map<string, ICallback[]> = new Map()
+  pendingQueue: Map<string, ICallback[]> = new Map()
   options: IOptions = {
     generateRequestKey: AxiosDeduplicatorPlugin.generateRequestKey
   }
@@ -31,12 +30,21 @@ export class AxiosDeduplicatorPlugin {
     timeout,
     generateRequestKey,
     isAllowRepeat,
-    isSkipHttpStatusError
+    deleteCurrentHistory
   }: Partial<IOptions> = {}) {
     this.options.timeout = timeout
-    this.options.generateRequestKey = generateRequestKey || this.options.generateRequestKey
     this.options.isAllowRepeat = isAllowRepeat
-    this.options.isSkipHttpStatusError = isSkipHttpStatusError
+    this.options.deleteCurrentHistory = deleteCurrentHistory
+
+    if (generateRequestKey) {
+      this.options.generateRequestKey = generateRequestKey
+    }
+  }
+
+  static getDataType(obj: any) {
+    let res = Object.prototype.toString.call(obj).split(' ')[1]
+    res = res.substring(0, res.length - 1).toLowerCase()
+    return res
   }
 
   static generateRequestKey(config: AxiosRequestConfig): string {
@@ -44,9 +52,9 @@ export class AxiosDeduplicatorPlugin {
     let key = `${method}-${url}`
 
     try {
-      if (data && getDataType(data) === 'object') {
+      if (data && AxiosDeduplicatorPlugin.getDataType(data) === 'object') {
         key += `-${JSON.stringify(data)}`
-      } else if (getDataType(data) === 'formdata') {
+      } else if (AxiosDeduplicatorPlugin.getDataType(data) === 'formdata') {
         for (const [k, v] of data.entries()) {
           if (v instanceof Blob) {
             continue
@@ -55,7 +63,7 @@ export class AxiosDeduplicatorPlugin {
         }
       }
 
-      if (params && getDataType(params) === 'object') {
+      if (params && AxiosDeduplicatorPlugin.getDataType(params) === 'object') {
         key += `-${JSON.stringify(params)}`
       }
 
@@ -68,21 +76,21 @@ export class AxiosDeduplicatorPlugin {
   }
 
   private on(key: string, callback: ICallback) {
-    if (!this.waitQueue.has(key)) {
-      this.waitQueue.set(key, [])
+    if (!this.pendingQueue.has(key)) {
+      this.pendingQueue.set(key, [])
     }
 
-    this.waitQueue.get(key)!.push(callback)
+    this.pendingQueue.get(key)!.push(callback)
   }
 
   private remove(key: string) {
-    this.waitQueue.delete(key)
+    this.pendingQueue.delete(key)
     this.histories.delete(key)
   }
 
   private emit(key: string, data?: AxiosResponse, error?: AxiosError) {
-    if (this.waitQueue.has(key)) {
-      for (const callback of this.waitQueue.get(key)!) {
+    if (this.pendingQueue.has(key)) {
+      for (const callback of this.pendingQueue.get(key)!) {
         callback(data, error)
       }
     }
@@ -90,7 +98,7 @@ export class AxiosDeduplicatorPlugin {
     this.remove(key)
   }
 
-  addPending(key: string) {
+  private addPending(key: string) {
     return new Promise<AxiosResponse>((resolve, reject) => {
       const delay = this.options.timeout
       let timer: NodeJS.Timeout | undefined
@@ -104,11 +112,7 @@ export class AxiosDeduplicatorPlugin {
       }
 
       const callback = (data?: AxiosResponse, error?: AxiosError) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(data!)
-        }
+        data ? resolve(data) : reject(error)
         timer && clearTimeout(timer)
       }
 
@@ -136,15 +140,20 @@ export class AxiosDeduplicatorPlugin {
     return config
   }
 
-  responseInterceptor(response: AxiosResponse) {
+  responseInterceptorFulfilled(response: AxiosResponse) {
     const key = this.options.generateRequestKey(response.config)
+    if (this.options.deleteCurrentHistory && this.options.deleteCurrentHistory(undefined, response)) {
+      this.remove(key)
+      return response
+    }
+
     this.emit(key, response)
     return response
   }
 
-  responseInterceptorError(error: AxiosError) {
+  responseInterceptorRejected(error: AxiosError) {
     const key = this.options.generateRequestKey(error.config!)
-    if (this.options.isSkipHttpStatusError && this.options.isSkipHttpStatusError(error)) {
+    if (this.options.deleteCurrentHistory && this.options.deleteCurrentHistory(error)) {
       this.remove(key)
       return Promise.reject(error)
     }
@@ -164,7 +173,7 @@ export default function createAxiosDeduplicatorPlugin(options: Partial<IOptions>
 
   return {
     requestInterceptor: obj.requestInterceptor.bind(obj),
-    responseInterceptorFulfilled: obj.responseInterceptor.bind(obj),
-    responseInterceptorRejected: obj.responseInterceptorError.bind(obj)
+    responseInterceptorFulfilled: obj.responseInterceptorFulfilled.bind(obj),
+    responseInterceptorRejected: obj.responseInterceptorRejected.bind(obj)
   }
 }
