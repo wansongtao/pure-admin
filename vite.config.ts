@@ -32,7 +32,7 @@ export default defineConfig({
   },
   base: '/admin/',
   define: {
-    __APP_VERSION__: `'${version}'`
+    __APP_VERSION__: version
   },
   server: {
     open: true,
