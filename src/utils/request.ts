@@ -1,4 +1,4 @@
-import axios, { AxiosError, type AxiosResponse, type AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, type AxiosResponse, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios'
 import { message } from 'ant-design-vue'
 import { useUserStore } from '@/stores/user'
 import router from '@/router/index'
@@ -28,23 +28,6 @@ const saveToken = (token: string, refreshToken: string) => {
   store.token = token
   setToken(token)
   setRefreshToken(refreshToken)
-}
-
-const responseInterceptor = (res: AxiosResponse<IBaseResponse | Blob>) => {
-  const data = res.data
-  const result: [AxiosError | undefined, AxiosResponse<IBaseResponse | Blob> | undefined] = [
-    undefined,
-    undefined
-  ]
-
-  if (data instanceof Blob || data.statusCode === 200) {
-    result[1] = res
-    return result
-  }
-
-  message.error(data.message)
-  result[0] = new AxiosError(data.message)
-  return result
 }
 
 export const instance = axios.create({
@@ -86,7 +69,7 @@ instance.interceptors.request.use(twinTokenPlugin.requestInterceptor)
 instance.interceptors.response.use(undefined, twinTokenPlugin.responseInterceptorRejected)
 
 instance.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig & IConfigHeader) => {
     if (config.headers?.isToken !== false) {
       const store = useUserStore()
       const token = store.token
@@ -104,8 +87,14 @@ instance.interceptors.request.use(
 )
 instance.interceptors.response.use(
   (res: AxiosResponse<IBaseResponse | Blob>) => {
-    const [error, data] = responseInterceptor(res)
-    return data !== undefined ? data : Promise.reject(error)
+    const data = res.data
+
+    if (data instanceof Blob || data.statusCode === 200) {
+      return res
+    }
+
+    message.error(data.message)
+    return Promise.reject(new AxiosError(data.message))
   },
   (error: AxiosError) => {
     if (error.code === 'ERR_CANCELED') {
