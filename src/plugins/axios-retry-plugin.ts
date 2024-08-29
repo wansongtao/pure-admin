@@ -73,14 +73,16 @@ export class AxiosRetryPlugin {
     return key
   }
 
-  private fetch(config: InternalAxiosRequestConfig) {
+  private fetch(config: InternalAxiosRequestConfig, beforeRetry?: () => void) {
     return new Promise<AxiosResponse>((resolve, reject) => {
       if (!this.options.retryDelay || this.options.retryDelay < 0) {
+        beforeRetry && beforeRetry()
         this.options.request(config).then(resolve).catch(reject)
         return
       }
 
       setTimeout(() => {
+        beforeRetry && beforeRetry()
         this.options.request(config).then(resolve).catch(reject)
       }, this.options.retryDelay)
     })
@@ -110,7 +112,7 @@ export class AxiosRetryPlugin {
 
     if (retryCount >= this.options.maxRetryCount) {
       this.histories.delete(key)
-      
+
       if (error) {
         return Promise.reject(error)
       }
@@ -120,9 +122,10 @@ export class AxiosRetryPlugin {
 
     const newCount = retryCount + 1
     this.histories.set(key, newCount)
-    this.options.beforeRetry?.(newCount, error, res)
-
-    return this.fetch(config)
+    
+    return this.fetch(config, () => {
+      this.options.beforeRetry?.(newCount, error, res)
+    })
   }
 
   responseInterceptorFulfilled(response: AxiosResponse) {
