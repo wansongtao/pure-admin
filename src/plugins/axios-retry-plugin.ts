@@ -9,6 +9,7 @@ export interface IOptions<
   request: (config: InternalAxiosRequestConfig) => Promise<AxiosResponse>
   isRetry: (error?: T, res?: U) => boolean
   beforeRetry?: (retryCount: number, error?: T, res?: U) => void
+  failed?: (retryCount: number, error?: T, res?: U) => void
 }
 
 export type IConfig = Partial<IOptions> & Pick<IOptions, 'request'>
@@ -88,6 +89,8 @@ export class AxiosRetryPlugin {
     })
   }
 
+  private retryRequest(error: AxiosError): Promise<AxiosResponse>
+  private retryRequest(error: undefined, res: AxiosResponse): AxiosResponse
   private retryRequest(error?: AxiosError, res?: AxiosResponse) {
     if (!this.options.isRetry(error, res)) {
       if (error) {
@@ -111,18 +114,18 @@ export class AxiosRetryPlugin {
     const retryCount = this.histories.get(key) || 0
 
     if (retryCount >= this.options.maxRetryCount) {
+      this.options.failed?.(retryCount, error, res)
       this.histories.delete(key)
 
       if (error) {
         return Promise.reject(error)
       }
-
       return res!
     }
 
     const newCount = retryCount + 1
     this.histories.set(key, newCount)
-    
+
     return this.fetch(config, () => {
       this.options.beforeRetry?.(newCount, error, res)
     })
