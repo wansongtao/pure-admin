@@ -1,4 +1,9 @@
-import axios, { AxiosError, type AxiosResponse, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  AxiosError,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig
+} from 'axios'
 import { message } from 'ant-design-vue'
 import { useUserStore } from '@/stores/user'
 import router from '@/router/index'
@@ -6,6 +11,7 @@ import { refreshToken } from '@/api/common'
 import { getRefreshToken, setToken, setRefreshToken } from './token'
 import createRefreshTokenPlugin from '@/plugins/axios-refresh-token-plugin'
 import createAxiosDeduplicatorPlugin from '@/plugins/axios-deduplicator-plugin'
+import createAxiosRetryPlugin from '@/plugins/axios-retry-plugin'
 
 import type { IBaseResponse, IConfigHeader } from '@/types/index'
 
@@ -50,6 +56,14 @@ instance.interceptors.response.use(
   deduplicator.responseInterceptorFulfilled,
   deduplicator.responseInterceptorRejected
 )
+
+const retryPlugin = createAxiosRetryPlugin({
+  request: instance.request,
+  isRetry: (error?: AxiosError) => {
+    return error?.response?.status !== 401
+  }
+})
+instance.interceptors.response.use(undefined, retryPlugin.responseInterceptorRejected)
 
 const twinTokenPlugin = createRefreshTokenPlugin(async () => {
   const token = getRefreshToken()
