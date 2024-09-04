@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 import axios from 'axios'
 
-import type { IBaseResponse } from '@/types/index'
 import type {
   ILoginParams,
   IUserInfo,
@@ -18,7 +17,7 @@ export const uploadFile = (url: string, file: File) => {
 }
 
 export const getPresignedUrl = (filename: string) => {
-  return request<IBaseResponse<string>>({
+  return request<string>({
     url: '/upload/presigned',
     method: 'get',
     params: {
@@ -28,7 +27,7 @@ export const getPresignedUrl = (filename: string) => {
 }
 
 export const getCaptcha = () => {
-  return request<IBaseResponse<{ captcha: string }>>({
+  return request<{ captcha: string }>({
     url: '/auth/captcha',
     method: 'GET',
     headers: {
@@ -38,7 +37,7 @@ export const getCaptcha = () => {
 }
 
 export const setLogin = (data: ILoginParams) => {
-  return request<IBaseResponse<{ token: string; refreshToken: string; }>>({
+  return request<{ token: string; refreshToken: string; }>({
     url: '/auth/login',
     method: 'POST',
     headers: {
@@ -49,7 +48,7 @@ export const setLogin = (data: ILoginParams) => {
 }
 
 export const refreshToken = (refreshToken: string) => {
-  return request<IBaseResponse<{ token: string; refreshToken: string }>>({
+  return request<{ token: string; refreshToken: string }>({
     url: '/auth/refresh_token',
     method: 'get',
     params: {
@@ -59,28 +58,28 @@ export const refreshToken = (refreshToken: string) => {
 }
 
 export const setLogout = () => {
-  return request<IBaseResponse<null>>({
+  return request<null>({
     url: '/auth/logout',
     method: 'get'
   })
 }
 
 export const getUserInfo = () => {
-  return request<IBaseResponse<IUserInfo>>({
+  return request<IUserInfo>({
     url: '/auth/userinfo',
     method: 'GET'
   })
 }
 
 export const getProfile = () => {
-  return request<IBaseResponse<IProfile>>({
+  return request<IProfile>({
     url: '/users/profile',
     method: 'get'
   })
 }
 
 export const updateProfile = (data: IProfileParam) => {
-  return request<IBaseResponse>({
+  return request({
     url: '/users/profile',
     method: 'patch',
     data
@@ -88,7 +87,7 @@ export const updateProfile = (data: IProfileParam) => {
 }
 
 export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
-  return request<IBaseResponse>({
+  return request({
     url: '/auth/password',
     method: 'post',
     data

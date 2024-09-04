@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-import type { IBaseList, IBaseResponse } from '@/types'
+import type { IBaseList } from '@/types'
 import type {
   IRoleList,
   IRoleQuery,
@@ -10,7 +10,7 @@ import type {
 } from '@/types/api/role'
 
 export const getRoleList = (params: IRoleQuery) => {
-  return request<IBaseResponse<IBaseList<IRoleList>>>({
+  return request<IBaseList<IRoleList>>({
     url: '/roles',
     method: 'GET',
     params
@@ -18,7 +18,7 @@ export const getRoleList = (params: IRoleQuery) => {
 }
 
 export const updateRole = (id: number, data: IRoleEditParam) => {
-  return request<IBaseResponse>({
+  return request({
     url: `/roles/${id}`,
     method: 'patch',
     data
@@ -26,7 +26,7 @@ export const updateRole = (id: number, data: IRoleEditParam) => {
 }
 
 export const addRole = (data: IRoleEditParam) => {
-  return request<IBaseResponse>({
+  return request({
     url: '/roles',
     method: 'post',
     data
@@ -34,21 +34,21 @@ export const addRole = (data: IRoleEditParam) => {
 }
 
 export const getRoleDetail = (id: number) => {
-  return request<IBaseResponse<IRoleDetail>>({
+  return request<IRoleDetail>({
     url: `/roles/${id}`,
     method: 'get'
   })
 }
 
 export const deleteRole = (id: number) => {
-  return request<IBaseResponse>({
+  return request({
     url: `/roles/${id}`,
     method: 'delete'
   })
 }
 
 export const deleteRoles = (id: number[]) => {
-  return request<IBaseResponse>({
+  return request({
     url: '/roles/batch-delete',
     method: 'post',
     data: {
@@ -58,7 +58,7 @@ export const deleteRoles = (id: number[]) => {
 }
 
 export const getRoleTree = () => {
-  return request<IBaseResponse<IRoleTree[]>>({
+  return request<IRoleTree[]>({
     url: '/roles/tree',
     method: 'get'
   })

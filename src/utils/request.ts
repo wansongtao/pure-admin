@@ -126,14 +126,14 @@ instance.interceptors.response.use(
   }
 )
 
-const request = <T extends IBaseResponse | Blob, C = any>(
+const request = <T = unknown, U = IBaseResponse<T>, C = unknown>(
   config: AxiosRequestConfig<C> & IConfigHeader
 ) => {
-  return new Promise<[err?: AxiosError, data?: T]>((resolve) => {
+  return new Promise<[err?: AxiosError, data?: U]>((resolve) => {
     instance
-      .request<IBaseResponse | Blob>(config)
+      .request<U>(config)
       .then((res) => {
-        resolve([undefined, res.data as T])
+        resolve([undefined, res.data])
       })
       .catch((error: AxiosError) => {
         resolve([error])
