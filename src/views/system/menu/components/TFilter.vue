@@ -92,4 +92,3 @@ watch(
 </template>
 
 <style lang="scss" scoped></style>
-@/constants/index

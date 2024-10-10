@@ -25,12 +25,11 @@ export interface IRoleEditParam {
 }
 
 export interface IRoleDetail {
-  description?: string
-  disabled: boolean
   id: number
-  menuIds: number[]
   name: string
-  nickName?: string
+  permissions: number[]
+  disabled: boolean
+  description?: string
 }
 
 export interface IRoleTree {
