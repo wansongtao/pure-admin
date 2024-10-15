@@ -1,8 +1,12 @@
-import type { IMenuType } from '@/types/api/menu'
+import type { IMenuType, IGender } from '@/types'
 
-export const ALL_PERMISSION = '*:*:*'
+export const MENU_TYPES: { readonly [key in IMenuType]: string } = {
+  DIRECTORY: '目录',
+  MENU: '菜单',
+  BUTTON: '按钮'
+}
 
-export const STATUS: {
+export const ACTIVE_STATE: {
   readonly label: string
   readonly value: 0 | 1
 }[] = [
@@ -16,8 +20,10 @@ export const STATUS: {
   }
 ]
 
-export const MENU_TYPES: { [key in IMenuType]: string } = {
-  'DIRECTORY': '目录',
-  'MENU': '菜单',
-  'BUTTON': '按钮'
+export const ALL_PERMISSION = '*:*:*'
+
+export const GENDER_MAP: { readonly [key in IGender]: string } = {
+  MA: '男',
+  FE: '女',
+  OT: '未知'
 }

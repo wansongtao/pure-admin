@@ -2,37 +2,42 @@
 import { getCaptcha } from '@/api/common'
 import { debounce } from '@/utils'
 
-const isRefresh = defineModel<boolean>()
-const img = ref<string>('')
-const onGetCaptchaImg = debounce(async () => {
-  const [, result] = await getCaptcha()
-  img.value = result?.data?.captcha ?? ''
-  isRefresh.value = false
-}, 400)
+const src = ref('')
+const onRefreshCaptcha = debounce<MouseEvent>(
+  async () => {
+    const [, res] = await getCaptcha()
+    if (!res) return
 
-watch(
-  isRefresh,
-  (val) => {
-    if (!val) {
-      return
-    }
-
-    onGetCaptchaImg()
+    src.value = res.data.captcha
   },
-  {
-    immediate: true
-  }
+  400,
+  true
 )
+
+onMounted(() => {
+  onRefreshCaptcha()
+})
+
+defineExpose({
+  onRefreshCaptcha
+})
 </script>
 
 <template>
-  <img :src="img" alt="captcha" class="code" @click="onGetCaptchaImg" />
+  <div class="captcha">
+    <img :src alt="captcha" @click="onRefreshCaptcha" />
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.code {
+.captcha {
   width: 100%;
-  height: 32px;
+  height: 34px;
   cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

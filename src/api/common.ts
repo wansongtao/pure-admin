@@ -1,30 +1,12 @@
-import request from '@/utils/request'
-import axios from 'axios'
+import request from '@/utils/axiosRequest'
 
 import type {
   ILoginParams,
-  IUserInfo,
+  IPasswordParam,
   IProfile,
-  IProfileParam
+  IProfileParam,
+  IUserInfo
 } from '@/types/api/common'
-
-export const uploadFile = (url: string, file: File) => {
-  return axios.put(url, file, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-}
-
-export const getPresignedUrl = (filename: string) => {
-  return request<string>({
-    url: '/upload/presigned',
-    method: 'get',
-    params: {
-      filename: filename
-    }
-  })
-}
 
 export const getCaptcha = () => {
   return request<{ captcha: string }>({
@@ -37,7 +19,7 @@ export const getCaptcha = () => {
 }
 
 export const setLogin = (data: ILoginParams) => {
-  return request<{ token: string; refreshToken: string; }>({
+  return request<{ token: string; refreshToken: string }>({
     url: '/auth/login',
     method: 'POST',
     headers: {
@@ -47,20 +29,20 @@ export const setLogin = (data: ILoginParams) => {
   })
 }
 
-export const refreshToken = (refreshToken: string) => {
+export const setLogout = () => {
+  return request({
+    url: '/auth/logout',
+    method: 'get'
+  })
+}
+
+export const getNewToken = (refreshToken: string) => {
   return request<{ token: string; refreshToken: string }>({
-    url: '/auth/refresh_token',
+    url: '/auth/refresh-token',
     method: 'get',
     params: {
       refreshToken
     }
-  })
-}
-
-export const setLogout = () => {
-  return request<null>({
-    url: '/auth/logout',
-    method: 'get'
   })
 }
 
@@ -86,7 +68,7 @@ export const updateProfile = (data: IProfileParam) => {
   })
 }
 
-export const updatePassword = (data: { oldPassword: string; newPassword: string }) => {
+export const updatePassword = (data: IPasswordParam) => {
   return request({
     url: '/auth/password',
     method: 'post',

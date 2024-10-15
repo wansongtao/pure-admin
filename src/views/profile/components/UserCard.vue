@@ -1,129 +1,86 @@
 <script lang="ts" setup>
-import UserIcon from '@/assets/svg/menus/user.svg'
-import RoleIcon from '@/assets/svg/menus/role.svg'
-import PhoneIcon from '@/assets/svg/phone.svg'
-import EmailIcon from '@/assets/svg/menus/email.svg'
-import SexmIcon from '@/assets/svg/sexm.svg'
-import SexwIcon from '@/assets/svg/sexw.svg'
-import SexIcon from '@/assets/svg/intersex.svg'
-import BirthdayIcon from '@/assets/svg/birthday.svg'
-import UploadAvatar from '@/components/UploadAvatar/index.vue'
-
-import { updateProfile } from '@/api/common'
-import { message } from 'ant-design-vue'
-import { useUserStore } from '@/stores/user'
+import UserAvatar from './UserAvatar.vue'
+import GenderMIcon from '@/assets/svgs/icons/gender-m.svg'
+import GenderWIcon from '@/assets/svgs/icons/gender-w.svg'
+import GenderIcon from '@/assets/svgs/icons/intersex.svg'
+import UserIcon from '@/assets/svgs/icons/user.svg'
+import RoleIcon from '@/assets/svgs/menus/role.svg'
+import BirthdayIcon from '@/assets/svgs/icons/birthday.svg'
+import PhoneIcon from '@/assets/svgs/icons/phone.svg'
+import EmailIcon from '@/assets/svgs/icons/email.svg'
 
 import type { IProfile } from '@/types/api/common'
 
-const $props = defineProps<{ user: IProfile }>()
-
-const avatar = ref('')
-watch(
-  () => $props.user.avatar,
-  (url) => {
-    if (url) {
-      avatar.value = url
-    }
-  }
-)
-
-const userStore = useUserStore()
-const { userInfo } = storeToRefs(userStore)
-
-const avatarRef = ref<InstanceType<typeof UploadAvatar>>()
-const handleUpdateAvatar = async () => {
-  const [err, avatar] = await avatarRef.value!.handleUpload()
-  if (err) {
-    message.error(err?.message || '头像上传失败')
-    return
-  }
-
-  const [error] = await updateProfile({ avatar })
-  if (error) {
-    return
-  }
-
-  userInfo.value.avatar = avatar!
-  message.success('头像修改成功')
-}
+const { profile } = defineProps<{
+  profile: IProfile
+}>()
 </script>
 
 <template>
-  <a-card>
-    <div class="flex_center">
-      <upload-avatar ref="avatarRef" v-model:imgUrl="avatar" @selectFile="handleUpdateAvatar" />
-    </div>
-    <p class="name">{{ user.nickName || user.userName }}</p>
-    <p class="text" v-if="user.description">{{ user.description }}</p>
-    <div class="profile_main">
-      <div class="main_item text">
-        <div class="item_label">
-          <sex-icon v-if="user.gender === 'OT'" />
-          <sexw-icon v-if="user.gender === 'MA'" />
-          <sexm-icon v-if="user.gender === 'FE'" />
+  <n-card style="border-radius: 12px">
+    <n-flex vertical align="center">
+      <user-avatar :url="profile.avatar" />
+      <div class="title">{{ profile.nickName || profile.userName }}</div>
+      <div class="user-info">
+        <div class="user-info-item">
+          <div class="icon">
+            <gender-m-icon v-if="profile.gender === 'MA'" />
+            <gender-w-icon v-if="profile.gender === 'FE'" />
+            <gender-icon v-if="profile.gender === 'OT'" />
+          </div>
+          <div>{{ profile.gender === 'FE' ? '女' : profile.gender === 'MA' ? '男' : '其他' }}</div>
         </div>
-        <div class="item_text">
-          {{ user.gender === 'FE' ? '女' : user.gender === 'MA' ? '男' : '--' }}
+        <div class="user-info-item">
+          <div class="icon"><user-icon /></div>
+          <div>{{ profile.userName }}</div>
+        </div>
+        <div class="user-info-item">
+          <div class="icon"><role-icon /></div>
+          <div class="content">
+            <n-flex size="small">
+              <n-tag size="small" v-for="role in profile.roles" :key="role">{{ role }}</n-tag>
+            </n-flex>
+            <template v-if="!profile.roles?.length">--</template>
+          </div>
+        </div>
+        <div class="user-info-item">
+          <div class="icon"><birthday-icon /></div>
+          <div>{{ profile.birthday ?? '--' }}</div>
+        </div>
+        <div class="user-info-item">
+          <div class="icon"><phone-icon /></div>
+          <div>{{ profile.phone ?? '--' }}</div>
+        </div>
+        <div class="user-info-item">
+          <div class="icon"><email-icon /></div>
+          <div>{{ profile.email ?? '--' }}</div>
         </div>
       </div>
-      <div class="main_item text">
-        <div class="item_label"><user-icon /></div>
-        <div class="item_text">{{ user.userName }}</div>
-      </div>
-      <div class="main_item text">
-        <div class="item_label"><role-icon /></div>
-        <div class="item_text">
-          <a-tag v-for="role in user.roles" :key="role">{{ role }}</a-tag>
-          <template v-if="!user.roles?.length">--</template>
-        </div>
-      </div>
-      <div class="main_item text">
-        <div class="item_label"><birthday-icon /></div>
-        <div class="item_text">{{ user.birthday || '--' }}</div>
-      </div>
-      <div class="main_item text">
-        <div class="item_label"><phone-icon /></div>
-        <div class="item_text">{{ user.phone || '--' }}</div>
-      </div>
-      <div class="main_item text">
-        <div class="item_label"><email-icon /></div>
-        <div class="item_text">{{ user.email || '--' }}</div>
-      </div>
-    </div>
-  </a-card>
+    </n-flex>
+  </n-card>
 </template>
 
 <style lang="scss" scoped>
-.name {
+.title {
   font-size: 20px;
-  line-height: 2em;
-  text-align: center;
-  color: var(--st-c-text-1);
 }
 
-.text {
-  line-height: 1.7em;
-  text-align: center;
-  color: var(--st-c-text-1);
-}
+.user-info {
+  margin-top: 10px;
 
-.profile_main {
-  padding-top: 15px;
-  margin: 0 auto;
-  width: 60%;
-}
+  .user-info-item {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 16px;
 
-.main_item {
-  display: flex;
+    .icon {
+      margin-right: 10px;
+    }
 
-  .item_label {
-    margin-right: 15px;
-    flex-shrink: 0;
-  }
-
-  .item_text {
-    flex: 1;
-    text-align: left;
+    .content {
+      max-width: 80%;
+    }
   }
 }
 </style>

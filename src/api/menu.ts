@@ -1,13 +1,7 @@
-import request from '@/utils/request'
+import request from '@/utils/axiosRequest'
 
-import type { IBaseList } from '@/types/index'
-import type {
-  IMenuListItem,
-  IMenuQuery,
-  IMenuTree,
-  IMenuParam,
-  IMenuDetail
-} from '@/types/api/menu'
+import type { IMenuListItem, IMenuParam, IMenuQuery, IMenuTree } from '@/types/api/menu'
+import type { IBaseList } from '@/types/api'
 
 export const getMenuList = (params: IMenuQuery) => {
   return request<IBaseList<IMenuListItem>>({
@@ -27,26 +21,10 @@ export const getMenuTree = (containButton: boolean = false) => {
   })
 }
 
-export const addMenu = (data: IMenuParam) => {
-  return request({
-    url: '/permissions',
-    method: 'post',
-    data
-  })
-}
-
 export const getMenuDetail = (id: number) => {
-  return request<IMenuDetail>({
+  return request<IMenuParam>({
     url: `/permissions/${id}`,
     method: 'get'
-  })
-}
-
-export const updateMenu = (id: number, data: IMenuParam) => {
-  return request({
-    url: `/permissions/${id}`,
-    method: 'patch',
-    data
   })
 }
 
@@ -57,12 +35,28 @@ export const deleteMenu = (id: number) => {
   })
 }
 
-export const deleteMenus = (ids: number[]) => {
+export const deleteMenuList = (ids: number[]) => {
   return request({
     url: '/permissions/batch-delete',
     method: 'post',
     data: {
       ids
     }
+  })
+}
+
+export const addMenu = (data: IMenuParam) => {
+  return request({
+    url: '/permissions',
+    method: 'post',
+    data
+  })
+}
+
+export const updateMenu = (id: number, data: IMenuParam) => {
+  return request({
+    url: `/permissions/${id}`,
+    method: 'patch',
+    data
   })
 }

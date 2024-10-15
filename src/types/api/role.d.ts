@@ -1,14 +1,4 @@
-export interface IRoleQuery {
-  disabled?: 0 | 1
-  endTime?: string
-  sort?: 'asc' | 'desc'
-  keyword?: string
-  page?: number
-  pageSize?: number
-  beginTime?: string
-}
-
-export interface IRoleList {
+export interface IRoleListItem {
   id: number
   name: string
   description?: string
@@ -17,7 +7,7 @@ export interface IRoleList {
   updatedAt: string
 }
 
-export interface IRoleEditParam {
+export interface IRoleParam {
   description?: string
   disabled?: boolean
   permissions?: number[]
@@ -32,7 +22,7 @@ export interface IRoleDetail {
   description?: string
 }
 
-export interface IRoleTree {
+export interface IRoleTreeItem {
   id: number
   name: string
 }

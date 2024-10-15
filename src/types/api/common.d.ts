@@ -1,3 +1,5 @@
+import { IGender } from '@/types'
+
 export interface ILoginParams {
   userName: string
   password: string
@@ -5,23 +7,14 @@ export interface ILoginParams {
 }
 
 export interface IUserInfo {
-  /**
-   * 用户头像地址
-   */
   avatar: string
-  /**
-   * 用户昵称
-   */
   name: string
-  /**
-   * 权限组
-   */
   permissions: string[]
   roles: string[]
-  menus?: IMenuData[]
+  menus?: IMenuItem[]
 }
 
-export interface IMenuData {
+export interface IMenuItem {
   /**
    * 菜单路径
    */
@@ -57,23 +50,17 @@ export interface IMenuData {
   /**
    * 子菜单
    */
-  children?: IMenuData[]
+  children?: IMenuItem[]
 }
 
 export interface IProfileParam {
   avatar?: string
-  birthday?: string
-  /**
-   * 个人简介
-   */
-  description?: string
-  email?: string
-  nickName?: string
-  phone?: string
-  /**
-   * 性别 MA 男，FE 女，OT 其他
-   */
-  gender?: 'MA' | 'FE' | 'OT'
+  birthday?: string | null
+  description?: string | null
+  email?: string | null
+  nickName?: string | null
+  phone?: string | null
+  gender?: IGender
 }
 
 export interface IProfile extends IProfileParam {
@@ -81,4 +68,7 @@ export interface IProfile extends IProfileParam {
   userName: string
 }
 
-export type IExportProfile = Omit<IProfile, 'roles' | 'avatar' | 'description'>
+export interface IPasswordParam {
+  oldPassword: string
+  newPassword: string
+}

@@ -1,14 +1,21 @@
-import request from '@/utils/request'
+import request from '@/utils/axiosRequest'
 
-import type { IBaseList } from '@/types'
-import type { IUserQuery, IUserList, IUserEdit, IUserDetail } from '@/types/api/user'
-import type { IExportProfile } from '@/types/api/common'
+import type { IBaseList, IQuery } from '@/types/api'
+import type { IUserDetail, IUserListItem, IUserParam } from '@/types/api/user'
 
-export const getUserList = (params: IUserQuery) => {
-  return request<IBaseList<IUserList>>({
+export const getUserList = (params: IQuery) => {
+  return request<IBaseList<IUserListItem>>({
     url: '/users',
     method: 'get',
     params
+  })
+}
+
+export const addUser = (data: IUserParam) => {
+  return request({
+    url: '/users',
+    method: 'post',
+    data
   })
 }
 
@@ -29,7 +36,7 @@ export const deleteUsers = (ids: string[]) => {
   })
 }
 
-export const updateUser = (id: string, data: IUserEdit) => {
+export const updateUser = (id: string, data: IUserParam) => {
   return request({
     url: `/users/${id}`,
     method: 'patch',
@@ -40,21 +47,6 @@ export const updateUser = (id: string, data: IUserEdit) => {
 export const getUserDetail = (id: string) => {
   return request<IUserDetail>({
     url: `/users/${id}`,
-    method: 'get'
-  })
-}
-
-export const addUser = (data: IUserEdit) => {
-  return request({
-    url: '/users',
-    method: 'post',
-    data
-  })
-}
-
-export const exportUserInfo = () => {
-  return request<IExportProfile[]>({
-    url: '/users/export',
     method: 'get'
   })
 }

@@ -1,26 +1,22 @@
 import { ALL_PERMISSION } from '@/constants/index'
 
 /**
- * 权限校验
+ *
  * @param permissions 拥有的权限组
- * @param needPerm 是否有的权限
+ * @param needPerm 需要的权限
  * @returns
  */
-export const checkPermission = (permissions: string[], needPerm: string) => {
+export const hasPermission = (permissions: string[], needPerm: string) => {
   return permissions.some((v) => {
-    if (v === ALL_PERMISSION || v === needPerm) {
-      return true
-    }
-
-    return false
+    return v === ALL_PERMISSION || v === needPerm
   })
 }
 
 /**
  *
  * @param permissions 拥有的权限组
- * @param needPermissions 是否有的权限/组
- * @param or 默认false，false => 全部有  true => 有一个即可
+ * @param needPermissions 需要的权限(组)
+ * @param or 默认 false，false => 全部有  true => 有一个即可
  * @returns
  */
 export const hasPermissions = (
@@ -29,51 +25,51 @@ export const hasPermissions = (
   or = false
 ) => {
   if (typeof needPermissions === 'string') {
-    return checkPermission(permissions, needPermissions)
+    return hasPermission(permissions, needPermissions)
   }
 
   if (or) {
     return needPermissions.some((v) => {
-      return checkPermission(permissions, v)
+      return hasPermission(permissions, v)
     })
   }
 
   return needPermissions.every((v) => {
-    return checkPermission(permissions, v)
-  })
-}
-
-/**
- * 角色校验
- * @param roles 拥有的角色组
- * @param needRole 是否有的角色
- * @returns
- */
-export const checkRole = (roles: string[], needRole: string) => {
-  return roles.some((v) => {
-    return v === needRole ? true : false
+    return hasPermission(permissions, v)
   })
 }
 
 /**
  *
  * @param roles 拥有的角色组
- * @param needRoles 是否有的角色/组
- * @param or 默认false，false => 全部有  true => 有一个即可
+ * @param needRole 需要的角色
+ * @returns
+ */
+export const hasRole = (roles: string[], needRole: string) => {
+  return roles.some((v) => {
+    return v === needRole
+  })
+}
+
+/**
+ *
+ * @param roles 拥有的角色组
+ * @param needRoles 需要的角色(组)
+ * @param or 默认 false，false => 全部有  true => 有一个即可
  * @returns
  */
 export const hasRoles = (roles: string[], needRoles: string | string[], or = false) => {
   if (typeof needRoles === 'string') {
-    return checkRole(roles, needRoles)
+    return hasRole(roles, needRoles)
   }
 
   if (or) {
     return needRoles.some((v) => {
-      return checkRole(roles, v)
+      return hasRole(roles, v)
     })
   }
 
   return needRoles.every((v) => {
-    return checkRole(roles, v)
+    return hasRole(roles, v)
   })
 }

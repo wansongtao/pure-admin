@@ -1,94 +1,77 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { getUserInfo, setLogin, setLogout } from '@/api/common'
-import { generateMenus, generateCacheRoutes, generateRoutes } from '@/utils/menu'
-import getStaticAdminRoute from '@/router/adminRoute'
-import { getToken, setToken, removeToken, setRefreshToken, removeRefreshToken } from '@/utils/token'
+import { setLogin, setLogout, getNewToken, getUserInfo } from '@/api/common'
 
-import type { IMenuItem } from '@/types'
 import type { ILoginParams, IUserInfo } from '@/types/api/common'
 
-export const useUserStore = defineStore('user', () => {
-  const userInfo = ref<IUserInfo>({
-    name: '',
-    avatar: '',
-    permissions: [],
-    roles: []
-  })
+export const useUserStore = defineStore(
+  'user',
+  () => {
+    const accessToken = ref('')
+    const refreshToken = ref('')
+    async function login(data: ILoginParams) {
+      const [, res] = await setLogin(data)
+      if (!res) {
+        return false
+      }
 
-  const addRouteName = ref<string>('')
-  const cacheRoutes = ref<string[]>([])
-  const menus = ref<IMenuItem[]>([])
+      accessToken.value = res.data.token
+      refreshToken.value = res.data.refreshToken
+      return true
+    }
+    async function refresh() {
+      if (!refreshToken.value) {
+        return false
+      }
 
-  async function getUserInfoAction() {
-    const [, result] = await getUserInfo()
-    const route = getStaticAdminRoute()
-    addRouteName.value = route.name as string
-    if (!result) {
-      return false
+      const [, res] = await getNewToken(refreshToken.value)
+      if (!res) {
+        return false
+      }
+
+      accessToken.value = res.data.token
+      refreshToken.value = res.data.refreshToken
+      return true
     }
 
-    userInfo.value = {
-      name: result.data.name,
-      avatar: result.data.avatar,
-      permissions: result.data.permissions,
-      roles: result.data.roles
+    const userInfo = ref(initUserInfo())
+    function initUserInfo(): IUserInfo {
+      return {
+        name: '',
+        avatar: '',
+        permissions: [],
+        roles: [],
+        menus: []
+      }
+    }
+    async function fetchUserInfo() {
+      const [, res] = await getUserInfo()
+      if (!res) {
+        return
+      }
+
+      userInfo.value = res.data
     }
 
-    const newRoute = generateRoutes(result.data.menus ?? [])
-    if (route.children) {
-      route.children.push(...newRoute)
-    } else {
-      route.children = newRoute
+    function reset() {
+      accessToken.value = ''
+      refreshToken.value = ''
+      userInfo.value = initUserInfo()
     }
 
-    cacheRoutes.value = generateCacheRoutes(route.children ?? [])
-    menus.value = generateMenus(route.children ?? [])
-
-    return route
-  }
-
-  const token = ref(getToken() ?? '')
-  async function login(data: ILoginParams) {
-    const [err, result] = await setLogin(data)
-    if (result) {
-      token.value = result.data.token
-      setToken(result.data.token)
-      setRefreshToken(result.data.refreshToken)
-    } else {
-      throw err
+    async function logout() {
+      await setLogout()
+      reset()
     }
-  }
 
-  function reset() {
-    token.value = ''
-    userInfo.value = {
-      name: '',
-      avatar: '',
-      permissions: [],
-      roles: []
+    return {
+      accessToken,
+      refreshToken,
+      login,
+      refresh,
+      userInfo,
+      fetchUserInfo,
+      reset,
+      logout
     }
-    menus.value = []
-    addRouteName.value = ''
-    cacheRoutes.value = []
-  }
-
-  async function logout() {
-    await setLogout()
-    reset()
-    removeToken()
-    removeRefreshToken()
-  }
-
-  return {
-    token,
-    login,
-    logout,
-    userInfo,
-    cacheRoutes,
-    menus,
-    addRouteName,
-    getUserInfoAction,
-    reset
-  }
-})
+  },
+  { persist: true }
+)

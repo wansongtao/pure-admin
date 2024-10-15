@@ -14,16 +14,17 @@ export default function getStaticAdminRoute(): RouteRecordRaw {
       {
         path: '',
         name: 'Home',
-        component: () => import('@/views/home/index.vue'),
+        component: () => import('@/views/home/HomeView.vue'),
         meta: {
           title: '首页',
-          icon: 'index'
+          icon: 'home',
+          cache: true
         }
       },
       {
         path: 'profile',
         name: 'ProfileView',
-        component: () => import('@/views/profile/index.vue'),
+        component: () => import('@/views/profile/ProfileView.vue'),
         meta: {
           title: '个人中心',
           hidden: true,

@@ -1,24 +1,20 @@
-<script setup lang="ts">
-import { theme } from 'ant-design-vue'
-import { useSettingStore } from '@/stores/setting'
-import dayjs from 'dayjs'
+<script lang="ts" setup>
+import { zhCN, dateZhCN, darkTheme, lightTheme } from 'naive-ui'
+import { useAppSetStore } from '@/stores/appSet'
 
-import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import 'dayjs/locale/zh-cn'
-
-const setStore = useSettingStore()
-dayjs.locale('zh-cn')
+const appSetStore = useAppSetStore()
+const { theme } = storeToRefs(appSetStore)
+const themeValue = computed(() => {
+  return theme.value === 'light' ? lightTheme : darkTheme
+})
 </script>
 
 <template>
-  <a-config-provider
-    :theme="{
-      algorithm: setStore.theme === 'light' ? theme.defaultAlgorithm : theme.darkAlgorithm
-    }"
-    :locale="zhCN"
-  >
-    <router-view />
-  </a-config-provider>
+  <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="themeValue">
+    <the-app-provider>
+      <router-view />
+    </the-app-provider>
+  </n-config-provider>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

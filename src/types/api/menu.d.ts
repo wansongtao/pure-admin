@@ -1,14 +1,8 @@
-export type IMenuType = 'DIRECTORY' | 'MENU' | 'BUTTON'
+import type { IQuery } from '.'
+import type { IMenuType } from '..'
 
-export interface IMenuQuery {
-  keyword?: string
-  beginTime?: string
-  endTime?: string
-  type?: IMenuType
-  disabled?: 0 | 1
-  page?: number
-  pageSize?: number
-  sort?: 'asc' | 'desc'
+export interface IMenuQuery extends IQuery {
+  type?: IMenuType | null
 }
 
 export interface IMenuListItem {
@@ -44,6 +38,9 @@ export interface IMenuListItem {
    * 是否禁用
    */
   disabled: boolean
+  /**
+   * 排序, 越大越靠前
+   */
   sort: number
   /**
    * 添加时间
@@ -52,9 +49,14 @@ export interface IMenuListItem {
   children?: IMenuTreeItem[]
 }
 
-/**
- * 新增/编辑菜单参数类型
- */
+export interface IMenuTree {
+  id: number
+  name: string
+  type: IMenuType
+  disabled: boolean
+  children?: IMenuTree[]
+}
+
 export interface IMenuParam {
   /**
    * 父级菜单ID
@@ -108,76 +110,4 @@ export interface IMenuParam {
    * 菜单排序，目录、菜单选填
    */
   sort?: number
-}
-
-export interface IMenuTree {
-  /**
-   * 菜单ID
-   */
-  id: number
-  /**
-   * 菜单名称
-   */
-  name: string
-  /**
-   * 菜单类型
-   */
-  type: IMenuType
-  disabled: boolean
-  children?: IMenuTree[]
-}
-
-export interface IMenuDetail {
-  /**
-   * 是否缓存
-   */
-  cache?: boolean
-  /**
-   * 菜单组件路径
-   */
-  component?: string
-  /**
-   * 是否禁用
-   */
-  disabled?: boolean
-  /**
-   * 是否隐藏
-   */
-  hidden?: boolean
-  /**
-   * 菜单图标
-   */
-  icon?: string
-  /**
-   * 菜单ID
-   */
-  id: number
-  /**
-   * 菜单路径
-   */
-  path?: string
-  /**
-   * 菜单权限
-   */
-  permission?: string
-  /**
-   * 父菜单ID
-   */
-  pid?: number
-  /**
-   * 是否开启路由布尔模式传参
-   */
-  props?: boolean
-  /**
-   * 重定向地址
-   */
-  redirect?: string
-  /**
-   * 菜单名称
-   */
-  title: string
-  /**
-   * 类型
-   */
-  type: IMenuType
 }

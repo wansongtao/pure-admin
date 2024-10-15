@@ -1,10 +1,9 @@
-import { ref } from 'vue'
 import { getRoleTree } from '@/api/role'
 
-import type { IRoleTree } from '@/types/api/role'
+import type { IRoleTreeItem } from '@/types/api/role'
 
-export const useRoleTree = (immediate = true) => {
-  const roleTree = ref<IRoleTree[]>([])
+export default function useRoleTree(immediate = true) {
+  const roleTree = ref<IRoleTreeItem[]>([])
 
   const fetchRoleTree = async () => {
     const [, result] = await getRoleTree()

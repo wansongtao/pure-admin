@@ -1,12 +1,10 @@
-import ParentView from '@/components/ParentView/index.vue'
+import MENU_ICON_MAP from '@/plugins/menuIcons'
+import ROUTE_COMPONENT_MAP from '@/plugins/routeComponents'
+import TheParentView from '@/components/the-parent-view/TheParentView.vue'
 
-import { h } from 'vue'
-import MENU_ICON_MAP from '@/plugins/importMenuIcons'
-import COMPONENT_MAP from '@/plugins/importRouteComponents'
-
-import type { IMenuData } from '@/types/api/common'
+import type { IMenuItem } from '@/types/api/common'
+import type { MenuOption } from 'naive-ui'
 import type { RouteRecordRaw } from 'vue-router'
-import type { IMenuItem } from '@/types/index'
 
 const getFullPath = (path: string, parentPath = '/') => {
   if (parentPath[parentPath.length - 1] !== '/' && path.indexOf('/') !== 0) {
@@ -20,29 +18,30 @@ const getFullPath = (path: string, parentPath = '/') => {
   return parentPath + path
 }
 
-export const generateMenus = (routes: RouteRecordRaw[], parentPath = ''): IMenuItem[] => {
-  const menus: IMenuItem[] = []
+export const generateMenus = (
+  routes: RouteRecordRaw[],
+  parentPath = '',
+  isSkip = (route: RouteRecordRaw) => route.meta?.hidden
+) => {
+  const menus: MenuOption[] = []
 
   routes.forEach((item) => {
-    if (item.meta?.hidden) {
+    if (isSkip(item)) {
       return
     }
 
     const { meta, name } = item
     const path = getFullPath(item.path, parentPath)
-
-    const menuItem: IMenuItem = {
+    const menuItem: MenuOption = {
       key: path,
-      label: meta?.title || (name as string),
-      path
+      label: meta?.title || (name as string)
     }
 
     if (meta?.icon && MENU_ICON_MAP[meta.icon]) {
       menuItem.icon = () => h(MENU_ICON_MAP[meta.icon!])
     }
-
     if (item.children?.length) {
-      menuItem.children = generateMenus(item.children, path)
+      menuItem.children = generateMenus(item.children, path, isSkip)
     }
 
     menus.push(menuItem)
@@ -51,49 +50,50 @@ export const generateMenus = (routes: RouteRecordRaw[], parentPath = ''): IMenuI
   return menus
 }
 
-export const generateCacheRoutes = (routes: RouteRecordRaw[]): string[] => {
+export const generateCacheRoutes = (
+  routes: RouteRecordRaw[],
+  isSkip = (route: RouteRecordRaw) => route.meta?.cache !== true || !route.name
+) => {
   const cacheRouteNames: string[] = []
 
   routes.forEach((route) => {
-    if (route.meta?.cache && route.name) {
+    if (!isSkip(route)) {
       cacheRouteNames.push(route.name as string)
     }
 
     if (route.children?.length) {
-      cacheRouteNames.push(...generateCacheRoutes(route.children))
+      cacheRouteNames.push(...generateCacheRoutes(route.children, isSkip))
     }
   })
 
   return cacheRouteNames
 }
 
-export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw[] => {
+export const generateRoutes = (menuTree: IMenuItem[]) => {
   const historyRouteNames: string[] = []
 
-  const recursionGenerateRoutes = (tree: IMenuData[], parentPath = ''): RouteRecordRaw[] => {
+  const recursionGenerateRoutes = (tree: IMenuItem[], parentPath = '') => {
     return tree.map((item) => {
       const path = getFullPath(item.path, parentPath)
       const name = path.replace(/\//g, '') + '-' + Math.random().toString(36).slice(2)
 
       const route: RouteRecordRaw = {
         path,
-        component: ParentView,
+        component: TheParentView,
         name,
         meta: {}
       }
 
-      if (item.component && COMPONENT_MAP[item.component]) {
-        route.component = COMPONENT_MAP[item.component]
+      if (item.component && ROUTE_COMPONENT_MAP[item.component]) {
+        route.component = ROUTE_COMPONENT_MAP[item.component]
+
         const name = item.component
           .replace(/.vue|.jsx|.tsx/g, '')
           .split('/')
-          .map((item) => item.replace(/^\S/, (s) => s.toUpperCase()))
-          .join('')
+          .pop()!
         if (!historyRouteNames.includes(name)) {
           route.name = name
           historyRouteNames.push(name)
-        } else {
-          console.warn(`多个路由引用了相同的组件：${item.component}`)
         }
       }
 
@@ -109,29 +109,16 @@ export const generateRoutes = (menuTree: IMenuData[]): RouteRecordRaw[] => {
       if (item.hidden === true) {
         route.meta!.hidden = item.hidden
       }
-      // 设置为字符串会报错，页面加载不出来
       if (item.props === true) {
         route.props = item.props
       }
 
       if (item.children?.length) {
-        // 通过在父路由的children中添加一个相同path的子路由，实现路由跳转父级菜单时，重定向到相应子菜单
-        const redirectRoute = {
-          path: route.path,
-          title: item.name,
-          redirect: item.redirect,
-          meta: {
-            hidden: true
-          }
-        }
-
-        // 如果未设置重定向地址，则重定向到父路由的第一个子路由
-        if (!item.redirect) {
-          redirectRoute.redirect = getFullPath(item.children[0].path, route.path)
-        }
+        // @ts-ignore
+        route.redirect = item.redirect || getFullPath(item.children[0].path, route.path)
 
         // @ts-ignore
-        route.children = [redirectRoute, ...recursionGenerateRoutes(item.children, route.path)]
+        route.children = [...recursionGenerateRoutes(item.children, route.path)]
       }
 
       return route

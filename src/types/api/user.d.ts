@@ -1,20 +1,4 @@
-export interface IUserQuery {
-  endTime?: string
-  sort?: 'asc' | 'desc'
-  /**
-   * 0=false，1=true
-   */
-  disabled?: 0 | 1
-  /**
-   * 用户名/昵称
-   */
-  keyword?: string
-  page?: number
-  pageSize?: number
-  beginTime?: string
-}
-
-export interface IUserList {
+export interface IUserListItem {
   avatar?: string
   disabled: boolean
   id: string
@@ -25,7 +9,7 @@ export interface IUserList {
   roleNames?: string[]
 }
 
-export interface IUserEdit {
+export interface IUserParam {
   userName?: string
   disabled?: boolean
   nickName?: string
@@ -33,7 +17,6 @@ export interface IUserEdit {
 }
 
 export interface IUserDetail {
-  avatar?: string
   disabled: boolean
   id: number
   nickName?: string

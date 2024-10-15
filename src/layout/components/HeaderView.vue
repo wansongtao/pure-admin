@@ -1,37 +1,39 @@
 <script lang="ts" setup>
-import AvatarDropdown from './AvatarDropdown.vue'
-import BreadCrumb from './BreadCrumb.vue'
-import SwitchTheme from './SwitchTheme.vue'
-
-defineOptions({
-  name: 'HeaderView'
-})
+import UserCenter from './UserCenter.vue'
 </script>
 
 <template>
-  <header class="header flex">
-    <div class="flex">
+  <header class="header">
+    <div class="header-left">
       <button-collapsed />
-      <bread-crumb />
+      <base-breadcrumb />
     </div>
-    <div class="flex">
-      <screen-full />
-      <switch-theme />
-      <avatar-dropdown />
+    <div class="header-right">
+      <button-fullscreen />
+      <button-theme />
+      <user-center />
     </div>
   </header>
 </template>
 
 <style lang="scss" scoped>
 .header {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  height: var(--st-header-h);
-  border-bottom: 1px solid var(--st-c-divider);
-}
+  padding: 0 24px;
+  height: 50px;
 
-.flex {
-  display: flex;
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
 }
 </style>

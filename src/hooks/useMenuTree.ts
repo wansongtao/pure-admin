@@ -1,49 +1,16 @@
-import { ref } from 'vue'
 import { getMenuTree } from '@/api/menu'
 
 import type { IMenuTree } from '@/types/api/menu'
 
-export interface ITree {
-  label: string
-  value: number
-  type: IMenuTree['type']
-  disabled?: boolean
-  children?: ITree[]
-}
+export default function useMenuTree(containButton: boolean = false) {
+  const menuTree = ref<IMenuTree[]>([])
 
-export const useMenuTree = (
-  callback?: (data: IMenuTree) => { label: string; value: number; disabled?: boolean },
-  immediate = true
-) => {
-  const menuTree = ref<ITree[]>([])
-
-  const fetchMenuTree = async (containButton?: boolean) => {
-    const transformData = (tree: IMenuTree[]) => {
-      return tree.map((v) => {
-        const item: ITree = { label: v.name, value: v.id, type: v.type, disabled: v.disabled }
-        if (callback) {
-          const res = callback(v)
-          item.label = res.label
-          item.value = res.value
-          item.disabled = res.disabled
-        }
-
-        if (v.children) {
-          item.children = transformData(v.children)
-        }
-
-        return item
-      })
-    }
-
+  const fetchMenuTree = async () => {
     const [, result] = await getMenuTree(containButton)
-    menuTree.value = transformData(result?.data ?? [])
-    return menuTree.value
+    menuTree.value = result?.data ?? []
   }
 
-  if (immediate) {
-    fetchMenuTree()
-  }
+  fetchMenuTree()
 
   return {
     menuTree,

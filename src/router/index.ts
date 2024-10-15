@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import NotFound from '@/views/NotFound.vue'
-import LoginView from '@/views/login/index.vue'
+import LoginView from '@/views/login/LoginView.vue'
+import NotFound from '@/views/404/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +16,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'not-found',
+      name: 'NotFound',
       component: NotFound,
       meta: {
         title: '404',

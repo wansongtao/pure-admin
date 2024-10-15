@@ -1,0 +1,19 @@
+@import './base.css';
+
+.svg-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.base-transition {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
