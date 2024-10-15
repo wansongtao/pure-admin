@@ -23,7 +23,7 @@ const options = [
   },
   {
     label: () =>
-      h('a', { href: 'https://github.com/wansongtao/blog-admin-next', target: '_blank' }, 'GitHub'),
+      h('a', { href: 'https://github.com/wansongtao/pure-admin', target: '_blank' }, 'GitHub'),
     key: 'github',
     icon: () => h(IconGithub)
   },
