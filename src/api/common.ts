@@ -5,7 +5,8 @@ import type {
   IPasswordParam,
   IProfile,
   IProfileParam,
-  IUserInfo
+  IUserInfo,
+  ITokenData
 } from '@/types/api/common'
 
 export const getCaptcha = () => {
@@ -19,7 +20,7 @@ export const getCaptcha = () => {
 }
 
 export const setLogin = (data: ILoginParams) => {
-  return request<{ token: string; refreshToken: string }>({
+  return request<ITokenData>({
     url: '/auth/login',
     method: 'POST',
     headers: {
@@ -32,15 +33,15 @@ export const setLogin = (data: ILoginParams) => {
 export const setLogout = () => {
   return request({
     url: '/auth/logout',
-    method: 'get'
+    method: 'post'
   })
 }
 
 export const getNewToken = (refreshToken: string) => {
-  return request<{ token: string; refreshToken: string }>({
+  return request<ITokenData>({
     url: '/auth/refresh-token',
-    method: 'get',
-    params: {
+    method: 'post',
+    data: {
       refreshToken
     }
   })

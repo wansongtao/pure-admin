@@ -13,7 +13,7 @@ export const useUserStore = defineStore(
         return false
       }
 
-      accessToken.value = res.data.token
+      accessToken.value = res.data.accessToken
       refreshToken.value = res.data.refreshToken
       return true
     }
@@ -27,7 +27,7 @@ export const useUserStore = defineStore(
         return false
       }
 
-      accessToken.value = res.data.token
+      accessToken.value = res.data.accessToken
       refreshToken.value = res.data.refreshToken
       return true
     }

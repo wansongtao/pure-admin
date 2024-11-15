@@ -6,6 +6,11 @@ export interface ILoginParams {
   captcha: string
 }
 
+export interface ITokenData {
+  accessToken: string
+  refreshToken: string
+}
+
 export interface IUserInfo {
   avatar: string
   name: string
