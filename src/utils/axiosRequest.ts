@@ -44,7 +44,7 @@ const retryRequest = createAxiosRetryRequestPlugin({
   maxRetryCount: 2,
   request: instance.request,
   isRetry: (err) => {
-    if (err?.response?.status !== 401 && err?.response?.status !== 403) {
+    if (err?.response?.status === 500) {
       return true
     }
 
@@ -78,7 +78,7 @@ const goToLogin = (seconds = 2) => {
 }
 
 instance.interceptors.request.use(addToken, (error: AxiosError) => Promise.reject(error))
-instance.interceptors.response.use(processResponse, (error: AxiosError) => {
+instance.interceptors.response.use(processResponse, (error: AxiosError<IBaseResponse>) => {
   if (error.code === 'ERR_CANCELED') {
     return Promise.reject(error)
   }
@@ -87,7 +87,7 @@ instance.interceptors.response.use(processResponse, (error: AxiosError) => {
     goToLogin()
   }
 
-  window.$message.error(error.response?.statusText || error.message)
+  window.$message.error(error.response?.data?.message || error.message)
   return Promise.reject(error)
 })
 
