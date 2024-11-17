@@ -37,9 +37,13 @@ export default defineConfig({
     __APP_VERSION__: version
   },
   base: '/admin/',
+  build: {
+    outDir: './docker/dist'
+  },
   server: {
     open: true,
     port: 5500,
+    host: '0.0.0.0',
     proxy: {
       '/dev': {
         target: 'http://127.0.0.1:3001/api/v1',
