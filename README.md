@@ -15,6 +15,10 @@
 
 ## 预览
 
+在线预览：[pure-admin](http://blog.wansongtao.com/admin/login)。
+账号：admin
+密码：d.12345
+
 ### 登录页
 
 ![登录页](./docs/login.png)
